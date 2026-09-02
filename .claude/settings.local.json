@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__rider__search_symbol",
+      "mcp__rider__search_text",
+      "mcp__rider__read_file"
+    ]
+  }
+}
