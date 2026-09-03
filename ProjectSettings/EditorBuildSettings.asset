@@ -20,4 +20,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/CharacterSelectScene.unity
     guid: ef11a265631e36c42a4f15c9b9aa6bc3
-  m_configObjects: {}
+  - enabled: 1
+    path: Assets/Scenes/GameSceneTableService.unity
+    guid: 436df1cb70beb9e43ae971e5178c8bd7
+  m_configObjects:
+    com.unity.dt.app-ui: {fileID: 11400000, guid: 1b1c20d82303e4b5781c3ef50ac1449f,
+      type: 2}

@@ -6,7 +6,6 @@ using UnityEngine;
 
 public class DeliveryManager : NetworkBehaviour {
 
-
     public event EventHandler OnRecipeSpawned;
     public event EventHandler OnRecipeCompleted;
     public event EventHandler OnRecipeSuccess;
@@ -29,12 +28,16 @@ public class DeliveryManager : NetworkBehaviour {
     private void Awake() {
         Instance = this;
 
-
         waitingRecipeSOList = new List<RecipeSO>();
     }
 
     private void Update() {
         if (!IsServer) {
+            return;
+        }
+
+        // Classic mode only – TableManager handles orders in Table Service mode
+        if (KitchenGameMultiplayer.tableServiceMode) {
             return;
         }
 
@@ -121,13 +124,65 @@ public class DeliveryManager : NetworkBehaviour {
         OnRecipeSuccess?.Invoke(this, EventArgs.Empty);
     }
 
-
     public List<RecipeSO> GetWaitingRecipeSOList() {
         return waitingRecipeSOList;
     }
 
     public int GetSuccessfulRecipesAmount() {
         return successfulRecipesAmount;
+    }
+
+    // ===== TABLE SERVICE MODE NOTIFICATIONS =====
+    // Called by TableManager (server-side). ClientRpcs so events fire on all clients
+    // – sound, delivery result popup, and score all work automatically.
+
+    [ClientRpc]
+    public void NotifyTableServiceRecipeSpawnedClientRpc(int recipeSOIndex) {
+        if (recipeListSO != null && recipeSOIndex >= 0 && recipeSOIndex < recipeListSO.recipeSOList.Count) {
+            RecipeSO waitingRecipeSO = recipeListSO.recipeSOList[recipeSOIndex];
+            waitingRecipeSOList.Add(waitingRecipeSO);
+        }
+        OnRecipeSpawned?.Invoke(this, EventArgs.Empty);
+    }
+
+    [ClientRpc]
+    public void NotifyTableServiceSuccessClientRpc(string tableId, int recipeSOIndex) {
+        successfulRecipesAmount++;
+        Debug.Log($"[DeliveryManager] Table service SUCCESS RPC received for tableId: {tableId}");
+
+        if (recipeListSO != null && recipeSOIndex >= 0 && recipeSOIndex < recipeListSO.recipeSOList.Count) {
+            RecipeSO completedRecipeSO = recipeListSO.recipeSOList[recipeSOIndex];
+            waitingRecipeSOList.Remove(completedRecipeSO);
+        }
+
+        OnRecipeCompleted?.Invoke(this, EventArgs.Empty);
+        OnRecipeSuccess?.Invoke(this, EventArgs.Empty);
+
+        if (TableManager.Instance != null) {
+            CustomerTable table = TableManager.Instance.GetTableById(tableId);
+            if (table != null) {
+                table.ShowDeliveryResult(true);
+            }
+        }
+    }
+
+    [ClientRpc]
+    public void NotifyTableServiceFailedClientRpc(string tableId, int recipeSOIndex) {
+        Debug.Log($"[DeliveryManager] Table service FAILED RPC received for tableId: {tableId}");
+
+        if (recipeListSO != null && recipeSOIndex >= 0 && recipeSOIndex < recipeListSO.recipeSOList.Count) {
+            RecipeSO failedRecipeSO = recipeListSO.recipeSOList[recipeSOIndex];
+            waitingRecipeSOList.Remove(failedRecipeSO);
+        }
+
+        OnRecipeFailed?.Invoke(this, EventArgs.Empty);
+
+        if (TableManager.Instance != null) {
+            CustomerTable table = TableManager.Instance.GetTableById(tableId);
+            if (table != null) {
+                table.ShowDeliveryResult(false);
+            }
+        }
     }
 
 }

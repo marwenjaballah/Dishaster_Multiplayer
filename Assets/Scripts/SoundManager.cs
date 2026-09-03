@@ -54,13 +54,17 @@ public class SoundManager : MonoBehaviour {
     }
 
     private void DeliveryManager_OnRecipeFailed(object sender, System.EventArgs e) {
-        DeliveryCounter deliveryCounter = DeliveryCounter.Instance;
-        PlaySound(audioClipRefsSO.deliveryFail, deliveryCounter.transform.position);
+        Vector3 soundPosition = DeliveryCounter.Instance != null 
+            ? DeliveryCounter.Instance.transform.position 
+            : (Camera.main != null ? Camera.main.transform.position : Vector3.zero);
+        PlaySound(audioClipRefsSO.deliveryFail, soundPosition);
     }
 
     private void DeliveryManager_OnRecipeSuccess(object sender, System.EventArgs e) {
-        DeliveryCounter deliveryCounter = DeliveryCounter.Instance;
-        PlaySound(audioClipRefsSO.deliverySuccess, deliveryCounter.transform.position);
+        Vector3 soundPosition = DeliveryCounter.Instance != null 
+            ? DeliveryCounter.Instance.transform.position 
+            : (Camera.main != null ? Camera.main.transform.position : Vector3.zero);
+        PlaySound(audioClipRefsSO.deliverySuccess, soundPosition);
     }
 
     private void PlaySound(AudioClip[] audioClipArray, Vector3 position, float volume = 1f) {

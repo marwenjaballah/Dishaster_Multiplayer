@@ -11,7 +11,7 @@ public struct PlayerData : IEquatable<PlayerData>, INetworkSerializable {
     public ulong clientId;
     public int colorId;
     public FixedString64Bytes playerName;
-    public FixedString64Bytes playerId;
+    public FixedString512Bytes playerId;  // Changed from FixedString64Bytes to handle longer Unity Authentication IDs
 
 
     public bool Equals(PlayerData other) {
