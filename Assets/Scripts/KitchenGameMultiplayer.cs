@@ -18,6 +18,9 @@ public class KitchenGameMultiplayer : NetworkBehaviour {
 
     public static bool playMultiplayer = true;
 
+    // When true, lobby routes to GameSceneTableService with per-table orders
+    public static bool tableServiceMode = false;
+
 
     public event EventHandler OnTryingToJoinGame;
     public event EventHandler OnFailedToJoinGame;
@@ -48,7 +51,10 @@ public class KitchenGameMultiplayer : NetworkBehaviour {
         if (!playMultiplayer) {
             // Singleplayer
             StartHost();
-            Loader.LoadNetwork(Loader.Scene.GameScene);
+            Loader.Scene targetScene = tableServiceMode 
+                ? Loader.Scene.GameSceneTableService 
+                : Loader.Scene.GameScene;
+            Loader.LoadNetwork(targetScene);
         }
     }
 
@@ -76,11 +82,25 @@ public class KitchenGameMultiplayer : NetworkBehaviour {
     public override void OnNetworkSpawn() {
         base.OnNetworkSpawn();
 
-        // Now that we're spawned, set our player name and ID
-        if (IsClient) {
-            SetPlayerNameServerRpc(GetPlayerName());
-            SetPlayerIdServerRpc(AuthenticationService.Instance.PlayerId);
+        // Clear any stale data when first spawning
+        if (IsServer && playerDataNetworkList.Count == 0) {
+            Debug.Log("KitchenGameMultiplayer spawned on server - initializing clean player list");
         }
+
+        // Wait for player to be added to the list before setting name/ID
+        if (IsClient) {
+            StartCoroutine(SetPlayerInfoWhenReady());
+        }
+    }
+
+    private System.Collections.IEnumerator SetPlayerInfoWhenReady() {
+        // Wait until this client's data exists in the list
+        while (GetPlayerDataIndexFromClientId(NetworkManager.Singleton.LocalClientId) == -1) {
+            yield return null;
+        }
+
+        SetPlayerNameServerRpc(GetPlayerName());
+        SetPlayerIdServerRpc(AuthenticationService.Instance.PlayerId);
     }
 
     private void NetworkManager_Server_OnClientDisconnectCallback(ulong clientId) {
@@ -126,13 +146,17 @@ public class KitchenGameMultiplayer : NetworkBehaviour {
     }
 
     private void NetworkManager_Client_OnClientConnectedCallback(ulong clientId) {
-        SetPlayerNameServerRpc(GetPlayerName());
-        SetPlayerIdServerRpc(AuthenticationService.Instance.PlayerId);
+        // Player name and ID will be set in OnNetworkSpawn() when the NetworkBehaviour is ready
     }
 
     [ServerRpc(RequireOwnership = false)]
     private void SetPlayerNameServerRpc(string playerName, ServerRpcParams serverRpcParams = default) {
         int playerDataIndex = GetPlayerDataIndexFromClientId(serverRpcParams.Receive.SenderClientId);
+
+        if (playerDataIndex == -1) {
+            Debug.LogError($"Player data not found for client {serverRpcParams.Receive.SenderClientId}");
+            return;
+        }
 
         PlayerData playerData = playerDataNetworkList[playerDataIndex];
 
@@ -144,6 +168,11 @@ public class KitchenGameMultiplayer : NetworkBehaviour {
     [ServerRpc(RequireOwnership = false)]
     private void SetPlayerIdServerRpc(string playerId, ServerRpcParams serverRpcParams = default) {
         int playerDataIndex = GetPlayerDataIndexFromClientId(serverRpcParams.Receive.SenderClientId);
+
+        if (playerDataIndex == -1) {
+            Debug.LogError($"Player data not found for client {serverRpcParams.Receive.SenderClientId}");
+            return;
+        }
 
         PlayerData playerData = playerDataNetworkList[playerDataIndex];
 
@@ -266,6 +295,10 @@ public class KitchenGameMultiplayer : NetworkBehaviour {
     }
 
     public void ChangePlayerColor(int colorId) {
+        if (!IsSpawned) {
+            Debug.LogError("KitchenGameMultiplayer is not spawned on the network yet! Cannot change player color.");
+            return;
+        }
         ChangePlayerColorServerRpc(colorId);
     }
 
@@ -277,6 +310,11 @@ public class KitchenGameMultiplayer : NetworkBehaviour {
         }
 
         int playerDataIndex = GetPlayerDataIndexFromClientId(serverRpcParams.Receive.SenderClientId);
+
+        if (playerDataIndex == -1) {
+            Debug.LogError($"Player data not found for client {serverRpcParams.Receive.SenderClientId}");
+            return;
+        }
 
         PlayerData playerData = playerDataNetworkList[playerDataIndex];
 

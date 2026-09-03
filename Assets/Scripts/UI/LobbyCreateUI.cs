@@ -12,6 +12,10 @@ public class LobbyCreateUI : MonoBehaviour {
     [SerializeField] private Button createPrivateButton;
     [SerializeField] private TMP_InputField lobbyNameInputField;
 
+    // Wire up in Inspector: a Button whose child Text shows the current mode
+    [SerializeField] private Button gameModeToggleButton;
+    [SerializeField] private TextMeshProUGUI gameModeToggleText;
+
 
 
     private void Awake() {
@@ -24,6 +28,13 @@ public class LobbyCreateUI : MonoBehaviour {
         closeButton.onClick.AddListener(() => {
             Hide();
         });
+
+        if (gameModeToggleButton != null) {
+            gameModeToggleButton.onClick.AddListener(() => {
+                KitchenGameMultiplayer.tableServiceMode = !KitchenGameMultiplayer.tableServiceMode;
+                RefreshModeText();
+            });
+        }
     }
 
     private void Start() {
@@ -32,7 +43,7 @@ public class LobbyCreateUI : MonoBehaviour {
 
     public void Show() {
         gameObject.SetActive(true);
-
+        RefreshModeText();
         createPublicButton.Select();
     }
 
@@ -40,4 +51,12 @@ public class LobbyCreateUI : MonoBehaviour {
         gameObject.SetActive(false);
     }
 
-}
+    private void RefreshModeText() {
+        if (gameModeToggleText != null) {
+            gameModeToggleText.text = KitchenGameMultiplayer.tableServiceMode
+                ? "Mode: Table Service"
+                : "Mode: Classic";
+        }
+    }
+
+}
