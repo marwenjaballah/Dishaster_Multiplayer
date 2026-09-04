@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Netcode;
@@ -17,8 +18,10 @@ public class TableManager : NetworkBehaviour {
 
     [Header("Configuration")]
     [SerializeField] private RecipeListSO recipeListSO;
-    [SerializeField] private float spawnRecipeInterval = 4f;
     [SerializeField] private int maxConcurrentOrders = 4;
+    [SerializeField] private float minOrderRespawnDelay = 7f;
+    [SerializeField] private float maxOrderRespawnDelay = 15f;
+    [SerializeField] private float initialGameStartDelay = 3f;
 
     [Header("Debug")]
     [SerializeField] private bool showDebugLogs = true;
@@ -30,8 +33,8 @@ public class TableManager : NetworkBehaviour {
     // Active orders tracking
     private NetworkList<TableOrder> activeOrders;
 
-    // Recipe spawning
-    private float spawnRecipeTimer = 0f;
+    // Per-table scheduled respawn coroutines
+    private Dictionary<string, Coroutine> tableRespawnCoroutines = new Dictionary<string, Coroutine>();
 
     // Statistics
     private int successfulDeliveries = 0;
@@ -52,28 +55,29 @@ public class TableManager : NetworkBehaviour {
         if (showDebugLogs) {
             Debug.Log($"TableManager spawned on {(IsServer ? "SERVER" : "CLIENT")}");
         }
+
+        if (IsServer) {
+            // Subscribe to game state changes to kick off initial table orders when game starts playing
+            KitchenGameManager.Instance.OnStateChanged += KitchenGameManager_OnStateChanged;
+        }
     }
 
     private void Start() {
-        // Reset timer
-        spawnRecipeTimer = spawnRecipeInterval;
-
         if (showDebugLogs) {
             Debug.Log($"TableManager started with {tableRegistry.Count} registered tables");
         }
     }
 
-    private void Update() {
+    private void KitchenGameManager_OnStateChanged(object sender, EventArgs e) {
         if (!IsServer) return;
-        if (!KitchenGameManager.Instance.IsGamePlaying()) return;
 
-        // Spawn recipes at intervals
-        spawnRecipeTimer -= Time.deltaTime;
-        if (spawnRecipeTimer <= 0f) {
-            spawnRecipeTimer = spawnRecipeInterval;
-
-            if (activeOrders.Count < maxConcurrentOrders) {
-                SpawnRecipeToRandomTable();
+        if (KitchenGameManager.Instance.IsGamePlaying()) {
+            // Kick off initial orders for registered tables with a short initial delay
+            foreach (var kvp in tableRegistry) {
+                CustomerTable table = kvp.Value;
+                if (!table.HasActiveOrder()) {
+                    ScheduleNewOrderForTable(table.GetTableId(), initialGameStartDelay);
+                }
             }
         }
     }
@@ -97,6 +101,13 @@ public class TableManager : NetworkBehaviour {
             if (showDebugLogs) {
                 Debug.Log($"Registered Table {table.GetDisplayNumber()} (ID: {tableId})");
             }
+
+            // If game is already running and server is active, schedule an order for this newly registered table
+            if (IsServer && KitchenGameManager.Instance != null && KitchenGameManager.Instance.IsGamePlaying()) {
+                if (!table.HasActiveOrder()) {
+                    ScheduleNewOrderForTable(tableId, UnityEngine.Random.Range(minOrderRespawnDelay, maxOrderRespawnDelay));
+                }
+            }
         } else {
             Debug.LogWarning($"Table {tableId} already registered!");
         }
@@ -110,49 +121,99 @@ public class TableManager : NetworkBehaviour {
         if (tableRegistry.ContainsKey(tableId)) {
             tableRegistry.Remove(tableId);
 
+            if (tableRespawnCoroutines.TryGetValue(tableId, out Coroutine routine) && routine != null) {
+                StopCoroutine(routine);
+                tableRespawnCoroutines.Remove(tableId);
+            }
+
             if (showDebugLogs) {
                 Debug.Log($"Unregistered Table {table.GetDisplayNumber()} (ID: {tableId})");
             }
         }
     }
 
-    // ===== ORDER SPAWNING =====
+    // ===== EVENT-DRIVEN ORDER SCHEDULING =====
 
-    private void SpawnRecipeToRandomTable() {
-        // Get available tables (no active order)
-        List<CustomerTable> availableTables = GetAvailableTables();
+    /// <summary>
+    /// Triggered when a table becomes empty (order completed or expired).
+    /// Decides a random delay between [minOrderRespawnDelay, maxOrderRespawnDelay] and schedules the next order.
+    /// </summary>
+    public void NotifyTableBecameEmpty(string tableId) {
+        if (!IsServer) return;
 
-        if (availableTables.Count == 0) {
-            if (showDebugLogs) {
-                Debug.Log("No available tables for new order");
-            }
-            return;
+        float delay = UnityEngine.Random.Range(minOrderRespawnDelay, maxOrderRespawnDelay);
+        if (showDebugLogs) {
+            CustomerTable table = GetTableById(tableId);
+            Debug.Log($"Table {table?.GetDisplayNumber() ?? 0} is now empty. Next order scheduled in {delay:F1}s.");
         }
 
-        // Select random table
-        CustomerTable selectedTable = availableTables[UnityEngine.Random.Range(0, availableTables.Count)];
+        ScheduleNewOrderForTable(tableId, delay);
+    }
+
+    private void ScheduleNewOrderForTable(string tableId, float delay) {
+        if (!IsServer) return;
+
+        // Cancel any pending respawn for this table
+        if (tableRespawnCoroutines.TryGetValue(tableId, out Coroutine existingRoutine) && existingRoutine != null) {
+            StopCoroutine(existingRoutine);
+            tableRespawnCoroutines.Remove(tableId);
+        }
+
+        Coroutine newRoutine = StartCoroutine(SpawnOrderToTableRoutine(tableId, delay));
+        tableRespawnCoroutines[tableId] = newRoutine;
+    }
+
+    private IEnumerator SpawnOrderToTableRoutine(string tableId, float delay) {
+        yield return new WaitForSeconds(delay);
+
+        // Wait if the game is paused or not currently playing
+        while (KitchenGameManager.Instance != null && !KitchenGameManager.Instance.IsGamePlaying()) {
+            yield return new WaitForSeconds(0.5f);
+        }
+
+        // Wait if we have reached the max concurrent orders limit
+        while (activeOrders.Count >= maxConcurrentOrders) {
+            yield return new WaitForSeconds(1.0f);
+
+            // Re-check if game is still playing
+            while (KitchenGameManager.Instance != null && !KitchenGameManager.Instance.IsGamePlaying()) {
+                yield return new WaitForSeconds(0.5f);
+            }
+        }
+
+        tableRespawnCoroutines.Remove(tableId);
+
+        CustomerTable table = GetTableById(tableId);
+        if (table == null || table.HasActiveOrder()) yield break;
+        if (recipeListSO == null || recipeListSO.recipeSOList.Count == 0) yield break;
+
+        // Double check capacity before final spawn
+        if (activeOrders.Count >= maxConcurrentOrders) {
+            // Reschedule check shortly
+            ScheduleNewOrderForTable(tableId, 1.0f);
+            yield break;
+        }
 
         // Select random recipe
         int recipeIndex = UnityEngine.Random.Range(0, recipeListSO.recipeSOList.Count);
         RecipeSO selectedRecipe = recipeListSO.recipeSOList[recipeIndex];
 
-        // Assign order (server-side)
-        selectedTable.AssignRecipe(selectedRecipe, recipeIndex);
+        // Assign order to this specific table
+        table.AssignRecipe(selectedRecipe, recipeIndex);
 
         // Track in network list
         TableOrder newOrder = new TableOrder {
-            tableId = new FixedString64Bytes(selectedTable.GetTableId()),
+            tableId = new FixedString64Bytes(table.GetTableId()),
             recipeSOIndex = recipeIndex,
             orderStartTime = Time.time
         };
         activeOrders.Add(newOrder);
 
-        // Trigger event for sound/UI compatibility
         if (showDebugLogs) {
-            Debug.Log($"Spawned {selectedRecipe.recipeName} to Table {selectedTable.GetDisplayNumber()}");
+            Debug.Log($"Spawned {selectedRecipe.recipeName} to Table {table.GetDisplayNumber()} (Active orders: {activeOrders.Count}/{maxConcurrentOrders})");
         }
 
-        // Notify all clients – triggers spawn sound & adds recipe to top-left HUD list
+        // Notify all clients for audio and top-left HUD
         if (DeliveryManager.Instance != null) {
             DeliveryManager.Instance.NotifyTableServiceRecipeSpawnedClientRpc(recipeIndex);
         }
