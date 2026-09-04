@@ -242,6 +242,9 @@ public class CustomerTable : BaseCounter {
         orderAssignedTime.Value   = -1f;
 
         Debug.Log($"Table {displayNumber} order cleared");
+
+        // Notify TableManager to schedule a new order after a random delay
+        TableManager.Instance?.NotifyTableBecameEmpty(tableId);
     }
 
     // ---- Visuals ----
