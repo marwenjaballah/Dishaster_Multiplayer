@@ -39,6 +39,11 @@ public class Player : NetworkBehaviour, IKitchenObjectParent {
     private Vector3 lastInteractDir;
     private BaseCounter selectedCounter;
     private KitchenObject kitchenObject;
+    private float speedMultiplier = 1f;
+
+    public void SetSpeedMultiplier(float multiplier) {
+        speedMultiplier = multiplier;
+    }
 
 
     private void Start() {
@@ -71,6 +76,13 @@ public class Player : NetworkBehaviour, IKitchenObjectParent {
 
     private void GameInput_OnInteractAlternateAction(object sender, EventArgs e) {
         if (!KitchenGameManager.Instance.IsGamePlaying()) return;
+        if (!IsOwner) return;
+
+        // If player is holding a portable tool (e.g. Fire Extinguisher), use it
+        if (HasKitchenObject() && GetKitchenObject().TryGetComponent(out PortableFireExtinguisher extinguisher)) {
+            extinguisher.Use(this);
+            return;
+        }
 
         if (selectedCounter != null) {
             selectedCounter.InteractAlternate(this);
@@ -79,6 +91,7 @@ public class Player : NetworkBehaviour, IKitchenObjectParent {
 
     private void GameInput_OnInteractAction(object sender, System.EventArgs e) {
         if (!KitchenGameManager.Instance.IsGamePlaying()) return;
+        if (!IsOwner) return;
 
         if (selectedCounter != null) {
             selectedCounter.Interact(this);
@@ -92,6 +105,9 @@ public class Player : NetworkBehaviour, IKitchenObjectParent {
 
         HandleMovement();
         HandleInteractions();
+
+        // Reset speed multiplier each frame (re-applied by hazards if standing in puddle)
+        speedMultiplier = 1f;
     }
 
     public bool IsWalking() {
@@ -128,7 +144,7 @@ public class Player : NetworkBehaviour, IKitchenObjectParent {
 
         Vector3 moveDir = new Vector3(inputVector.x, 0f, inputVector.y);
 
-        float moveDistance = moveSpeed * Time.deltaTime;
+        float moveDistance = moveSpeed * speedMultiplier * Time.deltaTime;
         float playerRadius = .6f;
         bool canMove = !Physics.BoxCast(transform.position, Vector3.one * playerRadius, moveDir, Quaternion.identity, moveDistance, collisionsLayerMask);
 

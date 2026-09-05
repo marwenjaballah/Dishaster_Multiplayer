@@ -12,6 +12,11 @@ public class ClearCounter : BaseCounter {
         if (!HasKitchenObject()) {
             // There is no KitchenObject here
             if (player.HasKitchenObject()) {
+                // Emergency tools must be returned to their designated wall mounts, not left on food counters
+                if (player.GetKitchenObject() is PortableFireExtinguisher || player.GetKitchenObject() is PortablePipeWrench) {
+                    return;
+                }
+
                 // Player is carrying something
                 player.GetKitchenObject().SetKitchenObjectParent(this);
             } else {

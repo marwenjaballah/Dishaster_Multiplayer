@@ -113,6 +113,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 5987591629470367271, guid: ac964a67cdc32584aab07a6cd2fe1b21,
+        type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 4211266567
+      objectReference: {fileID: 0}
     - target: {fileID: 6469687145593214517, guid: ac964a67cdc32584aab07a6cd2fe1b21,
         type: 3}
       propertyPath: m_Name
@@ -214,6 +219,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 870ab78533943e4448b15305b146a6bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   counterTopPoint: {fileID: 8028450213966386773}
   plateKitchenObjectSO: {fileID: 11400000, guid: c2b29260396631a4792f2e3e10773a1d,
     type: 2}
@@ -238,7 +244,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 867046696110709345, guid: e21b499d164095947b7559f0267f0e63,
         type: 3}
-      propertyPath: m_Materials.Array.data[0]
+      propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 1a0afd856a35421469b28b916116fd9c, type: 2}
     - target: {fileID: 4472461010448373620, guid: e21b499d164095947b7559f0267f0e63,

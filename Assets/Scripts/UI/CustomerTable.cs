@@ -43,10 +43,9 @@ public class CustomerTable : BaseCounter {
 
 
     private void Awake() {
-        // Auto-generate ID if not set
-        if (string.IsNullOrEmpty(tableId)) {
-            tableId = System.Guid.NewGuid().ToString();
-            Debug.Log($"Auto-generated table ID: {tableId}");
+        // Auto-generate ID if not set or invalid
+        if (string.IsNullOrEmpty(tableId) || tableId == "0") {
+            tableId = $"table_{displayNumber}";
         }
 
         // Find the billboard UI (child Canvas with TableOrderUI, or anywhere in children)
@@ -124,11 +123,6 @@ public class CustomerTable : BaseCounter {
             orderExpiredHandled = true;
             HandleExpiredOrder();
         }
-
-        // DEBUG: Log update status periodically
-        if (Time.time % 3f < 0.1f) { // Every 3 seconds
-            Debug.Log($"[CustomerTable {displayNumber}] Update: HasOrder={HasActiveOrder()}, Time={(orderAssignedTime.Value >= 0 ? orderAssignedTime.Value : -1)}, IsClient={IsClient}, IsEmpty={!HasKitchenObject()}");
-        }
     }
 
     // Auto-trigger when player enters trigger zone
@@ -150,10 +144,12 @@ public class CustomerTable : BaseCounter {
     }
 
     private void HandleExpiredOrder() {
-        // Tell TableManager first (removes from activeOrders, fires fail event)
+        if (RestaurantEconomyManager.Instance != null) {
+            RestaurantEconomyManager.Instance.ProcessExpiredOrderPenalty();
+        }
         TableManager.Instance?.HandleOrderExpired(tableId);
         ClearOrder();
-        ShowWrongDeliveryFeedbackClientRpc();
+        ShowExpiredOrderFeedbackClientRpc();
     }
 
     // ---- Interaction ----
@@ -190,13 +186,43 @@ public class CustomerTable : BaseCounter {
         bool isCorrect = ValidateDelivery(currentRecipe, plate);
 
         if (isCorrect) {
+            // Calculate patience and performance rating
+            float elapsed = Time.time - orderAssignedTime.Value;
+            float patience = 1f - Mathf.Clamp01(elapsed / orderTimeoutDuration);
+
+            float stars;
+            int tip;
+            if (patience >= 0.75f) {
+                stars = 5.0f;
+                tip = 15;
+            } else if (patience >= 0.25f) {
+                stars = 4.0f;
+                tip = 5;
+            } else {
+                stars = 3.0f;
+                tip = 0;
+            }
+
+            int basePayout = 25 + (currentRecipe.kitchenObjectSOList.Count * 5);
+
+            if (RestaurantEconomyManager.Instance != null) {
+                RestaurantEconomyManager.Instance.ProcessDeliveryReward(basePayout, tip, stars);
+            }
+
             TableManager.Instance?.HandleCorrectDelivery(tableId);
             ClearOrder();
             ShowCorrectDeliveryFeedbackClientRpc();
             KitchenObject.DestroyKitchenObject(plate);
         } else {
+            // Wrong dish delivered -> Customer rejects & cancels order!
+            if (RestaurantEconomyManager.Instance != null) {
+                RestaurantEconomyManager.Instance.ProcessWrongDeliveryPenalty();
+            }
+
             TableManager.Instance?.HandleWrongDelivery(tableId);
+            ClearOrder(); // Order is canceled!
             ShowWrongDeliveryFeedbackClientRpc();
+            // Note: KitchenObject.DestroyKitchenObject is NOT called -> player retains plate!
         }
     }
 
@@ -264,13 +290,22 @@ public class CustomerTable : BaseCounter {
     [ClientRpc]
     private void ShowCorrectDeliveryFeedbackClientRpc() {
         OnAnyTableDeliverySuccess?.Invoke(this, EventArgs.Empty);
+        ShowDeliveryResult(true);
         Debug.Log($"SUCCESS: Correct delivery to Table {displayNumber}!");
     }
 
     [ClientRpc]
     private void ShowWrongDeliveryFeedbackClientRpc() {
         OnAnyTableDeliveryFailed?.Invoke(this, EventArgs.Empty);
-        Debug.Log($"FAILED: Wrong delivery to Table {displayNumber}!");
+        ShowDeliveryResult(false);
+        Debug.Log($"FAILED: Wrong delivery to Table {displayNumber}! Order canceled.");
+    }
+
+    [ClientRpc]
+    private void ShowExpiredOrderFeedbackClientRpc() {
+        OnAnyTableDeliveryFailed?.Invoke(this, EventArgs.Empty);
+        ShowDeliveryResult(false);
+        Debug.Log($"EXPIRED: Order expired at Table {displayNumber}!");
     }
 
     [ClientRpc]

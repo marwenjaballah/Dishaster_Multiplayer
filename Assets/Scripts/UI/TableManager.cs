@@ -141,7 +141,24 @@ public class TableManager : NetworkBehaviour {
     public void NotifyTableBecameEmpty(string tableId) {
         if (!IsServer) return;
 
-        float delay = UnityEngine.Random.Range(minOrderRespawnDelay, maxOrderRespawnDelay);
+        float effectiveMinDelay = minOrderRespawnDelay;
+        float effectiveMaxDelay = maxOrderRespawnDelay;
+
+        // Modulate pacing based on restaurant reputation
+        if (RestaurantEconomyManager.Instance != null) {
+            float rating = RestaurantEconomyManager.Instance.GetStarRating();
+            if (rating >= 4.2f) {
+                // High popularity: Rush of customers!
+                effectiveMinDelay = Mathf.Max(3f, minOrderRespawnDelay * 0.6f);
+                effectiveMaxDelay = Mathf.Max(6f, maxOrderRespawnDelay * 0.6f);
+            } else if (rating < 2.5f) {
+                // Low popularity: Slow customer foot traffic
+                effectiveMinDelay = minOrderRespawnDelay * 1.5f;
+                effectiveMaxDelay = maxOrderRespawnDelay * 1.5f;
+            }
+        }
+
+        float delay = UnityEngine.Random.Range(effectiveMinDelay, effectiveMaxDelay);
         if (showDebugLogs) {
             CustomerTable table = GetTableById(tableId);
             Debug.Log($"Table {table?.GetDisplayNumber() ?? 0} is now empty. Next order scheduled in {delay:F1}s.");
@@ -171,8 +188,15 @@ public class TableManager : NetworkBehaviour {
             yield return new WaitForSeconds(0.5f);
         }
 
+        int effectiveMaxOrders = maxConcurrentOrders;
+        if (RestaurantEconomyManager.Instance != null) {
+            float rating = RestaurantEconomyManager.Instance.GetStarRating();
+            if (rating >= 4.2f) effectiveMaxOrders = 5;
+            else if (rating < 2.5f) effectiveMaxOrders = 2;
+        }
+
         // Wait if we have reached the max concurrent orders limit
-        while (activeOrders.Count >= maxConcurrentOrders) {
+        while (activeOrders.Count >= effectiveMaxOrders) {
             yield return new WaitForSeconds(1.0f);
 
             // Re-check if game is still playing
@@ -188,7 +212,7 @@ public class TableManager : NetworkBehaviour {
         if (recipeListSO == null || recipeListSO.recipeSOList.Count == 0) yield break;
 
         // Double check capacity before final spawn
-        if (activeOrders.Count >= maxConcurrentOrders) {
+        if (activeOrders.Count >= effectiveMaxOrders) {
             // Reschedule check shortly
             ScheduleNewOrderForTable(tableId, 1.0f);
             yield break;
@@ -252,9 +276,11 @@ public class TableManager : NetworkBehaviour {
         if (!IsServer) return;
 
         int recipeSOIndex = -1;
-        for (int i = 0; i < activeOrders.Count; i++) {
+        // Remove from active orders so the order is canceled
+        for (int i = activeOrders.Count - 1; i >= 0; i--) {
             if (activeOrders[i].tableId.ToString() == tableId) {
                 recipeSOIndex = activeOrders[i].recipeSOIndex;
+                activeOrders.RemoveAt(i);
                 break;
             }
         }
@@ -262,10 +288,10 @@ public class TableManager : NetworkBehaviour {
         // Trigger event for sound/UI
         if (showDebugLogs) {
             CustomerTable table = GetTableById(tableId);
-            Debug.Log($"Wrong delivery to Table {table?.GetDisplayNumber() ?? 0}");
+            Debug.Log($"Wrong delivery to Table {table?.GetDisplayNumber() ?? 0} - Order Canceled");
         }
 
-        // Notify all clients – triggers fail sound and popup
+        // Notify all clients – triggers fail sound, popup, and removes recipe from waiting list
         if (DeliveryManager.Instance != null) {
             DeliveryManager.Instance.NotifyTableServiceFailedClientRpc(tableId, recipeSOIndex);
         }

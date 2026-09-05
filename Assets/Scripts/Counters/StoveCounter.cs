@@ -71,6 +71,11 @@ public class StoveCounter : BaseCounter, IHasProgress {
             return;
         }
 
+        // Crisis event: pause cooking when blackout cuts power
+        if (KitchenCrisisManager.Instance != null && KitchenCrisisManager.Instance.IsBlackout()) {
+            return;
+        }
+
         if (HasKitchenObject()) {
             switch (state.Value) {
                 case State.Idle:
@@ -111,6 +116,11 @@ public class StoveCounter : BaseCounter, IHasProgress {
     }
 
     public override void Interact(Player player) {
+        // Prevent interaction if currently ablaze
+        FireHazard hazard = GetComponent<FireHazard>();
+        if (hazard != null && hazard.IsBurning()) {
+            return;
+        }
         if (!HasKitchenObject()) {
             // There is no KitchenObject here
             if (player.HasKitchenObject()) {

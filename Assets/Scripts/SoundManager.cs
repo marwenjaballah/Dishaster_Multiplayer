@@ -31,6 +31,24 @@ public class SoundManager : MonoBehaviour {
         Player.OnAnyPickedSomething += Player_OnPickedSomething;
         BaseCounter.OnAnyObjectPlacedHere += BaseCounter_OnAnyObjectPlacedHere;
         TrashCounter.OnAnyObjectTrashed += TrashCounter_OnAnyObjectTrashed;
+
+        if (KitchenCrisisManager.Instance != null) {
+            KitchenCrisisManager.Instance.OnBlackoutStarted += KitchenCrisisManager_OnBlackoutStarted;
+            KitchenCrisisManager.Instance.OnFireSpawned += KitchenCrisisManager_OnFireSpawned;
+        }
+    }
+
+    private void KitchenCrisisManager_OnBlackoutStarted(object sender, System.EventArgs e) {
+        if (audioClipRefsSO != null && audioClipRefsSO.warning != null && audioClipRefsSO.warning.Length > 0) {
+            PlaySound(audioClipRefsSO.warning, Camera.main != null ? Camera.main.transform.position : Vector3.zero);
+        }
+    }
+
+    private void KitchenCrisisManager_OnFireSpawned(object sender, KitchenCrisisManager.OnFireSpawnedEventArgs e) {
+        if (audioClipRefsSO != null && audioClipRefsSO.warning != null && audioClipRefsSO.warning.Length > 0) {
+            Vector3 pos = e.targetCounter != null ? e.targetCounter.transform.position : (Camera.main != null ? Camera.main.transform.position : Vector3.zero);
+            PlaySound(audioClipRefsSO.warning, pos);
+        }
     }
 
     private void TrashCounter_OnAnyObjectTrashed(object sender, System.EventArgs e) {

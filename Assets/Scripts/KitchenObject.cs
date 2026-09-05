@@ -14,7 +14,12 @@ public class KitchenObject : NetworkBehaviour {
 
 
     protected virtual void Awake() {
-        followTransform = GetComponent<FollowTransform>();
+        if (followTransform == null) {
+            followTransform = GetComponent<FollowTransform>();
+            if (followTransform == null) {
+                followTransform = gameObject.AddComponent<FollowTransform>();
+            }
+        }
     }
 
     public KitchenObjectSO GetKitchenObjectSO() {
@@ -47,6 +52,12 @@ public class KitchenObject : NetworkBehaviour {
 
         kitchenObjectParent.SetKitchenObject(this);
 
+        if (followTransform == null) {
+            followTransform = GetComponent<FollowTransform>();
+            if (followTransform == null) {
+                followTransform = gameObject.AddComponent<FollowTransform>();
+            }
+        }
         followTransform.SetTargetTransform(kitchenObjectParent.GetKitchenObjectFollowTransform());
     }
 
