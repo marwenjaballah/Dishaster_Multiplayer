@@ -70,7 +70,19 @@ public class Player : NetworkBehaviour, IKitchenObjectParent {
 
     private void NetworkManager_OnClientDisconnectCallback(ulong clientId) {
         if (clientId == OwnerClientId && HasKitchenObject()) {
-            KitchenObject.DestroyKitchenObject(GetKitchenObject());
+            KitchenObject heldObject = GetKitchenObject();
+            if (heldObject is PortablePipeWrench) {
+                PipeWrenchCounter pipeWrenchCounter = FindFirstObjectByType<PipeWrenchCounter>();
+                if (pipeWrenchCounter != null) {
+                    pipeWrenchCounter.RestoreWrench();
+                }
+            } else if (heldObject is PortableFireExtinguisher) {
+                FireExtinguisherCounter fireExtinguisherCounter = FindFirstObjectByType<FireExtinguisherCounter>();
+                if (fireExtinguisherCounter != null) {
+                    fireExtinguisherCounter.RestoreExtinguisher();
+                }
+            }
+            KitchenObject.DestroyKitchenObject(heldObject);
         }
     }
 

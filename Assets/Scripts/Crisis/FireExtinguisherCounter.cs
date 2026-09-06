@@ -49,25 +49,31 @@ public class FireExtinguisherCounter : BaseCounter {
 
     public override void Interact(Player player) {
         if (!player.HasKitchenObject()) {
-            // Player is empty-handed: pick up the extinguisher from the stand
+            // Player is empty-handed: request pick up from stand
             if (hasExtinguisherOnStand.Value) {
-                InteractPickupServerRpc();
-                KitchenObject.SpawnKitchenObject(fireExtinguisherSO, player);
+                InteractPickupServerRpc(player.GetNetworkObject());
             }
         } else {
             // Player is carrying something
             if (player.GetKitchenObject().GetKitchenObjectSO() == fireExtinguisherSO) {
-                // Return extinguisher to the stand
-                KitchenObject.DestroyKitchenObject(player.GetKitchenObject());
-                InteractReturnServerRpc();
+                // Request return extinguisher to the stand
+                InteractReturnServerRpc(player.GetKitchenObject().NetworkObject);
             }
         }
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void InteractPickupServerRpc() {
-        hasExtinguisherOnStand.Value = false;
-        InteractPickupClientRpc();
+    private void InteractPickupServerRpc(NetworkObjectReference playerNetworkObjectReference) {
+        if (!hasExtinguisherOnStand.Value) return;
+
+        if (playerNetworkObjectReference.TryGet(out NetworkObject playerNetworkObject)) {
+            Player player = playerNetworkObject.GetComponent<Player>();
+            if (player != null && !player.HasKitchenObject()) {
+                hasExtinguisherOnStand.Value = false;
+                KitchenObject.SpawnKitchenObject(fireExtinguisherSO, player);
+                InteractPickupClientRpc();
+            }
+        }
     }
 
     [ClientRpc]
@@ -77,14 +83,29 @@ public class FireExtinguisherCounter : BaseCounter {
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void InteractReturnServerRpc() {
-        hasExtinguisherOnStand.Value = true;
-        InteractReturnClientRpc();
+    private void InteractReturnServerRpc(NetworkObjectReference kitchenObjectNetworkObjectReference) {
+        if (hasExtinguisherOnStand.Value) return;
+
+        if (kitchenObjectNetworkObjectReference.TryGet(out NetworkObject kitchenObjectNetworkObject)) {
+            KitchenObject kitchenObject = kitchenObjectNetworkObject.GetComponent<KitchenObject>();
+            if (kitchenObject != null && kitchenObject.GetKitchenObjectSO() == fireExtinguisherSO) {
+                KitchenObject.DestroyKitchenObject(kitchenObject);
+                hasExtinguisherOnStand.Value = true;
+                InteractReturnClientRpc();
+            }
+        }
     }
 
     [ClientRpc]
     private void InteractReturnClientRpc() {
         OnExtinguisherReturned?.Invoke(this, EventArgs.Empty);
         OnAnyExtinguisherReturned?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void RestoreExtinguisher() {
+        if (!hasExtinguisherOnStand.Value) {
+            hasExtinguisherOnStand.Value = true;
+            InteractReturnClientRpc();
+        }
     }
 }

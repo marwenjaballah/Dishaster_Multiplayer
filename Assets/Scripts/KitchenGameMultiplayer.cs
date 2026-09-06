@@ -45,6 +45,23 @@ public class KitchenGameMultiplayer : NetworkBehaviour {
 
         playerDataNetworkList = new NetworkList<PlayerData>();
         playerDataNetworkList.OnListChanged += PlayerDataNetworkList_OnListChanged;
+
+        RegisterKitchenObjectPrefabs();
+    }
+
+    private void RegisterKitchenObjectPrefabs() {
+        if (NetworkManager.Singleton == null || kitchenObjectListSO == null) return;
+
+        foreach (KitchenObjectSO koSO in kitchenObjectListSO.kitchenObjectSOList) {
+            if (koSO != null && koSO.prefab != null) {
+                GameObject prefabGO = koSO.prefab.gameObject;
+                if (prefabGO.GetComponent<NetworkObject>() != null) {
+                    if (!NetworkManager.Singleton.NetworkConfig.Prefabs.Contains(prefabGO)) {
+                        NetworkManager.Singleton.AddNetworkPrefab(prefabGO);
+                    }
+                }
+            }
+        }
     }
 
     private void Start() {

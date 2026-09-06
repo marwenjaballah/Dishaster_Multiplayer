@@ -47,25 +47,31 @@ public class PipeWrenchCounter : BaseCounter {
 
     public override void Interact(Player player) {
         if (!player.HasKitchenObject()) {
-            // Player is empty-handed: pick up wrench from the stand
+            // Player is empty-handed: request pick up from stand
             if (hasWrenchOnStand.Value) {
-                InteractPickupServerRpc();
-                KitchenObject.SpawnKitchenObject(pipeWrenchSO, player);
+                InteractPickupServerRpc(player.GetNetworkObject());
             }
         } else {
             // Player is carrying something
             if (player.GetKitchenObject().GetKitchenObjectSO() == pipeWrenchSO) {
-                // Return wrench to the stand
-                KitchenObject.DestroyKitchenObject(player.GetKitchenObject());
-                InteractReturnServerRpc();
+                // Request return wrench to the stand
+                InteractReturnServerRpc(player.GetKitchenObject().NetworkObject);
             }
         }
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void InteractPickupServerRpc() {
-        hasWrenchOnStand.Value = false;
-        InteractPickupClientRpc();
+    private void InteractPickupServerRpc(NetworkObjectReference playerNetworkObjectReference) {
+        if (!hasWrenchOnStand.Value) return;
+
+        if (playerNetworkObjectReference.TryGet(out NetworkObject playerNetworkObject)) {
+            Player player = playerNetworkObject.GetComponent<Player>();
+            if (player != null && !player.HasKitchenObject()) {
+                hasWrenchOnStand.Value = false;
+                KitchenObject.SpawnKitchenObject(pipeWrenchSO, player);
+                InteractPickupClientRpc();
+            }
+        }
     }
 
     [ClientRpc]
@@ -75,14 +81,29 @@ public class PipeWrenchCounter : BaseCounter {
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void InteractReturnServerRpc() {
-        hasWrenchOnStand.Value = true;
-        InteractReturnClientRpc();
+    private void InteractReturnServerRpc(NetworkObjectReference kitchenObjectNetworkObjectReference) {
+        if (hasWrenchOnStand.Value) return;
+
+        if (kitchenObjectNetworkObjectReference.TryGet(out NetworkObject kitchenObjectNetworkObject)) {
+            KitchenObject kitchenObject = kitchenObjectNetworkObject.GetComponent<KitchenObject>();
+            if (kitchenObject != null && kitchenObject.GetKitchenObjectSO() == pipeWrenchSO) {
+                KitchenObject.DestroyKitchenObject(kitchenObject);
+                hasWrenchOnStand.Value = true;
+                InteractReturnClientRpc();
+            }
+        }
     }
 
     [ClientRpc]
     private void InteractReturnClientRpc() {
         OnWrenchReturned?.Invoke(this, EventArgs.Empty);
         OnAnyWrenchReturned?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void RestoreWrench() {
+        if (!hasWrenchOnStand.Value) {
+            hasWrenchOnStand.Value = true;
+            InteractReturnClientRpc();
+        }
     }
 }
