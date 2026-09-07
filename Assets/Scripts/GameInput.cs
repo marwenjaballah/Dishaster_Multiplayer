@@ -50,6 +50,15 @@ public class GameInput : MonoBehaviour {
         playerInputActions.Player.Interact.performed += Interact_performed;
         playerInputActions.Player.InteractAlternate.performed += InteractAlternate_performed;
         playerInputActions.Player.Pause.performed += Pause_performed;
+
+        EnsureMobileControls();
+    }
+
+    private void EnsureMobileControls() {
+        if (FindFirstObjectByType<UI.MobileTouchControlsUI>() == null) {
+            GameObject mobileControlsGo = new GameObject("MobileTouchControlsUI");
+            mobileControlsGo.AddComponent<UI.MobileTouchControlsUI>();
+        }
     }
 
     private void OnDestroy() {
@@ -72,16 +81,48 @@ public class GameInput : MonoBehaviour {
         OnInteractAction?.Invoke(this, EventArgs.Empty);
     }
 
+    private Vector2 mobileMovementVector;
+    private bool isMobileInteractPressed;
+    private bool isMobileInteractAlternatePressed;
+
+    public void SetMobileMovementVector(Vector2 moveVec) {
+        mobileMovementVector = moveVec;
+    }
+
+    public void SetMobileInteractPressed(bool isPressed) {
+        isMobileInteractPressed = isPressed;
+    }
+
+    public void SetMobileInteractAlternatePressed(bool isPressed) {
+        isMobileInteractAlternatePressed = isPressed;
+    }
+
+    public void TriggerMobileInteract() {
+        OnInteractAction?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void TriggerMobileInteractAlternate() {
+        OnInteractAlternateAction?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void TriggerMobilePause() {
+        OnPauseAction?.Invoke(this, EventArgs.Empty);
+    }
+
     public bool IsInteractPressed() {
-        return playerInputActions.Player.Interact.IsPressed();
+        return isMobileInteractPressed || (playerInputActions != null && playerInputActions.Player.Interact.IsPressed());
     }
 
     public bool IsInteractAlternatePressed() {
-        return playerInputActions.Player.InteractAlternate.IsPressed();
+        return isMobileInteractAlternatePressed || (playerInputActions != null && playerInputActions.Player.InteractAlternate.IsPressed());
     }
 
     public Vector2 GetMovementVectorNormalized() {
-        Vector2 inputVector = playerInputActions.Player.Move.ReadValue<Vector2>();
+        Vector2 inputVector = playerInputActions != null ? playerInputActions.Player.Move.ReadValue<Vector2>() : Vector2.zero;
+
+        if (mobileMovementVector.sqrMagnitude > 0.001f) {
+            inputVector = mobileMovementVector;
+        }
 
         inputVector = inputVector.normalized;
 
