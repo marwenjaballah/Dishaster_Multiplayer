@@ -166,35 +166,132 @@ public class OptionsUI : MonoBehaviour {
     }
 
     private void EnsureDisplayControls() {
-        if (resolutionButton == null && resolutionDropdown == null) {
-            resolutionButton = CreateSettingsButton("ResolutionButton", new Vector2(0, 48), "RES: " + (DisplaySettingsManager.Instance != null ? DisplaySettingsManager.Instance.GetCurrentResolutionText() : "1920 x 1080"), out resolutionText);
-        }
+        if (closeButton == null && transform.childCount == 0) {
+            BuildStandaloneModal();
+        } else {
+            if (resolutionButton == null && resolutionDropdown == null) {
+                resolutionButton = CreateSettingsButton("ResolutionButton", new Vector2(0, 48), "RES: " + (DisplaySettingsManager.Instance != null ? DisplaySettingsManager.Instance.GetCurrentResolutionText() : "1920 x 1080"), out resolutionText, transform);
+            }
 
-        if (windowModeButton == null && windowModeDropdown == null) {
-            windowModeButton = CreateSettingsButton("WindowModeButton", new Vector2(0, 0), "MODE: " + (DisplaySettingsManager.Instance != null ? DisplaySettingsManager.Instance.GetCurrentWindowModeText() : "BORDERLESS WINDOW"), out windowModeText);
+            if (windowModeButton == null && windowModeDropdown == null) {
+                windowModeButton = CreateSettingsButton("WindowModeButton", new Vector2(0, 0), "MODE: " + (DisplaySettingsManager.Instance != null ? DisplaySettingsManager.Instance.GetCurrentWindowModeText() : "BORDERLESS WINDOW"), out windowModeText, transform);
+            }
         }
     }
 
-    private Button CreateSettingsButton(string name, Vector2 anchoredPos, string defaultText, out TextMeshProUGUI textComp) {
+    private void BuildStandaloneModal() {
+        RectTransform rootRect = GetComponent<RectTransform>();
+        if (rootRect != null) {
+            rootRect.anchorMin = Vector2.zero;
+            rootRect.anchorMax = Vector2.one;
+            rootRect.sizeDelta = Vector2.zero;
+            rootRect.anchoredPosition = Vector2.zero;
+        }
+
+        // Blocker overlay
+        Image blockerImg = gameObject.AddComponent<Image>();
+        blockerImg.color = new Color(0, 0, 0, 0.75f);
+
+        // Center card modal
+        GameObject cardObj = new GameObject("SettingsCard", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+        cardObj.transform.SetParent(transform, false);
+        RectTransform cardRect = cardObj.GetComponent<RectTransform>();
+        cardRect.anchorMin = new Vector2(0.5f, 0.5f);
+        cardRect.anchorMax = new Vector2(0.5f, 0.5f);
+        cardRect.pivot = new Vector2(0.5f, 0.5f);
+        cardRect.sizeDelta = new Vector2(560, 520);
+        cardRect.anchoredPosition = Vector2.zero;
+
+        Image cardImg = cardObj.GetComponent<Image>();
+        cardImg.color = new Color(0.08f, 0.11f, 0.18f, 0.98f);
+
+        // Title
+        GameObject titleObj = new GameObject("Title", typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI));
+        titleObj.transform.SetParent(cardObj.transform, false);
+        RectTransform titleRect = titleObj.GetComponent<RectTransform>();
+        titleRect.anchorMin = new Vector2(0.5f, 0.5f);
+        titleRect.anchorMax = new Vector2(0.5f, 0.5f);
+        titleRect.sizeDelta = new Vector2(500, 50);
+        titleRect.anchoredPosition = new Vector2(0, 200);
+
+        TextMeshProUGUI titleText = titleObj.GetComponent<TextMeshProUGUI>();
+        titleText.text = "<color=#FFB703>SETTINGS</color>";
+        titleText.fontSize = 28;
+        titleText.fontStyle = FontStyles.Bold;
+        titleText.alignment = TextAlignmentOptions.Center;
+
+        // Sound volume button
+        soundEffectsButton = CreateSettingsButton("SoundEffectsButton", new Vector2(0, 120), "SFX: 100%", out soundEffectsText, cardObj.transform);
+        soundEffectsButton.onClick.AddListener(() => {
+            if (SoundManager.Instance != null) {
+                SoundManager.Instance.ChangeVolume();
+            } else {
+                float vol = PlayerPrefs.GetFloat("SoundEffectsVolume", 1f) + 0.1f;
+                if (vol > 1.05f) vol = 0f;
+                PlayerPrefs.SetFloat("SoundEffectsVolume", vol);
+                PlayerPrefs.Save();
+            }
+            UpdateVisual();
+        });
+
+        // Music volume button
+        musicButton = CreateSettingsButton("MusicButton", new Vector2(0, 60), "MUSIC: 30%", out musicText, cardObj.transform);
+        musicButton.onClick.AddListener(() => {
+            if (MusicManager.Instance != null) {
+                MusicManager.Instance.ChangeVolume();
+            } else {
+                float vol = PlayerPrefs.GetFloat("MusicVolume", 0.3f) + 0.1f;
+                if (vol > 1.05f) vol = 0f;
+                PlayerPrefs.SetFloat("MusicVolume", vol);
+                PlayerPrefs.Save();
+            }
+            UpdateVisual();
+        });
+
+        // Resolution button
+        resolutionButton = CreateSettingsButton("ResolutionButton", new Vector2(0, 0), "RES: 1920 x 1080", out resolutionText, cardObj.transform);
+        resolutionButton.onClick.AddListener(() => {
+            if (DisplaySettingsManager.Instance != null) DisplaySettingsManager.Instance.CycleResolution(1);
+        });
+
+        // Window mode button
+        windowModeButton = CreateSettingsButton("WindowModeButton", new Vector2(0, -60), "MODE: BORDERLESS WINDOW", out windowModeText, cardObj.transform);
+        windowModeButton.onClick.AddListener(() => {
+            if (DisplaySettingsManager.Instance != null) DisplaySettingsManager.Instance.CycleWindowMode(1);
+        });
+
+        // Close button
+        closeButton = CreateSettingsButton("CloseButton", new Vector2(0, -180), "CLOSE", out _, cardObj.transform);
+        RectTransform closeRect = closeButton.GetComponent<RectTransform>();
+        closeRect.sizeDelta = new Vector2(260, 48);
+        Image closeImg = closeButton.GetComponent<Image>();
+        closeImg.color = new Color(0.9f, 0.55f, 0.1f, 1f); // Vibrant accent
+        closeButton.onClick.AddListener(() => {
+            Hide();
+            onCloseButtonAction?.Invoke();
+        });
+    }
+
+    private Button CreateSettingsButton(string name, Vector2 anchoredPos, string defaultText, out TextMeshProUGUI textComp, Transform parentTransform) {
         textComp = null;
         GameObject btnObj = new GameObject(name, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Button));
-        btnObj.transform.SetParent(transform, false);
+        btnObj.transform.SetParent(parentTransform, false);
 
         RectTransform rect = btnObj.GetComponent<RectTransform>();
         rect.anchorMin = new Vector2(0.5f, 0.5f);
         rect.anchorMax = new Vector2(0.5f, 0.5f);
         rect.pivot = new Vector2(0.5f, 0.5f);
         rect.anchoredPosition = anchoredPos;
-        rect.sizeDelta = new Vector2(460, 42);
+        rect.sizeDelta = new Vector2(480, 44);
 
         Image img = btnObj.GetComponent<Image>();
-        img.color = new Color(0.12f, 0.15f, 0.22f, 0.95f);
+        img.color = new Color(0.14f, 0.18f, 0.28f, 0.95f);
 
         Button btn = btnObj.GetComponent<Button>();
         ColorBlock colors = btn.colors;
         colors.normalColor = Color.white;
-        colors.highlightedColor = new Color(0.2f, 0.85f, 1f, 1f);
-        colors.pressedColor = new Color(0.15f, 0.7f, 0.85f, 1f);
+        colors.highlightedColor = new Color(0.25f, 0.85f, 1f, 1f);
+        colors.pressedColor = new Color(0.18f, 0.7f, 0.85f, 1f);
         btn.colors = colors;
 
         GameObject textObj = new GameObject("Text", typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI));
