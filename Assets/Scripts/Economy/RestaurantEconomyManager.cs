@@ -179,10 +179,13 @@ public class RestaurantEconomyManager : NetworkBehaviour {
         SubmitCustomerReview(1.0f, "Wrong Dish Rejected!");
     }
 
-    public void ProcessExpiredOrderPenalty() {
+    public void ProcessExpiredOrderPenalty(int fine = -1) {
         if (!IsServer) return;
 
-        SubmitCustomerReview(1.0f, "Left Due To Slow Service!");
+        int penaltyAmount = fine >= 0 ? fine : wrongOrderFine;
+        currentBalance.Value -= penaltyAmount;
+
+        SubmitCustomerReview(1.0f, "Left Due To Expired Service!");
     }
 
     // ===== BILL PROCESSING & BANKRUPTCY =====

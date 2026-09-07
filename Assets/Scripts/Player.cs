@@ -157,15 +157,19 @@ public class Player : NetworkBehaviour, IKitchenObjectParent {
         Vector3 moveDir = new Vector3(inputVector.x, 0f, inputVector.y);
 
         float moveDistance = moveSpeed * speedMultiplier * Time.deltaTime;
-        float playerRadius = .6f;
-        bool canMove = !Physics.BoxCast(transform.position, Vector3.one * playerRadius, moveDir, Quaternion.identity, moveDistance, collisionsLayerMask);
+        float playerRadius = .45f;
+        float playerHeight = 1.3f;
+        Vector3 boxCenter = transform.position + Vector3.up * (playerHeight / 2f + 0.35f);
+        Vector3 halfExtents = new Vector3(playerRadius, playerHeight / 2f, playerRadius);
+
+        bool canMove = !Physics.BoxCast(boxCenter, halfExtents, moveDir, Quaternion.identity, moveDistance, collisionsLayerMask, QueryTriggerInteraction.Ignore);
 
         if (!canMove) {
             // Cannot move towards moveDir
 
             // Attempt only X movement
             Vector3 moveDirX = new Vector3(moveDir.x, 0, 0).normalized;
-            canMove = (moveDir.x < -.5f || moveDir.x > +.5f) && !Physics.BoxCast(transform.position, Vector3.one * playerRadius, moveDirX, Quaternion.identity, moveDistance, collisionsLayerMask);
+            canMove = (moveDir.x < -.5f || moveDir.x > +.5f) && !Physics.BoxCast(boxCenter, halfExtents, moveDirX, Quaternion.identity, moveDistance, collisionsLayerMask, QueryTriggerInteraction.Ignore);
 
             if (canMove) {
                 // Can move only on the X
@@ -175,7 +179,7 @@ public class Player : NetworkBehaviour, IKitchenObjectParent {
 
                 // Attempt only Z movement
                 Vector3 moveDirZ = new Vector3(0, 0, moveDir.z).normalized;
-                canMove = (moveDir.z < -.5f || moveDir.z > +.5f) && !Physics.BoxCast(transform.position, Vector3.one * playerRadius, moveDirZ, Quaternion.identity, moveDistance, collisionsLayerMask);
+                canMove = (moveDir.z < -.5f || moveDir.z > +.5f) && !Physics.BoxCast(boxCenter, halfExtents, moveDirZ, Quaternion.identity, moveDistance, collisionsLayerMask, QueryTriggerInteraction.Ignore);
 
                 if (canMove) {
                     // Can move only on the Z

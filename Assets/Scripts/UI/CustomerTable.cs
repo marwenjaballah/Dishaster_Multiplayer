@@ -145,7 +145,8 @@ public class CustomerTable : BaseCounter {
 
     private void HandleExpiredOrder() {
         if (RestaurantEconomyManager.Instance != null) {
-            RestaurantEconomyManager.Instance.ProcessExpiredOrderPenalty();
+            int fine = Difficulty.DifficultyManager.Instance != null ? Difficulty.DifficultyManager.Instance.GetTableWrongOrderFine() : 15;
+            RestaurantEconomyManager.Instance.ProcessExpiredOrderPenalty(fine);
         }
         TableManager.Instance?.HandleOrderExpired(tableId);
         ClearOrder();
@@ -186,24 +187,22 @@ public class CustomerTable : BaseCounter {
         bool isCorrect = ValidateDelivery(currentRecipe, plate);
 
         if (isCorrect) {
-            // Calculate patience and performance rating
             float elapsed = Time.time - orderAssignedTime.Value;
             float patience = 1f - Mathf.Clamp01(elapsed / orderTimeoutDuration);
+            int ingredientCount = currentRecipe != null && currentRecipe.kitchenObjectSOList != null ? currentRecipe.kitchenObjectSOList.Count : 3;
 
-            float stars;
+            int basePayout;
             int tip;
-            if (patience >= 0.75f) {
-                stars = 5.0f;
-                tip = 15;
-            } else if (patience >= 0.25f) {
-                stars = 4.0f;
-                tip = 5;
-            } else {
-                stars = 3.0f;
-                tip = 0;
-            }
+            float stars;
 
-            int basePayout = 25 + (currentRecipe.kitchenObjectSOList.Count * 5);
+            if (Difficulty.DifficultyManager.Instance != null) {
+                Difficulty.DifficultyManager.Instance.CalculateTablePayout(ingredientCount, patience, out basePayout, out tip, out stars);
+            } else {
+                // Fallback default
+                basePayout = 25 + (ingredientCount * 5);
+                tip = patience >= 0.75f ? 15 : (patience >= 0.25f ? 5 : 0);
+                stars = patience >= 0.75f ? 5f : (patience >= 0.25f ? 4f : 3f);
+            }
 
             if (RestaurantEconomyManager.Instance != null) {
                 RestaurantEconomyManager.Instance.ProcessDeliveryReward(basePayout, tip, stars);
@@ -214,15 +213,9 @@ public class CustomerTable : BaseCounter {
             ShowCorrectDeliveryFeedbackClientRpc();
             KitchenObject.DestroyKitchenObject(plate);
         } else {
-            // Wrong dish delivered -> Customer rejects & cancels order!
-            if (RestaurantEconomyManager.Instance != null) {
-                RestaurantEconomyManager.Instance.ProcessWrongDeliveryPenalty();
-            }
-
-            TableManager.Instance?.HandleWrongDelivery(tableId);
-            ClearOrder(); // Order is canceled!
+            // Wrong dish delivered -> Flash ❌ feedback, but player keeps plate and order stays active until timer expires
             ShowWrongDeliveryFeedbackClientRpc();
-            // Note: KitchenObject.DestroyKitchenObject is NOT called -> player retains plate!
+            DeliveryManager.Instance?.TriggerDeliveryFailed();
         }
     }
 
@@ -324,6 +317,20 @@ public class CustomerTable : BaseCounter {
     public int GetDisplayNumber()   => displayNumber;
     public RecipeSO GetAssignedRecipe() => currentRecipe;
     public Transform GetOrderUIAnchor() => orderUIAnchor;
+    public float GetOrderTimeoutDuration() => orderTimeoutDuration;
+    public float GetOrderAssignedTime() => orderAssignedTime.Value;
+
+    public float GetRemainingTime() {
+        if (orderAssignedTime.Value < 0f) return 0f;
+        float elapsed = Time.time - orderAssignedTime.Value;
+        return Mathf.Max(0f, orderTimeoutDuration - elapsed);
+    }
+
+    public float GetPatienceNormalized() {
+        if (orderAssignedTime.Value < 0f || orderTimeoutDuration <= 0f) return 0f;
+        float elapsed = Time.time - orderAssignedTime.Value;
+        return Mathf.Clamp01(1f - (elapsed / orderTimeoutDuration));
+    }
 
     private void UpdateTableNumberText() {
         if (tableNumberText != null) {

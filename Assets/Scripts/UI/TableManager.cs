@@ -72,20 +72,37 @@ public class TableManager : NetworkBehaviour {
         if (!IsServer) return;
 
         if (KitchenGameManager.Instance.IsGamePlaying()) {
-            // Kick off initial orders for registered tables with a short initial delay
+            // Kick off initial orders for registered tables, staggered according to current tier pacing
+            int maxInitial = maxConcurrentOrders;
+            float staggerDelay = 6f;
+
+            if (Difficulty.DifficultyManager.Instance != null) {
+                var diff = Difficulty.DifficultyManager.Instance.CurrentSettings;
+                maxInitial = diff.maxConcurrentTableOrders;
+                staggerDelay = Mathf.Max(4f, diff.tableMinRespawnDelay * 0.5f);
+            }
+
+            int scheduledCount = 0;
             foreach (var kvp in tableRegistry) {
+                if (scheduledCount >= maxInitial) break;
+
                 CustomerTable table = kvp.Value;
                 if (!table.HasActiveOrder()) {
-                    ScheduleNewOrderForTable(table.GetTableId(), initialGameStartDelay);
+                    float delay = initialGameStartDelay + (scheduledCount * staggerDelay);
+                    ScheduleNewOrderForTable(table.GetTableId(), delay);
+                    scheduledCount++;
                 }
             }
         }
     }
 
+    public event EventHandler OnActiveOrdersListChanged;
+
     private void OnActiveOrdersChanged(NetworkListEvent<TableOrder> changeEvent) {
         if (showDebugLogs) {
             Debug.Log($"Active orders changed: {activeOrders.Count} total orders");
         }
+        OnActiveOrdersListChanged?.Invoke(this, EventArgs.Empty);
     }
 
     // ===== TABLE REGISTRATION =====
@@ -144,17 +161,23 @@ public class TableManager : NetworkBehaviour {
         float effectiveMinDelay = minOrderRespawnDelay;
         float effectiveMaxDelay = maxOrderRespawnDelay;
 
+        if (Difficulty.DifficultyManager.Instance != null) {
+            var diffSettings = Difficulty.DifficultyManager.Instance.CurrentSettings;
+            effectiveMinDelay = diffSettings.tableMinRespawnDelay;
+            effectiveMaxDelay = diffSettings.tableMaxRespawnDelay;
+        }
+
         // Modulate pacing based on restaurant reputation
         if (RestaurantEconomyManager.Instance != null) {
             float rating = RestaurantEconomyManager.Instance.GetStarRating();
             if (rating >= 4.2f) {
                 // High popularity: Rush of customers!
-                effectiveMinDelay = Mathf.Max(3f, minOrderRespawnDelay * 0.6f);
-                effectiveMaxDelay = Mathf.Max(6f, maxOrderRespawnDelay * 0.6f);
+                effectiveMinDelay = Mathf.Max(2f, effectiveMinDelay * 0.7f);
+                effectiveMaxDelay = Mathf.Max(4f, effectiveMaxDelay * 0.7f);
             } else if (rating < 2.5f) {
                 // Low popularity: Slow customer foot traffic
-                effectiveMinDelay = minOrderRespawnDelay * 1.5f;
-                effectiveMaxDelay = maxOrderRespawnDelay * 1.5f;
+                effectiveMinDelay *= 1.4f;
+                effectiveMaxDelay *= 1.4f;
             }
         }
 
@@ -189,10 +212,13 @@ public class TableManager : NetworkBehaviour {
         }
 
         int effectiveMaxOrders = maxConcurrentOrders;
+        if (Difficulty.DifficultyManager.Instance != null) {
+            effectiveMaxOrders = Difficulty.DifficultyManager.Instance.CurrentSettings.maxConcurrentTableOrders;
+        }
+
         if (RestaurantEconomyManager.Instance != null) {
             float rating = RestaurantEconomyManager.Instance.GetStarRating();
-            if (rating >= 4.2f) effectiveMaxOrders = 5;
-            else if (rating < 2.5f) effectiveMaxOrders = 2;
+            if (rating < 2.5f) effectiveMaxOrders = Mathf.Max(1, effectiveMaxOrders - 1);
         }
 
         // Wait if we have reached the max concurrent orders limit
@@ -334,6 +360,10 @@ public class TableManager : NetworkBehaviour {
 
     public List<CustomerTable> GetAvailableTables() {
         return tableRegistry.Values.Where(t => !t.HasActiveOrder()).ToList();
+    }
+
+    public NetworkList<TableOrder> GetActiveOrders() {
+        return activeOrders;
     }
 
     public int GetActiveOrderCount() {

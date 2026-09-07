@@ -72,7 +72,7 @@ public class RestaurantSurvivalHUDUI : MonoBehaviour {
             }
             if (billWarningText != null) {
                 billWarningText.gameObject.SetActive(true);
-                billWarningText.text = $"⚠️ RENT DUE IN {Mathf.CeilToInt(billTimer)}s!";
+                billWarningText.text = $"RENT DUE IN {Mathf.CeilToInt(billTimer)}s!";
             }
         } else {
             if (nextBillText != null) {
@@ -103,7 +103,7 @@ public class RestaurantSurvivalHUDUI : MonoBehaviour {
                 int finalReviews = RestaurantEconomyManager.Instance.GetTotalReviews();
                 float finalRating = RestaurantEconomyManager.Instance.GetStarRating();
                 int debt = Mathf.Abs(RestaurantEconomyManager.Instance.GetCurrentBalance());
-                bankruptcyDetailsText.text = $"You couldn't afford the rent!\nDebt: -${debt}\nFinal Reputation: {finalRating:F1}★ ({finalReviews} reviews)";
+                bankruptcyDetailsText.text = $"You couldn't afford the rent!\nDebt: -${debt}\nFinal Reputation: {finalRating:F1}/5 ({finalReviews} reviews)";
             }
         }
     }

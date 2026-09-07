@@ -70,6 +70,11 @@ public class KitchenCrisisManager : NetworkBehaviour {
     private void Update() {
         if (!IsServer) return;
 
+        // Check initial crisis immunity (calm start)
+        if (Difficulty.DifficultyManager.Instance != null && Difficulty.DifficultyManager.Instance.IsInInitialCrisisImmunity()) {
+            return;
+        }
+
         if (isAutoCrisisActive.Value && KitchenGameManager.Instance != null && KitchenGameManager.Instance.IsGamePlaying()) {
             crisisTimer -= Time.deltaTime;
             if (crisisTimer <= 0f) {
@@ -80,7 +85,16 @@ public class KitchenCrisisManager : NetworkBehaviour {
     }
 
     private void ResetCrisisTimer() {
-        crisisTimer = UnityEngine.Random.Range(minCrisisInterval, maxCrisisInterval);
+        float minInterval = minCrisisInterval;
+        float maxInterval = maxCrisisInterval;
+
+        if (Difficulty.DifficultyManager.Instance != null) {
+            var settings = Difficulty.DifficultyManager.Instance.CurrentSettings;
+            minInterval = settings.crisisMinInterval;
+            maxInterval = settings.crisisMaxInterval;
+        }
+
+        crisisTimer = UnityEngine.Random.Range(minInterval, maxInterval);
     }
 
     private void TriggerRandomCrisis() {

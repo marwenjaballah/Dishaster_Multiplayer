@@ -39,7 +39,7 @@ public class TableOrderUI : MonoBehaviour {
         parentTable = GetComponentInParent<CustomerTable>();
         mainCamera = Camera.main;
 
-        if (tableNumberText == null) {
+        if (tableNumberText == null && parentTable != null) {
             Debug.LogWarning("[TableOrderUI] 'tableNumberText' field is not assigned in the Inspector!");
         }
         if (orderPanel == null) {
@@ -49,8 +49,15 @@ public class TableOrderUI : MonoBehaviour {
 
     private void Start() {
         // Initial update
-        UpdateTableNumberDisplay();
-        HideOrder();
+        if (parentTable != null) {
+            UpdateTableNumberDisplay();
+            HideOrder();
+        } else if (tableNumberText != null) {
+            tableNumberText.gameObject.SetActive(false);
+            if (tableNumberText.transform.parent != null) {
+                tableNumberText.transform.parent.gameObject.SetActive(false);
+            }
+        }
     }
 
     private void LateUpdate() {
@@ -94,14 +101,21 @@ public class TableOrderUI : MonoBehaviour {
             }
         }
 
-        // Update table number display and ensure its parent object is active & on top
+        // Update table number display if this is a table (customers do not have table IDs)
         if (tableNumberText != null) {
-            tableNumberText.gameObject.SetActive(true);
-            if (tableNumberText.transform.parent != null) {
-                tableNumberText.transform.parent.gameObject.SetActive(true);
-                tableNumberText.transform.parent.SetAsLastSibling(); // Bring to front!
+            if (parentTable != null) {
+                tableNumberText.gameObject.SetActive(true);
+                if (tableNumberText.transform.parent != null) {
+                    tableNumberText.transform.parent.gameObject.SetActive(true);
+                    tableNumberText.transform.parent.SetAsLastSibling(); // Bring to front!
+                }
+                UpdateTableNumberDisplay();
+            } else {
+                tableNumberText.gameObject.SetActive(false);
+                if (tableNumberText.transform.parent != null) {
+                    tableNumberText.transform.parent.gameObject.SetActive(false);
+                }
             }
-            UpdateTableNumberDisplay();
         }
 
         // Set panel color to active
@@ -114,14 +128,21 @@ public class TableOrderUI : MonoBehaviour {
             orderPanel.gameObject.SetActive(false);
         }
 
-        // Make sure table number text AND its parent container (TableId bar) stay active & on top
+        // Make sure table number text AND its parent container (TableId bar) stay active on dining tables
         if (tableNumberText != null) {
-            tableNumberText.gameObject.SetActive(true);
-            if (tableNumberText.transform.parent != null) {
-                tableNumberText.transform.parent.gameObject.SetActive(true);
-                tableNumberText.transform.parent.SetAsLastSibling(); // Bring to front!
+            if (parentTable != null) {
+                tableNumberText.gameObject.SetActive(true);
+                if (tableNumberText.transform.parent != null) {
+                    tableNumberText.transform.parent.gameObject.SetActive(true);
+                    tableNumberText.transform.parent.SetAsLastSibling(); // Bring to front!
+                }
+                UpdateTableNumberDisplay();
+            } else {
+                tableNumberText.gameObject.SetActive(false);
+                if (tableNumberText.transform.parent != null) {
+                    tableNumberText.transform.parent.gameObject.SetActive(false);
+                }
             }
-            UpdateTableNumberDisplay();
         }
 
         // Set panel color to inactive

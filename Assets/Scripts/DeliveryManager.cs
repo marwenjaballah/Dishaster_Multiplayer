@@ -132,6 +132,29 @@ public class DeliveryManager : NetworkBehaviour {
         return successfulRecipesAmount;
     }
 
+    // ===== HOME DELIVERY HOOKS =====
+    // Called by DeliveryCustomerManager (server-side) to reuse sound/UI pipeline.
+
+    public void TriggerDeliverySuccess() {
+        TriggerDeliverySuccessClientRpc();
+    }
+
+    [ClientRpc]
+    private void TriggerDeliverySuccessClientRpc() {
+        successfulRecipesAmount++;
+        OnRecipeCompleted?.Invoke(this, EventArgs.Empty);
+        OnRecipeSuccess?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void TriggerDeliveryFailed() {
+        TriggerDeliveryFailedClientRpc();
+    }
+
+    [ClientRpc]
+    private void TriggerDeliveryFailedClientRpc() {
+        OnRecipeFailed?.Invoke(this, EventArgs.Empty);
+    }
+
     // ===== TABLE SERVICE MODE NOTIFICATIONS =====
     // Called by TableManager (server-side). ClientRpcs so events fire on all clients
     // – sound, delivery result popup, and score all work automatically.
