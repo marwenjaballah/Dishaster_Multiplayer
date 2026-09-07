@@ -18,14 +18,18 @@ namespace CityLife
         public const string PoolTag = "Car";
 
         private const float ArrivalThreshold    = 0.7f;
-        private const float ObstacleCheckDist   = 5.5f;
-        private const float StopDistance        = 2.8f;
+        private const float ObstacleCheckDist   = 3.5f;
+        private const float StopDistance        = 1.8f;
         private const float Acceleration        = 8.0f;   // m/s^2
         private const float BrakingRate         = 16.0f;  // m/s^2
         private const float TurnSpeed           = 260f;   // deg/sec
         private const float MaxSteerAngle       = 30f;    // degrees
         private const float SteerReturnRate     = 140f;   // deg/sec
         private const float WheelSpinMultiplier = 50f;
+
+        // Anti-deadlock thresholds
+        private const float DeadlockCrawlThreshold = 2.5f; // Seconds stopped before forcing clearance
+        private const float DespawnFailsafeThreshold = 8.0f; // Seconds wedged before despawning
 
         [Header("Visuals")]
         public Renderer bodyRenderer;
@@ -52,6 +56,10 @@ namespace CityLife
         private float _wheelSpinAngle;
         private float _currentSteerAngle;
         private bool _isBraking;
+        private float _stoppedTimer;
+
+        public float CurrentSpeed => _currentSpeed;
+        public float StoppedTimer => _stoppedTimer;
 
         private static MaterialPropertyBlock _taillightBlock;
         private static readonly int EmissionColorId = Shader.PropertyToID("_EmissionColor");
@@ -92,6 +100,7 @@ namespace CityLife
             _active       = true;
             _currentSteerAngle = 0f;
             _isBraking    = false;
+            _stoppedTimer = 0f;
 
             // Spawn directly in the driving lane
             Vector3 spawnPos = startNode.Position;
@@ -113,6 +122,22 @@ namespace CityLife
         {
             if (!_active || _nextNode == null) return;
 
+            // Track stopped / stuck duration
+            if (_currentSpeed < 0.2f && _targetSpeed <= 0.1f)
+            {
+                _stoppedTimer += Time.deltaTime;
+                if (_stoppedTimer >= DespawnFailsafeThreshold)
+                {
+                    // Despawn failsafe: if permanently wedged for > 8s, recycle to pool
+                    ReturnToPool();
+                    return;
+                }
+            }
+            else if (_currentSpeed > 0.3f)
+            {
+                _stoppedTimer = Mathf.Max(0f, _stoppedTimer - Time.deltaTime * 2f);
+            }
+
             AdjustSpeedForObstacles();
             UpdateSmoothVelocity();
             MoveTowardTarget();
@@ -131,14 +156,17 @@ namespace CityLife
 
         /// <summary>
         /// SphereCast ahead to detect lead vehicles, crossing pedestrians, or players and compute target speed.
-        /// Ignores road meshes, curbs, ground, and terrain colliders.
+        /// Includes cross-traffic direction filtering and anti-deadlock clearance.
         /// </summary>
         private void AdjustSpeedForObstacles()
         {
-            Vector3 origin = transform.position + Vector3.up * 0.75f + transform.forward * 2.35f;
-            float checkDist = ObstacleCheckDist;
+            // Deadlock resolution: if stopped > 2.5s, force a crawl to clear the gridlock
+            bool isResolvingDeadlock = _stoppedTimer >= DeadlockCrawlThreshold;
 
-            var hits = Physics.SphereCastAll(origin, 0.45f, transform.forward, checkDist);
+            Vector3 origin = transform.position + Vector3.up * 0.75f + transform.forward * 1.5f;
+            float checkDist = isResolvingDeadlock ? (ObstacleCheckDist * 0.5f) : ObstacleCheckDist;
+
+            var hits = Physics.SphereCastAll(origin, 0.35f, transform.forward, checkDist);
             float closestDist = float.MaxValue;
             bool foundObstacle = false;
 
@@ -161,6 +189,37 @@ namespace CityLife
                     continue;
                 }
 
+                // Cross-traffic & Perpendicular Car Filtering
+                var otherCar = hit.collider.GetComponentInParent<CarController>();
+                if (otherCar != null && otherCar != this)
+                {
+                    float dot = Vector3.Dot(transform.forward, otherCar.transform.forward);
+
+                    // If perpendicular / crossing traffic (dot around 0)
+                    if (Mathf.Abs(dot) < 0.45f)
+                    {
+                        // If the other car is stopped and we are resolving deadlock (or we waited longer / tiebreaker), don't halt
+                        if (otherCar.CurrentSpeed < 0.2f)
+                        {
+                            if (isResolvingDeadlock || _stoppedTimer >= otherCar.StoppedTimer)
+                            {
+                                // Only stop if within point-blank physical collision distance (< 0.8m)
+                                if (hit.distance > 0.8f) continue;
+                            }
+                        }
+                    }
+                    // If oncoming opposite traffic (dot < -0.6f), ignore if offset sideways
+                    else if (dot < -0.6f)
+                    {
+                        Vector3 toOther = otherCar.transform.position - transform.position;
+                        float lateralOffset = Mathf.Abs(Vector3.Dot(transform.right, toOther));
+                        if (lateralOffset > 1.2f)
+                        {
+                            continue; // In opposite lane, safe to pass
+                        }
+                    }
+                }
+
                 if (hit.distance < closestDist)
                 {
                     closestDist = hit.distance;
@@ -170,6 +229,13 @@ namespace CityLife
 
             if (foundObstacle)
             {
+                if (isResolvingDeadlock)
+                {
+                    // Crawl forward cautiously to clear intersection
+                    _targetSpeed = _baseSpeed * 0.35f;
+                    return;
+                }
+
                 if (closestDist <= StopDistance)
                 {
                     _targetSpeed = 0f;
@@ -182,7 +248,7 @@ namespace CityLife
                 return;
             }
 
-            _targetSpeed = _baseSpeed;
+            _targetSpeed = isResolvingDeadlock ? (_baseSpeed * 0.6f) : _baseSpeed;
         }
 
         /// <summary>

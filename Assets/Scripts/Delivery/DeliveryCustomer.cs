@@ -160,6 +160,19 @@ public class DeliveryCustomer : MonoBehaviour
         StartCoroutine(ShowResultThenDeactivate(false));
     }
 
+    public void ResetCustomer()
+    {
+        _active = false;
+        _playerInRange = false;
+        _timerRemaining = 0f;
+        _orderTimerMax = 0f;
+        _assignedRecipe = null;
+        if (tableOrderUI != null)
+        {
+            tableOrderUI.HideOrder();
+        }
+    }
+
     private IEnumerator ShowResultThenDeactivate(bool success)
     {
         if (tableOrderUI != null)
@@ -174,7 +187,15 @@ public class DeliveryCustomer : MonoBehaviour
             tableOrderUI.HideOrder();
         }
 
-        gameObject.SetActive(false);
+        // Return to object pool instead of leaking or destroying
+        if (DeliveryCustomerManager.Instance != null)
+        {
+            DeliveryCustomerManager.Instance.ReturnCustomerToPool(this);
+        }
+        else
+        {
+            gameObject.SetActive(false);
+        }
     }
 
     private void StopPedestrianWalking()

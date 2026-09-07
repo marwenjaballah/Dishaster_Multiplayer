@@ -85,19 +85,31 @@ public class TableOrderUI : MonoBehaviour {
             recipeNameText.text = recipe.recipeName;
         }
 
-        // Clear existing icons
+        // Clear existing icons by deactivating them
         ClearIcons();
 
-        // Add ingredient icons
+        // Add ingredient icons (reusing existing pooled icon children)
         if (recipe != null && iconTemplate != null) {
+            int iconIndex = 0;
+            List<Transform> existingIcons = new List<Transform>();
+            foreach (Transform child in iconContainer) {
+                if (child != iconTemplate) existingIcons.Add(child);
+            }
+
             foreach (KitchenObjectSO ingredient in recipe.kitchenObjectSOList) {
-                Transform iconTransform = Instantiate(iconTemplate, iconContainer);
+                Transform iconTransform;
+                if (iconIndex < existingIcons.Count) {
+                    iconTransform = existingIcons[iconIndex];
+                } else {
+                    iconTransform = Instantiate(iconTemplate, iconContainer);
+                }
                 iconTransform.gameObject.SetActive(true);
 
                 Image img = iconTransform.GetComponent<Image>();
                 if (img != null && ingredient != null) {
                     img.sprite = ingredient.sprite;
                 }
+                iconIndex++;
             }
         }
 
@@ -224,7 +236,7 @@ public class TableOrderUI : MonoBehaviour {
 
         foreach (Transform child in iconContainer) {
             if (child == iconTemplate) continue;
-            Destroy(child.gameObject);
+            child.gameObject.SetActive(false);
         }
     }
 

@@ -42,6 +42,10 @@ public class DeliveryCustomerManager : NetworkBehaviour
     [Tooltip("If true, player must carry a DeliveryBag to complete the order. If false, any matching plate works.")]
     [SerializeField] private bool requireDeliveryBag = false;
 
+    [Header("Object Pooling")]
+    [Tooltip("How many customer instances to pre-instantiate at start to eliminate runtime GC allocations.")]
+    [SerializeField] private int prewarmPoolSize = 6;
+
     // ── Networked Data Struct ────────────────────────────────────────────────
     public struct SidewalkDeliveryData : INetworkSerializable, IEquatable<SidewalkDeliveryData>
     {
@@ -69,6 +73,8 @@ public class DeliveryCustomerManager : NetworkBehaviour
     // ── Runtime State ─────────────────────────────────────────────────────────
     private NetworkList<SidewalkDeliveryData> _activeDeliveryDataList;
     private List<DeliveryCustomer> _activeCustomers  = new();
+    private readonly Queue<DeliveryCustomer> _customerPool = new();
+    private Transform              _poolParent;
     private CityWaypointGraph      _waypointGraph;
     private System.Random          _rng;
     private float                  _spawnTimer;
@@ -82,6 +88,7 @@ public class DeliveryCustomerManager : NetworkBehaviour
         Instance = this;
 
         _activeDeliveryDataList = new NetworkList<SidewalkDeliveryData>();
+        InitializePool();
     }
 
     public override void OnNetworkSpawn()
@@ -95,11 +102,43 @@ public class DeliveryCustomerManager : NetworkBehaviour
 
         if (!IsServer) return;
 
+        InitializePool();
+
         _rng        = new System.Random(UnityEngine.Random.Range(0, int.MaxValue));
         _spawnTimer = spawnInterval * 0.5f; // first spawn sooner
 
         // Try to grab the waypoint graph from the CityLifeManager
         StartCoroutine(WaitForCityAndInitialize());
+    }
+
+    public override void OnDestroy()
+    {
+        base.OnDestroy();
+        _customerPool.Clear();
+    }
+
+    private void InitializePool()
+    {
+        if (deliveryCustomerPrefab == null) return;
+        if (_poolParent == null)
+        {
+            var poolGo = new GameObject("DeliveryCustomerPool");
+            _poolParent = poolGo.transform;
+            _poolParent.SetParent(transform);
+        }
+
+        int targetSize = Mathf.Max(maxActiveCustomers * 2, prewarmPoolSize);
+        while (_customerPool.Count < targetSize)
+        {
+            var obj = Instantiate(deliveryCustomerPrefab, _poolParent);
+            obj.name = $"DeliveryCustomer_Pooled_{_customerPool.Count:00}";
+            obj.SetActive(false);
+            var customer = obj.GetComponent<DeliveryCustomer>();
+            if (customer != null)
+            {
+                _customerPool.Enqueue(customer);
+            }
+        }
     }
 
     private IEnumerator WaitForCityAndInitialize()
@@ -199,14 +238,10 @@ public class DeliveryCustomerManager : NetworkBehaviour
 
     private void SpawnCustomerAtSpot(Vector3 position, RecipeSO recipe, int recipeIndex)
     {
-        // Instantiate locally on the server only (not a NetworkObject so no NetworkSpawn needed)
-        var obj = Instantiate(deliveryCustomerPrefab, position, Quaternion.identity);
-
-        var customer = obj.GetComponent<DeliveryCustomer>();
+        DeliveryCustomer customer = GetCustomerFromPool(position);
         if (customer == null)
         {
-            Debug.LogError("[DeliveryCustomerManager] deliveryCustomerPrefab is missing a DeliveryCustomer component!");
-            Destroy(obj);
+            Debug.LogError("[DeliveryCustomerManager] Could not retrieve a DeliveryCustomer from pool!");
             return;
         }
 
@@ -236,7 +271,44 @@ public class DeliveryCustomerManager : NetworkBehaviour
         // Notify all clients that a new order has appeared on the sidewalk
         NotifyNewCustomerClientRpc(recipe.recipeName, position);
 
-        Debug.Log($"[DeliveryCustomerManager] Spawned customer {deliveryId} at {position} waiting for '{recipe.recipeName}'.");
+        Debug.Log($"[DeliveryCustomerManager] Spawned pooled customer {deliveryId} at {position} waiting for '{recipe.recipeName}'.");
+    }
+
+    private DeliveryCustomer GetCustomerFromPool(Vector3 position)
+    {
+        DeliveryCustomer customer = null;
+        while (_customerPool.Count > 0 && customer == null)
+        {
+            customer = _customerPool.Dequeue();
+        }
+
+        if (customer == null)
+        {
+            if (deliveryCustomerPrefab == null) return null;
+            var obj = Instantiate(deliveryCustomerPrefab, _poolParent);
+            obj.name = $"DeliveryCustomer_Pooled_Auto";
+            customer = obj.GetComponent<DeliveryCustomer>();
+        }
+
+        if (customer != null)
+        {
+            customer.transform.position = position;
+            customer.gameObject.SetActive(true);
+        }
+        return customer;
+    }
+
+    public void ReturnCustomerToPool(DeliveryCustomer customer)
+    {
+        if (customer == null) return;
+
+        customer.ResetCustomer();
+        customer.gameObject.SetActive(false);
+        if (_poolParent != null)
+        {
+            customer.transform.SetParent(_poolParent);
+        }
+        _customerPool.Enqueue(customer);
     }
 
     // ── Delivery Validation ───────────────────────────────────────────────────
