@@ -193,6 +193,7 @@ namespace Vehicles
                 // Dismounted
                 if (_localRider != null)
                 {
+                    _localRider.SetMountedOnVehicle(false);
                     _localRider.enabled = true;
                     var col = _localRider.GetComponent<Collider>();
                     if (col != null) col.enabled = true;
@@ -208,9 +209,21 @@ namespace Vehicles
                 {
                     _isLocalMounted = true;
                     _localRider = Player.LocalInstance;
+                    if (_localRider == null)
+                    {
+                        foreach (Player p in FindObjectsByType<Player>(FindObjectsSortMode.None))
+                        {
+                            if (p.IsOwner)
+                            {
+                                _localRider = p;
+                                break;
+                            }
+                        }
+                    }
 
                     if (_localRider != null)
                     {
+                        _localRider.SetMountedOnVehicle(true);
                         var col = _localRider.GetComponent<Collider>();
                         if (col != null) col.enabled = false;
                         _localRider.enabled = false; // Disable standard player movement script

@@ -8,12 +8,10 @@ using CityLife;
 /// <summary>
 /// Server-authoritative manager that:
 ///   - Picks random sidewalk waypoints from the CityLife waypoint graph.
-///   - Spawns DeliveryCustomer NPCs there using the Pedestrian prefab.
-///   - Validates deliveries when the player presses [E] near a customer.
+///   - Spawns DeliveryCustomer NPCs using the Pedestrian pool across all multiplayer clients.
+///   - Synchronizes active outdoor deliveries for joining players via NetworkList.
+///   - Validates deliveries when any player (host or client) interacts near a customer.
 ///   - Awards score and fires DeliveryManager events (success/fail).
-///
-/// Place this on the same GameObject as DeliveryManager, or on its own.
-/// Assign a reference to the CityLifeManager in the Inspector.
 /// </summary>
 public class DeliveryCustomerManager : NetworkBehaviour
 {
@@ -72,7 +70,7 @@ public class DeliveryCustomerManager : NetworkBehaviour
 
     // ── Runtime State ─────────────────────────────────────────────────────────
     private NetworkList<SidewalkDeliveryData> _activeDeliveryDataList;
-    private List<DeliveryCustomer> _activeCustomers  = new();
+    private readonly List<DeliveryCustomer> _activeCustomers = new();
     private readonly Queue<DeliveryCustomer> _customerPool = new();
     private Transform              _poolParent;
     private CityWaypointGraph      _waypointGraph;
@@ -95,14 +93,18 @@ public class DeliveryCustomerManager : NetworkBehaviour
     {
         base.OnNetworkSpawn();
 
+        InitializePool();
+
+        // Listen for list changes to synchronize customer NPCs & HUD indicators
         _activeDeliveryDataList.OnListChanged += (changeEvent) =>
         {
-            OnDeliveryOrdersChanged?.Invoke(this, EventArgs.Empty);
+            SyncActiveCustomersWithNetworkList();
         };
 
-        if (!IsServer) return;
+        // Immediately sync any existing active orders upon spawning/joining
+        SyncActiveCustomersWithNetworkList();
 
-        InitializePool();
+        if (!IsServer) return;
 
         _rng        = new System.Random(UnityEngine.Random.Range(0, int.MaxValue));
         _spawnTimer = spawnInterval * 0.5f; // first spawn sooner
@@ -115,6 +117,7 @@ public class DeliveryCustomerManager : NetworkBehaviour
     {
         base.OnDestroy();
         _customerPool.Clear();
+        _activeCustomers.Clear();
     }
 
     private void InitializePool()
@@ -181,11 +184,73 @@ public class DeliveryCustomerManager : NetworkBehaviour
         }
     }
 
-    // ── Spawn Logic ───────────────────────────────────────────────────────────
+    // ── Synchronization for Server & Clients ──────────────────────────────────
+
+    /// <summary>
+    /// Synchronizes the local active DeliveryCustomer NPCs to match the current NetworkList.
+    /// Runs seamlessly on both Server and joining Clients.
+    /// </summary>
+    private void SyncActiveCustomersWithNetworkList()
+    {
+        if (_activeDeliveryDataList == null) return;
+
+        HashSet<int> activeIds = new HashSet<int>();
+
+        for (int i = 0; i < _activeDeliveryDataList.Count; i++)
+        {
+            SidewalkDeliveryData data = _activeDeliveryDataList[i];
+            activeIds.Add(data.deliveryId);
+
+            DeliveryCustomer existing = _activeCustomers.Find(c => c != null && c.GetDeliveryId() == data.deliveryId);
+            if (existing == null)
+            {
+                DeliveryCustomer customer = GetCustomerFromPool(data.worldPosition);
+                if (customer != null)
+                {
+                    RecipeSO recipe = GetRecipeSO(data.recipeSOIndex);
+                    float elapsed = Time.time - data.orderStartTime;
+                    float remaining = Mathf.Max(0.1f, data.orderDuration - elapsed);
+
+                    customer.SetDeliveryId(data.deliveryId);
+                    customer.ActivateAsCustomer(recipe, data.worldPosition, remaining);
+
+                    if (IsServer)
+                    {
+                        customer.OnDeliverySucceeded += HandleDeliverySucceeded;
+                        customer.OnDeliveryExpired   += HandleDeliveryExpired;
+                    }
+
+                    _activeCustomers.Add(customer);
+                }
+            }
+        }
+
+        // Clean up customers no longer in the active network list
+        for (int i = _activeCustomers.Count - 1; i >= 0; i--)
+        {
+            DeliveryCustomer customer = _activeCustomers[i];
+            if (customer == null || !activeIds.Contains(customer.GetDeliveryId()))
+            {
+                _activeCustomers.RemoveAt(i);
+                if (customer != null)
+                {
+                    if (IsServer)
+                    {
+                        customer.OnDeliverySucceeded -= HandleDeliverySucceeded;
+                        customer.OnDeliveryExpired   -= HandleDeliveryExpired;
+                    }
+                    ReturnCustomerToPool(customer);
+                }
+            }
+        }
+
+        OnDeliveryOrdersChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    // ── Spawn Logic (Server Only) ─────────────────────────────────────────────
 
     private void TrySpawnCustomer()
     {
-        // Purge any destroyed/deactivated customers
         _activeCustomers.RemoveAll(c => c == null || !c.gameObject.activeInHierarchy);
 
         int currentMax = maxActiveCustomers;
@@ -205,7 +270,6 @@ public class DeliveryCustomerManager : NetworkBehaviour
         int recipeIndex = _rng.Next(recipeListSO.recipeSOList.Count);
         RecipeSO recipe = recipeListSO.recipeSOList[recipeIndex];
 
-        // Spawn and activate the customer (server-side instantiation)
         SpawnCustomerAtSpot(spot.Position, recipe, recipeIndex);
     }
 
@@ -238,13 +302,6 @@ public class DeliveryCustomerManager : NetworkBehaviour
 
     private void SpawnCustomerAtSpot(Vector3 position, RecipeSO recipe, int recipeIndex)
     {
-        DeliveryCustomer customer = GetCustomerFromPool(position);
-        if (customer == null)
-        {
-            Debug.LogError("[DeliveryCustomerManager] Could not retrieve a DeliveryCustomer from pool!");
-            return;
-        }
-
         float currentTimer = orderTimer;
         if (Difficulty.DifficultyManager.Instance != null)
         {
@@ -252,13 +309,8 @@ public class DeliveryCustomerManager : NetworkBehaviour
         }
 
         int deliveryId = _nextDeliveryId++;
-        customer.SetDeliveryId(deliveryId);
-        customer.ActivateAsCustomer(recipe, position, currentTimer);
-        customer.OnDeliverySucceeded += HandleDeliverySucceeded;
-        customer.OnDeliveryExpired   += HandleDeliveryExpired;
 
-        _activeCustomers.Add(customer);
-
+        // Add to networked list; OnListChanged will spawn visuals across all clients
         _activeDeliveryDataList.Add(new SidewalkDeliveryData
         {
             deliveryId = deliveryId,
@@ -268,10 +320,8 @@ public class DeliveryCustomerManager : NetworkBehaviour
             orderDuration = currentTimer
         });
 
-        // Notify all clients that a new order has appeared on the sidewalk
         NotifyNewCustomerClientRpc(recipe.recipeName, position);
-
-        Debug.Log($"[DeliveryCustomerManager] Spawned pooled customer {deliveryId} at {position} waiting for '{recipe.recipeName}'.");
+        Debug.Log($"[DeliveryCustomerManager] Spawned sidewalk customer {deliveryId} at {position} waiting for '{recipe.recipeName}'.");
     }
 
     private DeliveryCustomer GetCustomerFromPool(Vector3 position)
@@ -311,21 +361,53 @@ public class DeliveryCustomerManager : NetworkBehaviour
         _customerPool.Enqueue(customer);
     }
 
-    // ── Delivery Validation ───────────────────────────────────────────────────
+    // ── Delivery Validation & Execution ───────────────────────────────────────
 
     /// <summary>
-    /// Called by DeliveryCustomer when the player presses [E] near it.
-    /// Validates the plate/bag the player is holding against the customer's order.
+    /// Called by DeliveryCustomer when a player presses [E] near it.
+    /// Handles both local host execution and client ServerRpc invocation.
     /// </summary>
     public void TryDeliverToCustomer(DeliveryCustomer customer, Player player)
     {
-        if (!customer.IsActive()) return;
+        if (customer == null || !customer.IsActive() || player == null) return;
+
+        if (IsServer)
+        {
+            ProcessDelivery(customer.GetDeliveryId(), player);
+        }
+        else
+        {
+            if (player.TryGetComponent(out NetworkObject netObj))
+            {
+                RequestDeliverToCustomerServerRpc(customer.GetDeliveryId(), netObj);
+            }
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void RequestDeliverToCustomerServerRpc(int deliveryId, NetworkObjectReference playerNetObjRef, ServerRpcParams rpcParams = default)
+    {
+        if (playerNetObjRef.TryGet(out NetworkObject playerNetObj))
+        {
+            Player player = playerNetObj.GetComponent<Player>();
+            if (player != null)
+            {
+                ProcessDelivery(deliveryId, player);
+            }
+        }
+    }
+
+    private void ProcessDelivery(int deliveryId, Player player)
+    {
+        DeliveryCustomer customer = _activeCustomers.Find(c => c != null && c.GetDeliveryId() == deliveryId);
+        if (customer == null || !customer.IsActive()) return;
 
         RecipeSO required = customer.GetRecipe();
         if (!player.HasKitchenObject())
         {
             customer.FlashWrongDeliveryFeedback();
-            NotifyWrongDeliveryClientRpc(player.GetComponent<NetworkObject>().OwnerClientId);
+            NotifyWrongDeliveryClientRpc(player.OwnerClientId);
+            PlayDeliveryResultClientRpc(deliveryId, false);
             DeliveryManager.Instance.TriggerDeliveryFailed();
             return;
         }
@@ -346,6 +428,7 @@ public class DeliveryCustomerManager : NetworkBehaviour
         if (held is PlateKitchenObject plate && PlateMatchesRecipe(plate, required))
         {
             DestroyThePlate(player, plate);
+            PlayDeliveryResultClientRpc(deliveryId, true);
             customer.CompleteDelivery(basePayout + tip);
             return;
         }
@@ -354,14 +437,35 @@ public class DeliveryCustomerManager : NetworkBehaviour
         if (held is DeliveryBagKitchenObject bag && bag.HasMatchingDish(required))
         {
             bag.TryConsumeMatchingDish(required);
+            PlayDeliveryResultClientRpc(deliveryId, true);
             customer.CompleteDelivery(basePayout + tip);
             return;
         }
 
-        // FAIL (wrong food or empty) -> Flash ❌ visual feedback and play sound, but do NOT take item or charge money penalty
+        // FAIL (wrong food or empty)
         customer.FlashWrongDeliveryFeedback();
-        NotifyWrongDeliveryClientRpc(player.GetComponent<NetworkObject>().OwnerClientId);
+        NotifyWrongDeliveryClientRpc(player.OwnerClientId);
+        PlayDeliveryResultClientRpc(deliveryId, false);
         DeliveryManager.Instance.TriggerDeliveryFailed();
+    }
+
+    [ClientRpc]
+    private void PlayDeliveryResultClientRpc(int deliveryId, bool success)
+    {
+        if (IsServer) return; // Server already processed locally
+
+        DeliveryCustomer cust = _activeCustomers.Find(c => c != null && c.GetDeliveryId() == deliveryId);
+        if (cust != null)
+        {
+            if (success)
+            {
+                cust.CompleteDelivery();
+            }
+            else
+            {
+                cust.FlashWrongDeliveryFeedback();
+            }
+        }
     }
 
     public List<DeliveryCustomer> GetActiveCustomers() => _activeCustomers;
@@ -383,7 +487,6 @@ public class DeliveryCustomerManager : NetworkBehaviour
 
     private void DestroyThePlate(Player player, PlateKitchenObject plate)
     {
-        // Use the existing KitchenObject destroy pipeline
         KitchenObject.DestroyKitchenObject(plate);
     }
 
@@ -418,7 +521,6 @@ public class DeliveryCustomerManager : NetworkBehaviour
         }
         else
         {
-            // Fallback default
             basePayout = 35 + (ingredientCount * 8);
             tip = patience >= 0.75f ? 25 : (patience >= 0.4f ? 15 : (patience >= 0.2f ? 8 : 3));
             stars = patience >= 0.75f ? 5f : (patience >= 0.4f ? 4.5f : (patience >= 0.2f ? 4f : 3f));
@@ -489,22 +591,17 @@ public class DeliveryCustomerManager : NetworkBehaviour
     private void NotifyNewCustomerClientRpc(string recipeName, Vector3 position)
     {
         Debug.Log($"[DeliveryCustomerManager] New sidewalk order: '{recipeName}' at {position}");
-        // UI toast / notification can be added here
     }
 
     [ClientRpc]
     private void NotifyWrongDeliveryClientRpc(ulong playerId)
     {
-        if (NetworkManager.Singleton.LocalClientId == playerId)
+        if (NetworkManager.Singleton != null && NetworkManager.Singleton.LocalClientId == playerId)
             Debug.Log("[DeliveryCustomerManager] Wrong food! This customer wants something else.");
     }
 
     // ── Utility ───────────────────────────────────────────────────────────────
 
-    /// <summary>
-    /// Tries to get the CityWaypointGraph from the CityLifeManager via reflection
-    /// (the field is private in the original).  Falls back gracefully.
-    /// </summary>
     private CityWaypointGraph TryGetWaypointGraph()
     {
         if (cityLifeManager == null)
@@ -513,7 +610,6 @@ public class DeliveryCustomerManager : NetworkBehaviour
             if (cityLifeManager == null) return null;
         }
 
-        // Use reflection to grab the private _graph field from CityLifeManager
         var field = typeof(CityLifeManager).GetField("_graph",
             System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
         if (field == null) return null;

@@ -24,7 +24,7 @@ public class PlayerAnimator : NetworkBehaviour {
             return;
         }
 
-        animator.SetBool(IS_WALKING, player.IsWalking());
+        animator.SetBool(IS_WALKING, player != null && player.IsWalking());
     }
 
 }

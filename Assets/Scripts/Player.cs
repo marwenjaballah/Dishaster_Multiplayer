@@ -36,6 +36,7 @@ public class Player : NetworkBehaviour, IKitchenObjectParent {
 
 
     private bool isWalking;
+    private bool isMountedOnVehicle;
     private Vector3 lastInteractDir;
     private BaseCounter selectedCounter;
     private KitchenObject kitchenObject;
@@ -43,6 +44,21 @@ public class Player : NetworkBehaviour, IKitchenObjectParent {
 
     public void SetSpeedMultiplier(float multiplier) {
         speedMultiplier = multiplier;
+    }
+
+    public void SetMountedOnVehicle(bool isMounted) {
+        this.isMountedOnVehicle = isMounted;
+        if (isMounted) {
+            isWalking = false;
+        }
+    }
+
+    public bool IsMountedOnVehicle() {
+        return isMountedOnVehicle;
+    }
+
+    private void OnDisable() {
+        isWalking = false;
     }
 
 
@@ -123,7 +139,7 @@ public class Player : NetworkBehaviour, IKitchenObjectParent {
     }
 
     public bool IsWalking() {
-        return isWalking;
+        return !isMountedOnVehicle && isWalking;
     }
 
     private void HandleInteractions() {

@@ -29,15 +29,36 @@ namespace UI
 
         private void Start()
         {
-            if (DeliveryCustomerManager.Instance != null)
-            {
-                DeliveryCustomerManager.Instance.OnDeliveryOrdersChanged += DeliveryCustomerManager_OnDeliveryOrdersChanged;
-            }
-
+            SubscribeEvents();
             UpdateVisual();
         }
 
+        private void OnEnable()
+        {
+            SubscribeEvents();
+            UpdateVisual();
+        }
+
+        private void OnDisable()
+        {
+            UnsubscribeEvents();
+        }
+
         private void OnDestroy()
+        {
+            UnsubscribeEvents();
+        }
+
+        private void SubscribeEvents()
+        {
+            if (DeliveryCustomerManager.Instance != null)
+            {
+                DeliveryCustomerManager.Instance.OnDeliveryOrdersChanged -= DeliveryCustomerManager_OnDeliveryOrdersChanged;
+                DeliveryCustomerManager.Instance.OnDeliveryOrdersChanged += DeliveryCustomerManager_OnDeliveryOrdersChanged;
+            }
+        }
+
+        private void UnsubscribeEvents()
         {
             if (DeliveryCustomerManager.Instance != null)
             {
