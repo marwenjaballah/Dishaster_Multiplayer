@@ -77,15 +77,76 @@ namespace UI
             {
                 _joystickCanvasGroup.alpha = restingAlpha;
             }
+
+            UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnSceneLoaded;
+
+            if (_canvas != null)
+            {
+                _canvas.enabled = ShouldShowControls();
+            }
+        }
+
+        private void OnDestroy()
+        {
+            UnityEngine.SceneManagement.SceneManager.sceneLoaded -= OnSceneLoaded;
+        }
+
+        private void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode)
+        {
+            if (_canvas != null)
+            {
+                _canvas.enabled = ShouldShowControls();
+            }
+        }
+
+        /// <summary>
+        /// Returns true only if the currently active scene is a gameplay scene (GameScene, GameSceneTableService, etc.)
+        /// </summary>
+        private bool IsInGameplayScene()
+        {
+            string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+            return sceneName == Loader.Scene.GameScene.ToString() ||
+                   sceneName == Loader.Scene.GameSceneTableService.ToString() ||
+                   sceneName.Contains("GameScene");
+        }
+
+        private bool ShouldShowControls()
+        {
+            // 1. Must be in an active gameplay scene (never on MainMenu, Lobby, CharacterSelect, or LoadingScene)
+            if (!IsInGameplayScene()) return false;
+
+            // 2. Must have active KitchenGameManager in playing or countdown state, not paused or game over
+            if (KitchenGameManager.Instance != null)
+            {
+                if (KitchenGameManager.Instance.IsGameOver()) return false;
+                if (KitchenGameManager.Instance.IsLocalGamePaused()) return false;
+                if (KitchenGameManager.Instance.IsWaitingToStart()) return false;
+
+                return KitchenGameManager.Instance.IsGamePlaying() || KitchenGameManager.Instance.IsCountdownToStartActive();
+            }
+
+            return false;
         }
 
         private void Update()
         {
-            // Only active when playing
-            bool isGamePlaying = KitchenGameManager.Instance != null && KitchenGameManager.Instance.IsGamePlaying();
-            if (_canvas != null && _canvas.enabled != isGamePlaying)
+            bool show = ShouldShowControls();
+            if (_canvas != null && _canvas.enabled != show)
             {
-                _canvas.enabled = isGamePlaying;
+                _canvas.enabled = show;
+                if (!show)
+                {
+                    // Reset any active touch drag
+                    _isJoystickActive = false;
+                    _joystickFingerId = -1;
+                    if (_joystickKnobRect != null) _joystickKnobRect.anchoredPosition = Vector2.zero;
+                    if (GameInput.Instance != null)
+                    {
+                        GameInput.Instance.SetMobileMovementVector(Vector2.zero);
+                        GameInput.Instance.SetMobileInteractPressed(false);
+                        GameInput.Instance.SetMobileInteractAlternatePressed(false);
+                    }
+                }
             }
         }
 

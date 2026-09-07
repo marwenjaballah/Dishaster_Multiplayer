@@ -280,6 +280,10 @@ public class KitchenGameManager : NetworkBehaviour {
         Loader.Load(Loader.Scene.MainMenuScene);
     }
 
+    public bool IsLocalGamePaused() {
+        return isLocalGamePaused;
+    }
+
     public void TogglePauseGame() {
         isLocalGamePaused = !isLocalGamePaused;
         if (isLocalGamePaused) {
