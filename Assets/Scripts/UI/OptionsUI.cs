@@ -10,6 +10,9 @@ public class OptionsUI : MonoBehaviour {
 
     public static OptionsUI Instance { get; private set; }
 
+    private const string PLAYER_PREFS_SOUND_EFFECTS_VOLUME = "SoundEffectsVolume";
+    private const string PLAYER_PREFS_MUSIC_VOLUME = "MusicVolume";
+
 
     [Header("Volume Controls")]
     [SerializeField] private Slider soundEffectsSlider;
@@ -20,17 +23,12 @@ public class OptionsUI : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI musicText;
 
     [Header("Display & Resolution")]
-    [SerializeField] private Button resolutionButton;
-    [SerializeField] private Button resolutionPrevButton;
-    [SerializeField] private Button resolutionNextButton;
-    [SerializeField] private TextMeshProUGUI resolutionText;
     [SerializeField] private TMP_Dropdown resolutionDropdown;
-
-    [SerializeField] private Button windowModeButton;
-    [SerializeField] private Button windowModePrevButton;
-    [SerializeField] private Button windowModeNextButton;
-    [SerializeField] private TextMeshProUGUI windowModeText;
     [SerializeField] private TMP_Dropdown windowModeDropdown;
+    [SerializeField] private Button resolutionButton;
+    [SerializeField] private Button windowModeButton;
+    [SerializeField] private TextMeshProUGUI resolutionText;
+    [SerializeField] private TextMeshProUGUI windowModeText;
 
     [Header("Keybinding Buttons")]
     [SerializeField] private Button closeButton;
@@ -58,77 +56,60 @@ public class OptionsUI : MonoBehaviour {
 
 
     private Action onCloseButtonAction;
+    private bool isShowing;
 
 
     private void Awake() {
         Instance = this;
 
-        EnsureDisplayControls();
-
         if (soundEffectsSlider != null) {
             soundEffectsSlider.onValueChanged.AddListener((float val) => {
-                SoundManager.Instance.SetVolume(val);
-                UpdateVisual();
+                SetSfxVolume(val);
             });
         }
         if (musicSlider != null) {
             musicSlider.onValueChanged.AddListener((float val) => {
-                MusicManager.Instance.SetVolume(val);
-                UpdateVisual();
+                SetMusicVolume(val);
             });
         }
 
         if (soundEffectsButton != null) {
             soundEffectsButton.onClick.AddListener(() => {
-                SoundManager.Instance.ChangeVolume();
-                UpdateVisual();
+                float v = GetSfxVolume() + 0.1f;
+                if (v > 1.05f) v = 0f;
+                SetSfxVolume(v);
+                if (soundEffectsSlider != null) soundEffectsSlider.SetValueWithoutNotify(v);
             });
         }
         if (musicButton != null) {
             musicButton.onClick.AddListener(() => {
-                MusicManager.Instance.ChangeVolume();
-                UpdateVisual();
+                float v = GetMusicVolume() + 0.1f;
+                if (v > 1.05f) v = 0f;
+                SetMusicVolume(v);
+                if (musicSlider != null) musicSlider.SetValueWithoutNotify(v);
             });
         }
 
-        // Resolution Controls
+        // Resolution Dropdown
+        if (resolutionDropdown != null) {
+            SetupResolutionDropdown();
+        }
+
+        // Window Mode Dropdown
+        if (windowModeDropdown != null) {
+            SetupWindowModeDropdown();
+        }
+
+        // Resolution and Window Mode Button fallback (if present)
         if (resolutionButton != null) {
             resolutionButton.onClick.AddListener(() => {
                 if (DisplaySettingsManager.Instance != null) DisplaySettingsManager.Instance.CycleResolution(1);
             });
         }
-        if (resolutionNextButton != null) {
-            resolutionNextButton.onClick.AddListener(() => {
-                if (DisplaySettingsManager.Instance != null) DisplaySettingsManager.Instance.CycleResolution(1);
-            });
-        }
-        if (resolutionPrevButton != null) {
-            resolutionPrevButton.onClick.AddListener(() => {
-                if (DisplaySettingsManager.Instance != null) DisplaySettingsManager.Instance.CycleResolution(-1);
-            });
-        }
-        if (resolutionDropdown != null) {
-            SetupResolutionDropdown();
-        }
-
-        // Window Mode Controls
         if (windowModeButton != null) {
             windowModeButton.onClick.AddListener(() => {
                 if (DisplaySettingsManager.Instance != null) DisplaySettingsManager.Instance.CycleWindowMode(1);
             });
-        }
-        if (windowModeNextButton != null) {
-            windowModeNextButton.onClick.AddListener(() => {
-                if (DisplaySettingsManager.Instance != null) DisplaySettingsManager.Instance.CycleWindowMode(1);
-            });
-        }
-        if (windowModePrevButton != null) {
-            windowModePrevButton.onClick.AddListener(() => {
-                if (DisplaySettingsManager.Instance != null) DisplaySettingsManager.Instance.CycleWindowMode(-1);
-            });
-        }
-        if (windowModeDropdown != null) {
-            SetupWindowModeDropdown();
         }
 
         if (closeButton != null) {
@@ -159,184 +140,74 @@ public class OptionsUI : MonoBehaviour {
             DisplaySettingsManager.Instance.OnDisplaySettingsChanged += DisplaySettingsManager_OnDisplaySettingsChanged;
         }
 
+        SetupResolutionDropdown();
+        SetupWindowModeDropdown();
         UpdateVisual();
 
         HidePressToRebindKey();
-        Hide();
-    }
-
-    private void EnsureDisplayControls() {
-        if (closeButton == null && transform.childCount == 0) {
-            BuildStandaloneModal();
-        } else {
-            if (resolutionButton == null && resolutionDropdown == null) {
-                resolutionButton = CreateSettingsButton("ResolutionButton", new Vector2(0, 48), "RES: " + (DisplaySettingsManager.Instance != null ? DisplaySettingsManager.Instance.GetCurrentResolutionText() : "1920 x 1080"), out resolutionText, transform);
-            }
-
-            if (windowModeButton == null && windowModeDropdown == null) {
-                windowModeButton = CreateSettingsButton("WindowModeButton", new Vector2(0, 0), "MODE: " + (DisplaySettingsManager.Instance != null ? DisplaySettingsManager.Instance.GetCurrentWindowModeText() : "BORDERLESS WINDOW"), out windowModeText, transform);
-            }
-        }
-    }
-
-    private void BuildStandaloneModal() {
-        RectTransform rootRect = GetComponent<RectTransform>();
-        if (rootRect != null) {
-            rootRect.anchorMin = Vector2.zero;
-            rootRect.anchorMax = Vector2.one;
-            rootRect.sizeDelta = Vector2.zero;
-            rootRect.anchoredPosition = Vector2.zero;
-        }
-
-        // Blocker overlay
-        Image blockerImg = gameObject.AddComponent<Image>();
-        blockerImg.color = new Color(0, 0, 0, 0.75f);
-
-        // Center card modal
-        GameObject cardObj = new GameObject("SettingsCard", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
-        cardObj.transform.SetParent(transform, false);
-        RectTransform cardRect = cardObj.GetComponent<RectTransform>();
-        cardRect.anchorMin = new Vector2(0.5f, 0.5f);
-        cardRect.anchorMax = new Vector2(0.5f, 0.5f);
-        cardRect.pivot = new Vector2(0.5f, 0.5f);
-        cardRect.sizeDelta = new Vector2(560, 520);
-        cardRect.anchoredPosition = Vector2.zero;
-
-        Image cardImg = cardObj.GetComponent<Image>();
-        cardImg.color = new Color(0.08f, 0.11f, 0.18f, 0.98f);
-
-        // Title
-        GameObject titleObj = new GameObject("Title", typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI));
-        titleObj.transform.SetParent(cardObj.transform, false);
-        RectTransform titleRect = titleObj.GetComponent<RectTransform>();
-        titleRect.anchorMin = new Vector2(0.5f, 0.5f);
-        titleRect.anchorMax = new Vector2(0.5f, 0.5f);
-        titleRect.sizeDelta = new Vector2(500, 50);
-        titleRect.anchoredPosition = new Vector2(0, 200);
-
-        TextMeshProUGUI titleText = titleObj.GetComponent<TextMeshProUGUI>();
-        titleText.text = "<color=#FFB703>SETTINGS</color>";
-        titleText.fontSize = 28;
-        titleText.fontStyle = FontStyles.Bold;
-        titleText.alignment = TextAlignmentOptions.Center;
-
-        // Sound volume button
-        soundEffectsButton = CreateSettingsButton("SoundEffectsButton", new Vector2(0, 120), "SFX: 100%", out soundEffectsText, cardObj.transform);
-        soundEffectsButton.onClick.AddListener(() => {
-            if (SoundManager.Instance != null) {
-                SoundManager.Instance.ChangeVolume();
-            } else {
-                float vol = PlayerPrefs.GetFloat("SoundEffectsVolume", 1f) + 0.1f;
-                if (vol > 1.05f) vol = 0f;
-                PlayerPrefs.SetFloat("SoundEffectsVolume", vol);
-                PlayerPrefs.Save();
-            }
-            UpdateVisual();
-        });
-
-        // Music volume button
-        musicButton = CreateSettingsButton("MusicButton", new Vector2(0, 60), "MUSIC: 30%", out musicText, cardObj.transform);
-        musicButton.onClick.AddListener(() => {
-            if (MusicManager.Instance != null) {
-                MusicManager.Instance.ChangeVolume();
-            } else {
-                float vol = PlayerPrefs.GetFloat("MusicVolume", 0.3f) + 0.1f;
-                if (vol > 1.05f) vol = 0f;
-                PlayerPrefs.SetFloat("MusicVolume", vol);
-                PlayerPrefs.Save();
-            }
-            UpdateVisual();
-        });
-
-        // Resolution button
-        resolutionButton = CreateSettingsButton("ResolutionButton", new Vector2(0, 0), "RES: 1920 x 1080", out resolutionText, cardObj.transform);
-        resolutionButton.onClick.AddListener(() => {
-            if (DisplaySettingsManager.Instance != null) DisplaySettingsManager.Instance.CycleResolution(1);
-        });
-
-        // Window mode button
-        windowModeButton = CreateSettingsButton("WindowModeButton", new Vector2(0, -60), "MODE: BORDERLESS WINDOW", out windowModeText, cardObj.transform);
-        windowModeButton.onClick.AddListener(() => {
-            if (DisplaySettingsManager.Instance != null) DisplaySettingsManager.Instance.CycleWindowMode(1);
-        });
-
-        // Close button
-        closeButton = CreateSettingsButton("CloseButton", new Vector2(0, -180), "CLOSE", out _, cardObj.transform);
-        RectTransform closeRect = closeButton.GetComponent<RectTransform>();
-        closeRect.sizeDelta = new Vector2(260, 48);
-        Image closeImg = closeButton.GetComponent<Image>();
-        closeImg.color = new Color(0.9f, 0.55f, 0.1f, 1f); // Vibrant accent
-        closeButton.onClick.AddListener(() => {
+        if (!isShowing) {
             Hide();
-            onCloseButtonAction?.Invoke();
-        });
-    }
-
-    private Button CreateSettingsButton(string name, Vector2 anchoredPos, string defaultText, out TextMeshProUGUI textComp, Transform parentTransform) {
-        textComp = null;
-        GameObject btnObj = new GameObject(name, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Button));
-        btnObj.transform.SetParent(parentTransform, false);
-
-        RectTransform rect = btnObj.GetComponent<RectTransform>();
-        rect.anchorMin = new Vector2(0.5f, 0.5f);
-        rect.anchorMax = new Vector2(0.5f, 0.5f);
-        rect.pivot = new Vector2(0.5f, 0.5f);
-        rect.anchoredPosition = anchoredPos;
-        rect.sizeDelta = new Vector2(480, 44);
-
-        Image img = btnObj.GetComponent<Image>();
-        img.color = new Color(0.14f, 0.18f, 0.28f, 0.95f);
-
-        Button btn = btnObj.GetComponent<Button>();
-        ColorBlock colors = btn.colors;
-        colors.normalColor = Color.white;
-        colors.highlightedColor = new Color(0.25f, 0.85f, 1f, 1f);
-        colors.pressedColor = new Color(0.18f, 0.7f, 0.85f, 1f);
-        btn.colors = colors;
-
-        GameObject textObj = new GameObject("Text", typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI));
-        textObj.transform.SetParent(btnObj.transform, false);
-
-        RectTransform textRect = textObj.GetComponent<RectTransform>();
-        textRect.anchorMin = Vector2.zero;
-        textRect.anchorMax = Vector2.one;
-        textRect.sizeDelta = Vector2.zero;
-        textRect.anchoredPosition = Vector2.zero;
-
-        textComp = textObj.GetComponent<TextMeshProUGUI>();
-        textComp.text = defaultText;
-        textComp.fontSize = 20;
-        textComp.fontStyle = FontStyles.Bold;
-        textComp.alignment = TextAlignmentOptions.Center;
-        textComp.color = Color.white;
-
-        if (soundEffectsText != null && soundEffectsText.font != null) {
-            textComp.font = soundEffectsText.font;
         }
-
-        return btn;
     }
 
     private void DisplaySettingsManager_OnDisplaySettingsChanged(object sender, EventArgs e) {
         UpdateVisual();
     }
 
+    private float GetSfxVolume() {
+        if (SoundManager.Instance != null) return SoundManager.Instance.GetVolume();
+        return PlayerPrefs.GetFloat(PLAYER_PREFS_SOUND_EFFECTS_VOLUME, 1f);
+    }
+
+    private float GetMusicVolume() {
+        if (MusicManager.Instance != null) return MusicManager.Instance.GetVolume();
+        return PlayerPrefs.GetFloat(PLAYER_PREFS_MUSIC_VOLUME, 0.3f);
+    }
+
+    private void SetSfxVolume(float val) {
+        val = Mathf.Clamp01(val);
+        if (SoundManager.Instance != null) {
+            SoundManager.Instance.SetVolume(val);
+        } else {
+            PlayerPrefs.SetFloat(PLAYER_PREFS_SOUND_EFFECTS_VOLUME, val);
+            PlayerPrefs.Save();
+        }
+        if (soundEffectsText != null) {
+            soundEffectsText.text = "SFX: " + Mathf.RoundToInt(val * 100f) + "%";
+        }
+    }
+
+    private void SetMusicVolume(float val) {
+        val = Mathf.Clamp01(val);
+        if (MusicManager.Instance != null) {
+            MusicManager.Instance.SetVolume(val);
+        } else {
+            PlayerPrefs.SetFloat(PLAYER_PREFS_MUSIC_VOLUME, val);
+            PlayerPrefs.Save();
+        }
+        if (musicText != null) {
+            musicText.text = "MUSIC: " + Mathf.RoundToInt(val * 100f) + "%";
+        }
+    }
+
     private void SetupResolutionDropdown() {
-        if (DisplaySettingsManager.Instance == null) return;
+        if (resolutionDropdown == null || DisplaySettingsManager.Instance == null) return;
+        resolutionDropdown.onValueChanged.RemoveAllListeners();
         resolutionDropdown.ClearOptions();
         List<string> options = new List<string>();
         foreach (var res in DisplaySettingsManager.Instance.GetResolutions()) {
             options.Add(res.ToString());
         }
         resolutionDropdown.AddOptions(options);
-        resolutionDropdown.value = DisplaySettingsManager.Instance.GetCurrentResolutionIndex();
+        resolutionDropdown.SetValueWithoutNotify(DisplaySettingsManager.Instance.GetCurrentResolutionIndex());
         resolutionDropdown.onValueChanged.AddListener((int index) => {
             DisplaySettingsManager.Instance.SetResolutionIndex(index);
         });
     }
 
     private void SetupWindowModeDropdown() {
-        if (DisplaySettingsManager.Instance == null) return;
+        if (windowModeDropdown == null || DisplaySettingsManager.Instance == null) return;
+        windowModeDropdown.onValueChanged.RemoveAllListeners();
         windowModeDropdown.ClearOptions();
         List<string> options = new List<string> {
             DisplaySettingsManager.Instance.GetWindowModeText(DisplaySettingsManager.WindowMode.ExclusiveFullScreen),
@@ -344,7 +215,7 @@ public class OptionsUI : MonoBehaviour {
             DisplaySettingsManager.Instance.GetWindowModeText(DisplaySettingsManager.WindowMode.Windowed)
         };
         windowModeDropdown.AddOptions(options);
-        windowModeDropdown.value = (int)DisplaySettingsManager.Instance.GetCurrentWindowMode();
+        windowModeDropdown.SetValueWithoutNotify((int)DisplaySettingsManager.Instance.GetCurrentWindowMode());
         windowModeDropdown.onValueChanged.AddListener((int index) => {
             DisplaySettingsManager.Instance.SetWindowMode((DisplaySettingsManager.WindowMode)index);
         });
@@ -355,8 +226,8 @@ public class OptionsUI : MonoBehaviour {
     }
 
     private void UpdateVisual() {
-        float sfxVol = SoundManager.Instance != null ? SoundManager.Instance.GetVolume() : 1f;
-        float musVol = MusicManager.Instance != null ? MusicManager.Instance.GetVolume() : 1f;
+        float sfxVol = GetSfxVolume();
+        float musVol = GetMusicVolume();
 
         if (soundEffectsSlider != null) soundEffectsSlider.SetValueWithoutNotify(sfxVol);
         if (musicSlider != null) musicSlider.SetValueWithoutNotify(musVol);
@@ -365,17 +236,17 @@ public class OptionsUI : MonoBehaviour {
         if (musicText != null) musicText.text = "MUSIC: " + Mathf.RoundToInt(musVol * 100f) + "%";
 
         if (DisplaySettingsManager.Instance != null) {
-            if (resolutionText != null) {
-                resolutionText.text = "RES: " + DisplaySettingsManager.Instance.GetCurrentResolutionText();
-            }
-            if (windowModeText != null) {
-                windowModeText.text = "MODE: " + DisplaySettingsManager.Instance.GetCurrentWindowModeText();
-            }
             if (resolutionDropdown != null) {
                 resolutionDropdown.SetValueWithoutNotify(DisplaySettingsManager.Instance.GetCurrentResolutionIndex());
             }
             if (windowModeDropdown != null) {
                 windowModeDropdown.SetValueWithoutNotify((int)DisplaySettingsManager.Instance.GetCurrentWindowMode());
+            }
+            if (resolutionText != null) {
+                resolutionText.text = "RES: " + DisplaySettingsManager.Instance.GetCurrentResolutionText();
+            }
+            if (windowModeText != null) {
+                windowModeText.text = "MODE: " + DisplaySettingsManager.Instance.GetCurrentWindowModeText();
             }
         }
 
@@ -395,15 +266,23 @@ public class OptionsUI : MonoBehaviour {
 
     public void Show(Action onCloseButtonAction) {
         this.onCloseButtonAction = onCloseButtonAction;
+        isShowing = true;
 
         gameObject.SetActive(true);
 
-        if (soundEffectsButton != null) {
-            soundEffectsButton.Select();
+        HidePressToRebindKey();
+        SetupResolutionDropdown();
+        SetupWindowModeDropdown();
+        UpdateVisual();
+
+        if (closeButton != null) {
+            closeButton.Select();
         }
     }
 
-    private void Hide() {
+    public void Hide() {
+        isShowing = false;
+        HidePressToRebindKey();
         gameObject.SetActive(false);
     }
 
@@ -420,11 +299,15 @@ public class OptionsUI : MonoBehaviour {
     }
 
     private void RebindBinding(GameInput.Binding binding) {
-        ShowPressToRebindKey();
-        GameInput.Instance.RebindBinding(binding, () => {
+        if (GameInput.Instance != null) {
+            ShowPressToRebindKey();
+            GameInput.Instance.RebindBinding(binding, () => {
+                HidePressToRebindKey();
+                UpdateVisual();
+            });
+        } else {
             HidePressToRebindKey();
-            UpdateVisual();
-        });
+        }
     }
 
     private void OnDestroy() {

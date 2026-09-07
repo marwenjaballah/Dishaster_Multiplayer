@@ -8,7 +8,22 @@ public class GameInput : MonoBehaviour {
     private const string PLAYER_PREFS_BINDINGS = "InputBindings";
 
 
-    public static GameInput Instance { get; private set; }
+    private static GameInput instance;
+    public static GameInput Instance {
+        get {
+            if (instance == null) {
+                instance = FindFirstObjectByType<GameInput>();
+                if (instance == null) {
+                    GameObject gameInputGo = new GameObject("GameInput");
+                    instance = gameInputGo.AddComponent<GameInput>();
+                }
+            }
+            return instance;
+        }
+        private set {
+            instance = value;
+        }
+    }
 
 
 
@@ -36,7 +51,11 @@ public class GameInput : MonoBehaviour {
 
 
     private void Awake() {
-        Instance = this;
+        if (instance != null && instance != this) {
+            Destroy(gameObject);
+            return;
+        }
+        instance = this;
 
 
         playerInputActions = new PlayerInputActions();
@@ -55,9 +74,12 @@ public class GameInput : MonoBehaviour {
     }
 
     private void EnsureMobileControls() {
-        if (FindFirstObjectByType<UI.MobileTouchControlsUI>() == null) {
-            GameObject mobileControlsGo = new GameObject("MobileTouchControlsUI");
-            mobileControlsGo.AddComponent<UI.MobileTouchControlsUI>();
+        string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        if (sceneName == Loader.Scene.GameScene.ToString() || sceneName == "GameSceneTableService") {
+            if (FindFirstObjectByType<UI.MobileTouchControlsUI>() == null) {
+                GameObject mobileControlsGo = new GameObject("MobileTouchControlsUI");
+                mobileControlsGo.AddComponent<UI.MobileTouchControlsUI>();
+            }
         }
     }
 
