@@ -316,7 +316,8 @@ namespace CityLife
             }
         }
 
-        private const float ProceduralAnimLODSqrDist = 35f * 35f; // 35 meters
+        private const float FarAnimGroundSqrDist = 45f * 45f; // 45m ground radius
+        private bool _isFarLOD;
 
         /// <summary>
         /// Computes and applies full procedural locomotion poses to limbs, torso, and head,
@@ -344,15 +345,38 @@ namespace CityLife
                 _animator.SetFloat(MotionSpeedHash, 1f);
             }
 
-            // LOD Check: Skip heavy bone trigonometry if far from camera
-            Transform camTr = LookAtCamera.MainCameraTransform;
-            if (camTr != null)
+            // ── DISTANCE LOD (Planar 2D Ground Distance with Hysteresis) ──
+            Vector3 focusPos = Player.LocalInstance != null 
+                ? Player.LocalInstance.transform.position 
+                : (LookAtCamera.MainCameraTransform != null ? LookAtCamera.MainCameraTransform.position : transform.position);
+
+            float dx = transform.position.x - focusPos.x;
+            float dz = transform.position.z - focusPos.z;
+            float planarSqrDist = dx * dx + dz * dz;
+
+            // Hysteresis: switch to far LOD at 45m, re-enable full animation at 38m
+            if (_isFarLOD)
             {
-                float sqrDist = (transform.position - camTr.position).sqrMagnitude;
-                if (sqrDist > ProceduralAnimLODSqrDist)
+                if (planarSqrDist < 38f * 38f) _isFarLOD = false;
+            }
+            else
+            {
+                if (planarSqrDist > FarAnimGroundSqrDist) _isFarLOD = true;
+            }
+
+            if (_isFarLOD)
+            {
+                // Smoothly ease limbs to neutral rest pose so distant pedestrians never freeze in awkward positions
+                if (hipL != null) hipL.localRotation = Quaternion.Slerp(hipL.localRotation, Quaternion.identity, Time.deltaTime * 6f);
+                if (hipR != null) hipR.localRotation = Quaternion.Slerp(hipR.localRotation, Quaternion.identity, Time.deltaTime * 6f);
+                if (shoulderL != null) shoulderL.localRotation = Quaternion.Slerp(shoulderL.localRotation, Quaternion.Euler(0f, 0f, -armRestAngle), Time.deltaTime * 6f);
+                if (shoulderR != null) shoulderR.localRotation = Quaternion.Slerp(shoulderR.localRotation, Quaternion.Euler(0f, 0f, armRestAngle), Time.deltaTime * 6f);
+                if (torso != null)
                 {
-                    return; // Distant pedestrian: navigation continues, but skip fine bone math
+                    torso.localPosition = Vector3.Lerp(torso.localPosition, _initialTorsoPos, Time.deltaTime * 6f);
+                    torso.localRotation = Quaternion.Slerp(torso.localRotation, Quaternion.identity, Time.deltaTime * 6f);
                 }
+                return; // Navigation continues without per-frame trigonometric calculations
             }
 
             // ── 1. LEGS (Alternating pitch from hip sockets) ──
