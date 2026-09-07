@@ -271,9 +271,10 @@ public class InteractKeyPromptUI : MonoBehaviour {
 
     private void LateUpdate() {
         if (visualContainer != null && visualContainer.activeSelf) {
-            // Billboarding towards main camera without mirroring
-            if (Camera.main != null) {
-                transform.forward = Camera.main.transform.forward;
+            // Billboarding towards main camera without mirroring using cached camera transform
+            Transform camTr = LookAtCamera.MainCameraTransform;
+            if (camTr != null) {
+                transform.forward = camTr.forward;
             }
 
             // Subtle bobbing animation

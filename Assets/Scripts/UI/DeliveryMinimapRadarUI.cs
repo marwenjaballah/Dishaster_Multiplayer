@@ -134,9 +134,12 @@ namespace UI
             _hasCalculatedRestaurantPos = true;
         }
 
+        private float _lastTextUpdateTime;
+
         private void Update()
         {
-            if (Player.LocalInstance == null || Camera.main == null)
+            Transform camTr = LookAtCamera.MainCameraTransform;
+            if (Player.LocalInstance == null || camTr == null)
             {
                 SetVisible(false);
                 return;
@@ -155,11 +158,11 @@ namespace UI
             EnsureDedicatedMarkers();
 
             Vector3 playerPos = Player.LocalInstance.transform.position;
-            Vector3 camForward = Camera.main.transform.forward;
+            Vector3 camForward = camTr.forward;
             camForward.y = 0f;
             camForward.Normalize();
 
-            Vector3 camRight = Camera.main.transform.right;
+            Vector3 camRight = camTr.right;
             camRight.y = 0f;
             camRight.Normalize();
 

@@ -316,6 +316,8 @@ namespace CityLife
             }
         }
 
+        private const float ProceduralAnimLODSqrDist = 35f * 35f; // 35 meters
+
         /// <summary>
         /// Computes and applies full procedural locomotion poses to limbs, torso, and head,
         /// and updates any attached Animator component.
@@ -332,6 +334,26 @@ namespace CityLife
 
             // Smooth cross-fade between walking and idle (transition time ~0.2s)
             _walkWeight = Mathf.MoveTowards(_walkWeight, isMoving ? 1f : 0f, Time.deltaTime * 5f);
+
+            // ── ANIMATOR INTEGRATION (If rigged humanoid attached) ──
+            if (_animator != null)
+            {
+                _animator.SetFloat(SpeedHash, isMoving ? currentSpeed : 0f);
+                _animator.SetBool(WalkingHash, isMoving);
+                _animator.SetBool(GroundedHash, true);
+                _animator.SetFloat(MotionSpeedHash, 1f);
+            }
+
+            // LOD Check: Skip heavy bone trigonometry if far from camera
+            Transform camTr = LookAtCamera.MainCameraTransform;
+            if (camTr != null)
+            {
+                float sqrDist = (transform.position - camTr.position).sqrMagnitude;
+                if (sqrDist > ProceduralAnimLODSqrDist)
+                {
+                    return; // Distant pedestrian: navigation continues, but skip fine bone math
+                }
+            }
 
             // ── 1. LEGS (Alternating pitch from hip sockets) ──
             float legPitch = Mathf.Sin(_gaitPhase) * maxLegAngle * _walkWeight;
@@ -392,12 +414,6 @@ namespace CityLife
                 _currentHeadYaw = Mathf.MoveTowardsAngle(_currentHeadYaw, _targetHeadYaw, 100f * Time.deltaTime);
                 head.localRotation = Quaternion.Euler(0f, _currentHeadYaw, 0f);
             }
-
-            // ── 5. ANIMATOR INTEGRATION (If rigged humanoid attached) ──
-            if (_animator != null)
-            {
-                _animator.SetFloat(SpeedHash, isMoving ? currentSpeed : 0f);
-                _animator.SetBool(WalkingHash, isMoving);
                 _animator.SetBool(GroundedHash, true);
                 _animator.SetFloat(MotionSpeedHash, currentSpeed > 0.01f ? currentSpeed / 1.2f : 1f);
             }

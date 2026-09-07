@@ -16,20 +16,38 @@ public class LookAtCamera : MonoBehaviour {
     [SerializeField] private Mode mode;
 
 
+    private static Camera _cachedCamera;
+    private static Transform _cachedCameraTransform;
+
+    public static Transform MainCameraTransform {
+        get {
+            if (_cachedCamera == null || !_cachedCamera.gameObject.activeInHierarchy) {
+                _cachedCamera = Camera.main;
+                if (_cachedCamera != null) {
+                    _cachedCameraTransform = _cachedCamera.transform;
+                }
+            }
+            return _cachedCameraTransform;
+        }
+    }
+
     private void LateUpdate() {
+        Transform camTr = MainCameraTransform;
+        if (camTr == null) return;
+
         switch (mode) {
             case Mode.LookAt:
-                transform.LookAt(Camera.main.transform);
+                transform.LookAt(camTr);
                 break;
             case Mode.LookAtInverted:
-                Vector3 dirFromCamera = transform.position - Camera.main.transform.position;
+                Vector3 dirFromCamera = transform.position - camTr.position;
                 transform.LookAt(transform.position + dirFromCamera);
                 break;
             case Mode.CameraForward:
-                transform.forward = Camera.main.transform.forward;
+                transform.forward = camTr.forward;
                 break;
             case Mode.CameraForwardInverted:
-                transform.forward = -Camera.main.transform.forward;
+                transform.forward = -camTr.forward;
                 break;
         }
     }

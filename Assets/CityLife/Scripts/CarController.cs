@@ -154,6 +154,9 @@ namespace CityLife
             }
         }
 
+        private static readonly RaycastHit[] _sphereCastBuffer = new RaycastHit[12];
+        private const float WheelLODSqrDist = 45f * 45f; // 45 meters
+
         /// <summary>
         /// SphereCast ahead to detect lead vehicles, crossing pedestrians, or players and compute target speed.
         /// Includes cross-traffic direction filtering and anti-deadlock clearance.
@@ -166,13 +169,13 @@ namespace CityLife
             Vector3 origin = transform.position + Vector3.up * 0.75f + transform.forward * 1.5f;
             float checkDist = isResolvingDeadlock ? (ObstacleCheckDist * 0.5f) : ObstacleCheckDist;
 
-            var hits = Physics.SphereCastAll(origin, 0.35f, transform.forward, checkDist);
+            int hitCount = Physics.SphereCastNonAlloc(origin, 0.35f, transform.forward, _sphereCastBuffer, checkDist);
             float closestDist = float.MaxValue;
             bool foundObstacle = false;
 
-            for (int i = 0; i < hits.Length; i++)
+            for (int i = 0; i < hitCount; i++)
             {
-                var hit = hits[i];
+                var hit = _sphereCastBuffer[i];
                 if (hit.transform == transform || hit.transform.IsChildOf(transform) ||
                     hit.collider.transform == transform || hit.collider.transform.IsChildOf(transform))
                 {
@@ -300,6 +303,13 @@ namespace CityLife
         /// </summary>
         private void UpdateWheelVisuals()
         {
+            Transform camTr = LookAtCamera.MainCameraTransform;
+            if (camTr != null)
+            {
+                float sqrDist = (transform.position - camTr.position).sqrMagnitude;
+                if (sqrDist > WheelLODSqrDist) return; // Skip wheel mesh rotations when far from camera
+            }
+
             _wheelSpinAngle = (_wheelSpinAngle + _currentSpeed * Time.deltaTime * WheelSpinMultiplier) % 360f;
 
             // Front wheels turn with steering angle
