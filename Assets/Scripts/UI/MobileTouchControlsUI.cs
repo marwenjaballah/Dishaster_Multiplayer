@@ -61,7 +61,10 @@ namespace UI
             }
 
             // Optimize mobile runtime settings
+            #if ENABLE_LEGACY_INPUT_MANAGER
             Input.multiTouchEnabled = true;
+            #endif
+            UnityEngine.InputSystem.EnhancedTouch.EnhancedTouchSupport.Enable();
             if (isMobilePlatform)
             {
                 Application.targetFrameRate = 60;
