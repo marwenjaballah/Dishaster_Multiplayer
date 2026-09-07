@@ -97,14 +97,9 @@ public class RestaurantSurvivalHUDUI : MonoBehaviour {
     }
 
     private void Instance_OnBankruptcy(object sender, EventArgs e) {
+        // Bankruptcy is now unified and displayed by GameOverUI!
         if (bankruptcyPanel != null) {
-            bankruptcyPanel.SetActive(true);
-            if (bankruptcyDetailsText != null) {
-                int finalReviews = RestaurantEconomyManager.Instance.GetTotalReviews();
-                float finalRating = RestaurantEconomyManager.Instance.GetStarRating();
-                int debt = Mathf.Abs(RestaurantEconomyManager.Instance.GetCurrentBalance());
-                bankruptcyDetailsText.text = $"You couldn't afford the rent!\nDebt: -${debt}\nFinal Reputation: {finalRating:F1}/5 ({finalReviews} reviews)";
-            }
+            bankruptcyPanel.SetActive(false);
         }
     }
 
@@ -122,8 +117,7 @@ public class RestaurantSurvivalHUDUI : MonoBehaviour {
         float rating = RestaurantEconomyManager.Instance.GetStarRating();
         int totalReviews = RestaurantEconomyManager.Instance.GetTotalReviews();
         if (starRatingText != null) {
-            starRatingText.text = $"Rating: {rating:F1} / 5.0 <size=65%>({totalReviews} reviews)</size>";
-            // Color based on rating tier
+            starRatingText.text = $"RATING: {rating:F1} / 5.0 <size=70%>({totalReviews} REVIEWS)</size>";
             if (rating >= 4.0f) {
                 starRatingText.color = new Color(1.0f, 0.85f, 0.2f); // Gold
             } else if (rating >= 2.5f) {
@@ -146,7 +140,7 @@ public class RestaurantSurvivalHUDUI : MonoBehaviour {
         int billCycle = RestaurantEconomyManager.Instance.GetCurrentBillCycle();
 
         if (nextBillText != null) {
-            nextBillText.text = $"Rent #{billCycle} (${billAmount}): {minutes:00}:{seconds:00}";
+            nextBillText.text = $"RENT #{billCycle} (${billAmount}): {minutes:00}:{seconds:00}";
         }
     }
 

@@ -17,6 +17,7 @@ using UnityEngine.SceneManagement;
 public class KitchenGameLobby : MonoBehaviour {
 
 
+    public const string KEY_GAME_MODE = "GameMode";
     private const string KEY_RELAY_JOIN_CODE = "RelayJoinCode";
 
 
@@ -51,7 +52,7 @@ public class KitchenGameLobby : MonoBehaviour {
     private async void InitializeUnityAuthentication() {
         if (UnityServices.State != ServicesInitializationState.Initialized) {
             InitializationOptions initializationOptions = new InitializationOptions();
-            //initializationOptions.SetProfile(UnityEngine.Random.Range(0, 10000).ToString());
+            initializationOptions.SetProfile(UnityEngine.Random.Range(0, 10000).ToString());
 
             await UnityServices.InitializeAsync(initializationOptions);
 
@@ -66,7 +67,6 @@ public class KitchenGameLobby : MonoBehaviour {
 
     private void HandlePeriodicListLobbies() {
         if (joinedLobby == null &&
-            UnityServices.State == ServicesInitializationState.Initialized &&
             AuthenticationService.Instance.IsSignedIn && 
             SceneManager.GetActiveScene().name == Loader.Scene.LobbyScene.ToString()) {
 
@@ -151,8 +151,12 @@ public class KitchenGameLobby : MonoBehaviour {
     public async void CreateLobby(string lobbyName, bool isPrivate) {
         OnCreateLobbyStarted?.Invoke(this, EventArgs.Empty);
         try {
+            string modeName = KitchenGameMultiplayer.tableServiceMode ? "Table Service" : "Classic";
             joinedLobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, KitchenGameMultiplayer.MAX_PLAYER_AMOUNT, new CreateLobbyOptions {
                 IsPrivate = isPrivate,
+                Data = new Dictionary<string, DataObject> {
+                    { KEY_GAME_MODE, new DataObject(DataObject.VisibilityOptions.Public, modeName) }
+                }
             });
 
             Allocation allocation = await AllocateRelay();
@@ -161,7 +165,8 @@ public class KitchenGameLobby : MonoBehaviour {
 
             await LobbyService.Instance.UpdateLobbyAsync(joinedLobby.Id, new UpdateLobbyOptions {
                 Data = new Dictionary<string, DataObject> {
-                     { KEY_RELAY_JOIN_CODE , new DataObject(DataObject.VisibilityOptions.Member, relayJoinCode) }
+                     { KEY_RELAY_JOIN_CODE , new DataObject(DataObject.VisibilityOptions.Member, relayJoinCode) },
+                     { KEY_GAME_MODE , new DataObject(DataObject.VisibilityOptions.Public, modeName) }
                  }
             });
 
@@ -185,6 +190,8 @@ public class KitchenGameLobby : MonoBehaviour {
         OnJoinStarted?.Invoke(this, EventArgs.Empty);
         try {
             joinedLobby = await LobbyService.Instance.QuickJoinLobbyAsync();
+
+            SyncGameModeFromLobby(joinedLobby);
 
             string relayJoinCode = joinedLobby.Data[KEY_RELAY_JOIN_CODE].Value;
 
@@ -211,6 +218,8 @@ public class KitchenGameLobby : MonoBehaviour {
         try {
             joinedLobby = await LobbyService.Instance.JoinLobbyByIdAsync(lobbyId);
 
+            SyncGameModeFromLobby(joinedLobby);
+
             string relayJoinCode = joinedLobby.Data[KEY_RELAY_JOIN_CODE].Value;
 
             JoinAllocation joinAllocation = await JoinRelay(relayJoinCode);
@@ -236,6 +245,8 @@ public class KitchenGameLobby : MonoBehaviour {
         try {
             joinedLobby = await LobbyService.Instance.JoinLobbyByCodeAsync(lobbyCode);
 
+            SyncGameModeFromLobby(joinedLobby);
+
             string relayJoinCode = joinedLobby.Data[KEY_RELAY_JOIN_CODE].Value;
 
             JoinAllocation joinAllocation = await JoinRelay(relayJoinCode);
@@ -253,6 +264,12 @@ public class KitchenGameLobby : MonoBehaviour {
         } catch (LobbyServiceException e) {
             Debug.Log(e);
             OnJoinFailed?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
+    private void SyncGameModeFromLobby(Lobby lobby) {
+        if (lobby != null && lobby.Data != null && lobby.Data.ContainsKey(KEY_GAME_MODE)) {
+            KitchenGameMultiplayer.tableServiceMode = lobby.Data[KEY_GAME_MODE].Value == "Table Service";
         }
     }
 

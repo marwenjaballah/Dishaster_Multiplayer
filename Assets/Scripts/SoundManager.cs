@@ -115,6 +115,12 @@ public class SoundManager : MonoBehaviour {
         PlayerPrefs.Save();
     }
 
+    public void SetVolume(float newVolume) {
+        volume = Mathf.Clamp01(newVolume);
+        PlayerPrefs.SetFloat(PLAYER_PREFS_SOUND_EFFECTS_VOLUME, volume);
+        PlayerPrefs.Save();
+    }
+
     public float GetVolume() {
         return volume;
     }

@@ -9,7 +9,7 @@ using UnityEngine;
 /// </summary>
 public class CrisisDebugUI : MonoBehaviour {
 
-    [SerializeField] private bool showDebugUI = true;
+    [SerializeField] private bool showDebugUI = false;
 
     private GUIStyle boxStyle;
     private GUIStyle buttonStyle;

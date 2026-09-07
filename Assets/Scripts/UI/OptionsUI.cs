@@ -11,8 +11,15 @@ public class OptionsUI : MonoBehaviour {
     public static OptionsUI Instance { get; private set; }
 
 
+    [Header("Volume Controls")]
+    [SerializeField] private Slider soundEffectsSlider;
+    [SerializeField] private Slider musicSlider;
     [SerializeField] private Button soundEffectsButton;
     [SerializeField] private Button musicButton;
+    [SerializeField] private TextMeshProUGUI soundEffectsText;
+    [SerializeField] private TextMeshProUGUI musicText;
+
+    [Header("Keybinding Buttons")]
     [SerializeField] private Button closeButton;
     [SerializeField] private Button moveUpButton;
     [SerializeField] private Button moveDownButton;
@@ -24,8 +31,6 @@ public class OptionsUI : MonoBehaviour {
     [SerializeField] private Button gamepadInteractButton;
     [SerializeField] private Button gamepadInteractAlternateButton;
     [SerializeField] private Button gamepadPauseButton;
-    [SerializeField] private TextMeshProUGUI soundEffectsText;
-    [SerializeField] private TextMeshProUGUI musicText;
     [SerializeField] private TextMeshProUGUI moveUpText;
     [SerializeField] private TextMeshProUGUI moveDownText;
     [SerializeField] private TextMeshProUGUI moveLeftText;
@@ -45,17 +50,34 @@ public class OptionsUI : MonoBehaviour {
     private void Awake() {
         Instance = this;
 
-        soundEffectsButton.onClick.AddListener(() => {
-            SoundManager.Instance.ChangeVolume();
-            UpdateVisual();
-        });
-        musicButton.onClick.AddListener(() => {
-            MusicManager.Instance.ChangeVolume();
-            UpdateVisual();
-        });
+        if (soundEffectsSlider != null) {
+            soundEffectsSlider.onValueChanged.AddListener((float val) => {
+                SoundManager.Instance.SetVolume(val);
+                UpdateVisual();
+            });
+        }
+        if (musicSlider != null) {
+            musicSlider.onValueChanged.AddListener((float val) => {
+                MusicManager.Instance.SetVolume(val);
+                UpdateVisual();
+            });
+        }
+
+        if (soundEffectsButton != null) {
+            soundEffectsButton.onClick.AddListener(() => {
+                SoundManager.Instance.ChangeVolume();
+                UpdateVisual();
+            });
+        }
+        if (musicButton != null) {
+            musicButton.onClick.AddListener(() => {
+                MusicManager.Instance.ChangeVolume();
+                UpdateVisual();
+            });
+        }
         closeButton.onClick.AddListener(() => {
             Hide();
-            onCloseButtonAction();
+            onCloseButtonAction?.Invoke();
         });
 
         moveUpButton.onClick.AddListener(() => { RebindBinding(GameInput.Binding.Move_Up); });
@@ -84,8 +106,14 @@ public class OptionsUI : MonoBehaviour {
     }
 
     private void UpdateVisual() {
-        soundEffectsText.text = "Sound Effects: " + Mathf.Round(SoundManager.Instance.GetVolume() * 10f);
-        musicText.text = "Music: " + Mathf.Round(MusicManager.Instance.GetVolume() * 10f);
+        float sfxVol = SoundManager.Instance.GetVolume();
+        float musVol = MusicManager.Instance.GetVolume();
+
+        if (soundEffectsSlider != null) soundEffectsSlider.SetValueWithoutNotify(sfxVol);
+        if (musicSlider != null) musicSlider.SetValueWithoutNotify(musVol);
+
+        if (soundEffectsText != null) soundEffectsText.text = "SFX: " + Mathf.RoundToInt(sfxVol * 100f) + "%";
+        if (musicText != null) musicText.text = "MUSIC: " + Mathf.RoundToInt(musVol * 100f) + "%";
 
         moveUpText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Move_Up);
         moveDownText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Move_Down);

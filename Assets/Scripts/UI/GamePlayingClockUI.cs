@@ -9,7 +9,15 @@ public class GamePlayingClockUI : MonoBehaviour {
     [SerializeField] private Image timerImage;
 
 
+    private void Start() {
+        if (KitchenGameMultiplayer.tableServiceMode) {
+            gameObject.SetActive(false);
+        }
+    }
+
     private void Update() {
-        timerImage.fillAmount = KitchenGameManager.Instance.GetGamePlayingTimerNormalized();
+        if (timerImage != null && KitchenGameManager.Instance != null) {
+            timerImage.fillAmount = KitchenGameManager.Instance.GetGamePlayingTimerNormalized();
+        }
     }
 }

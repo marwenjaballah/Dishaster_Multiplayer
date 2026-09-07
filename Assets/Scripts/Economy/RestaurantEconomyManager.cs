@@ -210,6 +210,10 @@ public class RestaurantEconomyManager : NetworkBehaviour {
 
             NotifyBillPaidClientRpc(bill, cycle, false);
             NotifyBankruptcyClientRpc();
+
+            if (KitchenGameManager.Instance != null) {
+                KitchenGameManager.Instance.TriggerBankruptcyGameOver();
+            }
         }
     }
 

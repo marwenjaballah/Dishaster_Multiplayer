@@ -22,7 +22,16 @@ public class LobbyListSingleUI : MonoBehaviour {
 
     public void SetLobby(Lobby lobby) {
         this.lobby = lobby;
-        lobbyNameText.text = lobby.Name;
+        string modeBadge = "";
+        if (lobby.Data != null && lobby.Data.ContainsKey(KitchenGameLobby.KEY_GAME_MODE)) {
+            string mode = lobby.Data[KitchenGameLobby.KEY_GAME_MODE].Value;
+            if (mode == "Table Service") {
+                modeBadge = " <color=#FFD700><size=80%>[Table Service]</size></color>";
+            } else {
+                modeBadge = " <color=#00E5FF><size=80%>[Classic]</size></color>";
+            }
+        }
+        lobbyNameText.text = lobby.Name + modeBadge;
     }
 
 }
