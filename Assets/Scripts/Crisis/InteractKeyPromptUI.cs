@@ -305,6 +305,7 @@ public class InteractKeyPromptUI : MonoBehaviour {
     }
 
     public void Show() {
+        UpdateVisualState(isHolding: false);
         if (visualContainer != null) {
             visualContainer.SetActive(true);
         }

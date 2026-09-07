@@ -8,7 +8,7 @@ namespace Vehicles
     /// <summary>
     /// An Electric Scooter (Trottinette) vehicle.
     /// Parked outside the kitchen exit, allowing players to mount/dismount with [F].
-    /// Features increased movement speed (16f), responsive steering, and audio.
+    /// Features increased movement speed (16f), responsive steering, solid collision, and audio.
     /// </summary>
     public class ElectricScooter : NetworkBehaviour
     {
@@ -16,12 +16,12 @@ namespace Vehicles
         [Header("Vehicle Settings")]
         [SerializeField] private float moveSpeed = 16f;
         [SerializeField] private float rotateSpeed = 12f;
-        [SerializeField] private float mountDistance = 2.5f;
+        [SerializeField] private float interactRange = 3.5f;
         [SerializeField] private LayerMask collisionsLayerMask;
 
         [Header("References")]
         [SerializeField] private Transform playerMountPoint;
-        [SerializeField] private GameObject interactPromptUI; // "[F] Ride Scooter"
+        [SerializeField] private GameObject interactPromptUI;
         [SerializeField] private AudioSource motorAudioSource;
 
         // ── Network State ─────────────────────────────────────────────────────────
@@ -52,6 +52,24 @@ namespace Vehicles
             _riderClientId.OnValueChanged -= OnRiderClientIdChanged;
         }
 
+        private void Awake()
+        {
+            if (interactPromptUI == null)
+            {
+                var promptTransform = transform.Find("InteractPromptUI");
+                if (promptTransform != null) interactPromptUI = promptTransform.gameObject;
+            }
+
+            if (collisionsLayerMask.value == 0)
+            {
+                collisionsLayerMask = LayerMask.GetMask("Default", "Counters", "Obstacles");
+                if (collisionsLayerMask.value == 0)
+                {
+                    collisionsLayerMask = 193;
+                }
+            }
+        }
+
         private void OnEnable()
         {
             if (GameInput.Instance != null)
@@ -75,35 +93,69 @@ namespace Vehicles
                 GameInput.Instance.OnInteractAlternateAction -= GameInput_OnInteractAlternateAction;
                 GameInput.Instance.OnInteractAlternateAction += GameInput_OnInteractAlternateAction;
             }
-            if (interactPromptUI != null) interactPromptUI.SetActive(false);
+            if (interactPromptUI != null)
+            {
+                interactPromptUI.SetActive(false);
+            }
         }
 
         // ── Input & Interactions ──────────────────────────────────────────────────
 
         private void GameInput_OnInteractAlternateAction(object sender, EventArgs e)
         {
-            if (!KitchenGameManager.Instance.IsGamePlaying()) return;
+            if (KitchenGameManager.Instance != null && !KitchenGameManager.Instance.IsGamePlaying()) return;
 
             if (_isLocalMounted)
             {
                 // Request dismount
-                RequestDismountServerRpc();
+                if (IsSpawned)
+                {
+                    RequestDismountServerRpc();
+                }
+                else
+                {
+                    UpdateMountVisuals(ulong.MaxValue);
+                }
             }
             else
             {
-                // Check if unmounted and local player is close enough
-                if (_riderClientId.Value == ulong.MaxValue && IsLocalPlayerNearby())
+                // Check if unmounted and local player is in range
+                bool isOccupied = IsSpawned ? (_riderClientId.Value != ulong.MaxValue) : _isLocalMounted;
+                if (!isOccupied && IsPlayerInRange())
                 {
-                    RequestMountServerRpc();
+                    if (IsSpawned)
+                    {
+                        RequestMountServerRpc();
+                    }
+                    else
+                    {
+                        UpdateMountVisuals(0);
+                    }
                 }
             }
         }
 
-        private bool IsLocalPlayerNearby()
+        public bool IsPlayerInRange()
         {
-            if (Player.LocalInstance == null) return false;
-            float sqrDist = (Player.LocalInstance.transform.position - transform.position).sqrMagnitude;
-            return sqrDist <= mountDistance * mountDistance;
+            Player player = Player.LocalInstance;
+            if (player == null)
+            {
+                foreach (Player p in FindObjectsByType<Player>(FindObjectsSortMode.None))
+                {
+                    if (p.IsOwner || p.isActiveAndEnabled)
+                    {
+                        player = p;
+                        break;
+                    }
+                }
+            }
+            if (player == null) return false;
+
+            Vector3 playerPos = player.transform.position;
+            Vector3 scooterPos = transform.position;
+            playerPos.y = 0f;
+            scooterPos.y = 0f;
+            return (playerPos - scooterPos).sqrMagnitude <= (interactRange * interactRange);
         }
 
         // ── Server RPCs ───────────────────────────────────────────────────────────
@@ -184,15 +236,26 @@ namespace Vehicles
             }
         }
 
-        // ── Driving Loop ──────────────────────────────────────────────────────────
+        // ── Driving & Range Prompt Loop ───────────────────────────────────────────
 
         private void Update()
         {
-            // Prompt display
-            if (!_isLocalMounted && interactPromptUI != null)
+            // Range-based prompt display without raycasts
+            bool isOccupied = IsSpawned ? (_riderClientId.Value != ulong.MaxValue) : _isLocalMounted;
+            if (!_isLocalMounted && !isOccupied)
             {
-                bool show = _riderClientId.Value == ulong.MaxValue && IsLocalPlayerNearby();
-                if (interactPromptUI.activeSelf != show) interactPromptUI.SetActive(show);
+                bool inRange = IsPlayerInRange();
+                if (interactPromptUI != null && interactPromptUI.activeSelf != inRange)
+                {
+                    interactPromptUI.SetActive(inRange);
+                }
+            }
+            else
+            {
+                if (interactPromptUI != null && interactPromptUI.activeSelf)
+                {
+                    interactPromptUI.SetActive(false);
+                }
             }
 
             if (!_isLocalMounted) return;
@@ -273,5 +336,11 @@ namespace Vehicles
         }
 
         public bool IsMounted() => _riderClientId.Value != ulong.MaxValue;
+
+        private void OnDrawGizmosSelected()
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(transform.position, interactRange);
+        }
     }
 }
