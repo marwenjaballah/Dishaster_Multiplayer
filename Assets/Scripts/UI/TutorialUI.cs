@@ -16,11 +16,16 @@ public class TutorialUI : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI keyGamepadInteractText;
     [SerializeField] private TextMeshProUGUI keyGamepadInteractAlternateText;
     [SerializeField] private TextMeshProUGUI keyGamepadPauseText;
+    [SerializeField] private TextMeshProUGUI pressInteractToStartText;
 
 
     private void Start() {
-        GameInput.Instance.OnBindingRebind += GameInput_OnBindingRebind;
-        KitchenGameManager.Instance.OnLocalPlayerReadyChanged += KitchenGameManager_OnLocalPlayerReadyChanged;
+        if (GameInput.Instance != null) {
+            GameInput.Instance.OnBindingRebind += GameInput_OnBindingRebind;
+        }
+        if (KitchenGameManager.Instance != null) {
+            KitchenGameManager.Instance.OnLocalPlayerReadyChanged += KitchenGameManager_OnLocalPlayerReadyChanged;
+        }
 
         UpdateVisual();
 
@@ -28,7 +33,7 @@ public class TutorialUI : MonoBehaviour {
     }
 
     private void KitchenGameManager_OnLocalPlayerReadyChanged(object sender, System.EventArgs e) {
-        if (KitchenGameManager.Instance.IsLocalPlayerReady()) {
+        if (KitchenGameManager.Instance != null && KitchenGameManager.Instance.IsLocalPlayerReady()) {
             Hide();
         }
     }
@@ -38,16 +43,24 @@ public class TutorialUI : MonoBehaviour {
     }
 
     private void UpdateVisual() {
-        keyMoveUpText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Move_Up);
-        keyMoveDownText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Move_Down);
-        keyMoveLeftText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Move_Left);
-        keyMoveRightText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Move_Right);
-        keyInteractText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Interact);
-        keyInteractAlternateText.text = GameInput.Instance.GetBindingText(GameInput.Binding.InteractAlternate);
-        keyPauseText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Pause);
-        keyGamepadInteractText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Gamepad_Interact);
-        keyGamepadInteractAlternateText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Gamepad_InteractAlternate);
-        keyGamepadPauseText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Gamepad_Pause);
+        if (GameInput.Instance != null) {
+            if (keyMoveUpText != null) keyMoveUpText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Move_Up);
+            if (keyMoveDownText != null) keyMoveDownText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Move_Down);
+            if (keyMoveLeftText != null) keyMoveLeftText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Move_Left);
+            if (keyMoveRightText != null) keyMoveRightText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Move_Right);
+            if (keyInteractText != null) keyInteractText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Interact);
+            if (keyInteractAlternateText != null) keyInteractAlternateText.text = GameInput.Instance.GetBindingText(GameInput.Binding.InteractAlternate);
+            if (keyPauseText != null) keyPauseText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Pause);
+            if (keyGamepadInteractText != null) keyGamepadInteractText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Gamepad_Interact);
+            if (keyGamepadInteractAlternateText != null) keyGamepadInteractAlternateText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Gamepad_InteractAlternate);
+            if (keyGamepadPauseText != null) keyGamepadPauseText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Gamepad_Pause);
+
+            if (pressInteractToStartText != null) {
+                string interactKey = GameInput.Instance.GetBindingText(GameInput.Binding.Interact);
+                string gamepadKey = GameInput.Instance.GetBindingText(GameInput.Binding.Gamepad_Interact);
+                pressInteractToStartText.text = $"PRESS <color=#FFB703>[{interactKey}]</color> OR <color=#00F5D4>[{gamepadKey}]</color> TO START";
+            }
+        }
     }
 
     private void Show() {
