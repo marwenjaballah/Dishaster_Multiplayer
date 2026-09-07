@@ -224,7 +224,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 3137426068
+  GlobalObjectIdHash: 2493926842
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -254,6 +254,21 @@ MonoBehaviour:
   counterTopPoint: {fileID: 2634843115095033575}
   deliveryBagKitchenObjectSO: {fileID: 11400000, guid: e38c4c0ebf6b03b4faa123fa64e02735,
     type: 2}
+--- !u!114 &4128509124801827411
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6779790900035075909}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bfaa777aed0004948ac822fe3508ea7a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DeliveryBagCounterVisual
+  deliveryBagCounter: {fileID: 3553453067605400747}
+  counterTopPoint: {fileID: 2634843115095033575}
+  bagVisualPrefab: {fileID: 0}
 --- !u!1 &6949547120851095126
 GameObject:
   m_ObjectHideFlags: 0
@@ -392,19 +407,3 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &4128509124801827411
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6779790900035075909}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bfaa777aed0004948ac822fe3508ea7a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DeliveryBagCounterVisual
-  deliveryBagCounter: {fileID: 3553453067605400747}
-  counterTopPoint: {fileID: 2634843115095033575}
-  bagVisualPrefab: {fileID: 0}
-
