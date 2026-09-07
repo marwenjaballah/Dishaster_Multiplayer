@@ -102,6 +102,14 @@ public class KitchenGameManager : NetworkBehaviour {
     }
 
     private void State_OnValueChanged(State previousValue, State newValue) {
+        if (state.Value == State.GameOver) {
+            Time.timeScale = 0f;
+        } else if (state.Value == State.CountdownToStart || state.Value == State.GamePlaying || state.Value == State.WaitingToStart) {
+            if (!isGamePaused.Value) {
+                Time.timeScale = 1f;
+            }
+        }
+
         OnStateChanged?.Invoke(this, EventArgs.Empty);
     }
 
@@ -264,6 +272,7 @@ public class KitchenGameManager : NetworkBehaviour {
 
     private void RestartGameSession() {
         if (!IsServer) return;
+        Time.timeScale = 1f;
         Loader.Scene targetScene = KitchenGameMultiplayer.tableServiceMode
             ? Loader.Scene.GameSceneTableService
             : Loader.Scene.GameScene;
@@ -271,6 +280,7 @@ public class KitchenGameManager : NetworkBehaviour {
     }
 
     public void LeaveGameSession() {
+        Time.timeScale = 1f;
         if (KitchenGameLobby.Instance != null) {
             KitchenGameLobby.Instance.LeaveLobby();
         }

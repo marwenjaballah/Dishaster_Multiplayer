@@ -131,6 +131,11 @@ public class Player : NetworkBehaviour, IKitchenObjectParent {
             return;
         }
 
+        if (KitchenGameManager.Instance != null && !KitchenGameManager.Instance.IsGamePlaying()) {
+            isWalking = false;
+            return;
+        }
+
         HandleMovement();
         HandleInteractions();
 

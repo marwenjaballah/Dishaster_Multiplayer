@@ -253,6 +253,13 @@ namespace Vehicles
 
         private void Update()
         {
+            if (KitchenGameManager.Instance != null && !KitchenGameManager.Instance.IsGamePlaying())
+            {
+                if (interactPromptUI != null && interactPromptUI.activeSelf) interactPromptUI.SetActive(false);
+                if (motorAudioSource != null && motorAudioSource.isPlaying) motorAudioSource.Stop();
+                return;
+            }
+
             // Range-based prompt display without raycasts
             bool isOccupied = IsSpawned ? (_riderClientId.Value != ulong.MaxValue) : _isLocalMounted;
             if (!_isLocalMounted && !isOccupied)
