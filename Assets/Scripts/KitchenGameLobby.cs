@@ -216,7 +216,17 @@ public class KitchenGameLobby : MonoBehaviour {
     public async void JoinWithId(string lobbyId) {
         OnJoinStarted?.Invoke(this, EventArgs.Empty);
         try {
-            joinedLobby = await LobbyService.Instance.JoinLobbyByIdAsync(lobbyId);
+            try {
+                joinedLobby = await LobbyService.Instance.JoinLobbyByIdAsync(lobbyId);
+            } catch (LobbyServiceException e) when (e.Reason == LobbyExceptionReason.LobbyConflict || e.ErrorCode == 16003 || (e.Message != null && e.Message.Contains("already a member"))) {
+                // If player is already a member of this lobby, fetch the active lobby info directly
+                joinedLobby = await LobbyService.Instance.GetLobbyAsync(lobbyId);
+            }
+
+            if (joinedLobby == null) {
+                OnJoinFailed?.Invoke(this, EventArgs.Empty);
+                return;
+            }
 
             SyncGameModeFromLobby(joinedLobby);
 
@@ -243,7 +253,18 @@ public class KitchenGameLobby : MonoBehaviour {
     public async void JoinWithCode(string lobbyCode) {
         OnJoinStarted?.Invoke(this, EventArgs.Empty);
         try {
-            joinedLobby = await LobbyService.Instance.JoinLobbyByCodeAsync(lobbyCode);
+            try {
+                joinedLobby = await LobbyService.Instance.JoinLobbyByCodeAsync(lobbyCode);
+            } catch (LobbyServiceException e) when (e.Reason == LobbyExceptionReason.LobbyConflict || e.ErrorCode == 16003 || (e.Message != null && e.Message.Contains("already a member"))) {
+                if (joinedLobby != null) {
+                    joinedLobby = await LobbyService.Instance.GetLobbyAsync(joinedLobby.Id);
+                }
+            }
+
+            if (joinedLobby == null) {
+                OnJoinFailed?.Invoke(this, EventArgs.Empty);
+                return;
+            }
 
             SyncGameModeFromLobby(joinedLobby);
 
