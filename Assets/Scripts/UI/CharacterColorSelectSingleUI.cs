@@ -28,14 +28,16 @@ public class CharacterColorSelectSingleUI : MonoBehaviour {
     }
 
     private void UpdateIsSelected() {
-        if (KitchenGameMultiplayer.Instance.GetPlayerData().colorId == colorId) {
-            selectedGameObject.SetActive(true);
-        } else {
-            selectedGameObject.SetActive(false);
+        bool isSelected = KitchenGameMultiplayer.Instance.GetPlayerData().colorId == colorId;
+        if (selectedGameObject != null) {
+            selectedGameObject.SetActive(isSelected);
         }
+        transform.localScale = isSelected ? Vector3.one * 1.12f : Vector3.one;
     }
 
     private void OnDestroy() {
-        KitchenGameMultiplayer.Instance.OnPlayerDataNetworkListChanged -= KitchenGameMultiplayer_OnPlayerDataNetworkListChanged;
+        if (KitchenGameMultiplayer.Instance != null) {
+            KitchenGameMultiplayer.Instance.OnPlayerDataNetworkListChanged -= KitchenGameMultiplayer_OnPlayerDataNetworkListChanged;
+        }
     }
 }
