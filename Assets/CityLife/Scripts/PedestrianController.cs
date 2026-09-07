@@ -414,9 +414,6 @@ namespace CityLife
                 _currentHeadYaw = Mathf.MoveTowardsAngle(_currentHeadYaw, _targetHeadYaw, 100f * Time.deltaTime);
                 head.localRotation = Quaternion.Euler(0f, _currentHeadYaw, 0f);
             }
-                _animator.SetBool(GroundedHash, true);
-                _animator.SetFloat(MotionSpeedHash, currentSpeed > 0.01f ? currentSpeed / 1.2f : 1f);
-            }
         }
 
         private static MaterialPropertyBlock _propBlock;
