@@ -8,7 +8,18 @@ using UnityEngine.UI;
 public class OptionsUI : MonoBehaviour {
 
 
-    public static OptionsUI Instance { get; private set; }
+    private static OptionsUI instance;
+    public static OptionsUI Instance {
+        get {
+            if (instance == null) {
+                instance = FindFirstObjectByType<OptionsUI>(FindObjectsInactive.Include);
+            }
+            return instance;
+        }
+        private set {
+            instance = value;
+        }
+    }
 
     private const string PLAYER_PREFS_SOUND_EFFECTS_VOLUME = "SoundEffectsVolume";
     private const string PLAYER_PREFS_MUSIC_VOLUME = "MusicVolume";
@@ -60,7 +71,11 @@ public class OptionsUI : MonoBehaviour {
 
 
     private void Awake() {
-        Instance = this;
+        if (instance != null && instance != this) {
+            Destroy(gameObject);
+            return;
+        }
+        instance = this;
 
         if (soundEffectsSlider != null) {
             soundEffectsSlider.onValueChanged.AddListener((float val) => {
