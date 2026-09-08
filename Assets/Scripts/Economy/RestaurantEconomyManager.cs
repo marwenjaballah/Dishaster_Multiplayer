@@ -269,6 +269,10 @@ public class RestaurantEconomyManager : NetworkBehaviour {
     public int GetCurrentBillCycle() => currentBillCycle.Value;
     public bool IsBankrupt() => isBankrupt.Value;
     public int GetWrongOrderFine() => wrongOrderFine;
+    public float GetCrisisDurationTimer() => crisisDurationTimer;
+    public float GetCrisisGracePeriod() => crisisGracePeriod;
+    public float GetCrisisPenaltyTimer() => crisisPenaltyTimer;
+    public float GetCrisisPenaltyInterval() => crisisPenaltyInterval;
 
     public override void OnDestroy() {
         base.OnDestroy();

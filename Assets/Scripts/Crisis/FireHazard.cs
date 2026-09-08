@@ -145,7 +145,7 @@ public class FireHazard : MonoBehaviour, IHasProgress {
         lRect.anchoredPosition = new Vector3(0, 18, 0);
 
         var tmp = labelObj.AddComponent<TMPro.TextMeshProUGUI>();
-        tmp.text = "🔥 FIRE 🔥";
+        tmp.text = "FIRE";
         tmp.alignment = TMPro.TextAlignmentOptions.Center;
         tmp.fontSize = 20;
         tmp.fontStyle = TMPro.FontStyles.Bold;
