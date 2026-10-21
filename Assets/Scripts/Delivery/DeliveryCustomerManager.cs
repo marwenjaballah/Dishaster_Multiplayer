@@ -169,6 +169,7 @@ public class DeliveryCustomerManager : NetworkBehaviour
         if (!IsServer) return;
         if (_waypointGraph == null) return;
         if (!KitchenGameManager.Instance.IsGamePlaying()) return;
+        if (DayLoopManager.Instance != null && !DayLoopManager.Instance.CanAcceptNewOrders()) return;
 
         float currentInterval = spawnInterval;
         if (Difficulty.DifficultyManager.Instance != null)

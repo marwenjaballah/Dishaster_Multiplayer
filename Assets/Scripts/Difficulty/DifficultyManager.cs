@@ -236,6 +236,9 @@ namespace Difficulty
             if (!IsServer) return;
             if (KitchenGameManager.Instance == null || !KitchenGameManager.Instance.IsGamePlaying()) return;
 
+            // When DayLoopManager is active, it controls shift and tier advancement
+            if (DayLoopManager.Instance != null) return;
+
             _elapsedPlayingTime += Time.deltaTime;
             EvaluateDifficultyProgression();
         }
@@ -284,6 +287,12 @@ namespace Difficulty
                 tierTitle = settings.tierName,
                 tierDescription = settings.tierDescription
             });
+        }
+
+        public void ForceSetDifficultyTier(DifficultyTier tier)
+        {
+            if (!IsServer) return;
+            _currentTier.Value = tier;
         }
 
         // ── Public Getters for Subsystems ─────────────────────────────────────────

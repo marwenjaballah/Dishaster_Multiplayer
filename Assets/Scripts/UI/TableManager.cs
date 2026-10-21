@@ -59,6 +59,7 @@ public class TableManager : NetworkBehaviour {
         if (IsServer) {
             // Subscribe to game state changes to kick off initial table orders when game starts playing
             KitchenGameManager.Instance.OnStateChanged += KitchenGameManager_OnStateChanged;
+            DayLoopManager.OnAnyDayPhaseChanged += DayLoopManager_OnAnyDayPhaseChanged;
         }
     }
 
@@ -89,6 +90,32 @@ public class TableManager : NetworkBehaviour {
                 CustomerTable table = kvp.Value;
                 if (!table.HasActiveOrder()) {
                     float delay = initialGameStartDelay + (scheduledCount * staggerDelay);
+                    ScheduleNewOrderForTable(table.GetTableId(), delay);
+                    scheduledCount++;
+                }
+            }
+        }
+    }
+
+    private void DayLoopManager_OnAnyDayPhaseChanged(object sender, DayLoopManager.OnDayPhaseChangedEventArgs e) {
+        if (!IsServer) return;
+        if (e.newPhase == DayLoopManager.DayPhase.Shift1_MorningPrep) {
+            int maxInitial = maxConcurrentOrders;
+            float staggerDelay = 5f;
+
+            if (Difficulty.DifficultyManager.Instance != null) {
+                var diff = Difficulty.DifficultyManager.Instance.CurrentSettings;
+                maxInitial = diff.maxConcurrentTableOrders;
+                staggerDelay = Mathf.Max(3f, diff.tableMinRespawnDelay * 0.5f);
+            }
+
+            int scheduledCount = 0;
+            foreach (var kvp in tableRegistry) {
+                if (scheduledCount >= maxInitial) break;
+
+                CustomerTable table = kvp.Value;
+                if (!table.HasActiveOrder() && !tableRespawnCoroutines.ContainsKey(table.GetTableId())) {
+                    float delay = 2f + (scheduledCount * staggerDelay);
                     ScheduleNewOrderForTable(table.GetTableId(), delay);
                     scheduledCount++;
                 }
@@ -209,6 +236,11 @@ public class TableManager : NetworkBehaviour {
         // Wait if the game is paused or not currently playing
         while (KitchenGameManager.Instance != null && !KitchenGameManager.Instance.IsGamePlaying()) {
             yield return new WaitForSeconds(0.5f);
+        }
+
+        // Do not spawn new table orders during closing or after-hours
+        if (DayLoopManager.Instance != null && !DayLoopManager.Instance.CanAcceptNewOrders()) {
+            yield break;
         }
 
         int effectiveMaxOrders = maxConcurrentOrders;
@@ -406,6 +438,13 @@ public class TableManager : NetworkBehaviour {
 
         if (activeOrders != null) {
             activeOrders.OnListChanged -= OnActiveOrdersChanged;
+        }
+
+        if (IsServer) {
+            if (KitchenGameManager.Instance != null) {
+                KitchenGameManager.Instance.OnStateChanged -= KitchenGameManager_OnStateChanged;
+            }
+            DayLoopManager.OnAnyDayPhaseChanged -= DayLoopManager_OnAnyDayPhaseChanged;
         }
     }
 

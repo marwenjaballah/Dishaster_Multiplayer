@@ -126921,6 +126921,8 @@ GameObject:
   - component: {fileID: 964913856}
   - component: {fileID: 964913855}
   - component: {fileID: 964913857}
+  - component: {fileID: 964913859}
+  - component: {fileID: 964913858}
   m_Layer: 0
   m_Name: RestaurantEconomyManager
   m_TagString: Untagged
@@ -126989,9 +126991,45 @@ MonoBehaviour:
   initialBillAmount: 60
   billInflationRate: 1.35
   warningTimeBeforeBill: 15
+  maxDebtStrikes: 1
   wrongOrderFine: 15
   crisisGracePeriod: 10
   crisisPenaltyInterval: 10
+--- !u!114 &964913858
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 964913854}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14061ded9bdb62242b60393fa5854ade, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NightMarketManager
+  ShowTopMostFoldoutHeaderGroup: 1
+--- !u!114 &964913859
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 964913854}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 116b96337f3936e4d972d5ea9095ddba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DayLoopManager
+  ShowTopMostFoldoutHeaderGroup: 1
+  dayStartDuration: 4
+  morningShiftDuration: 75
+  lunchRushDuration: 90
+  afternoonShiftDuration: 60
+  dinnerRushDuration: 90
+  closingTimeDuration: 30
+  baseDailyRent: 150
+  rentInflationRate: 1.2
+  maxDebtStrikes: 2
 --- !u!1 &965311209
 GameObject:
   m_ObjectHideFlags: 0

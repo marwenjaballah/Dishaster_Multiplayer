@@ -180,6 +180,20 @@ public class KitchenCrisisManager : NetworkBehaviour {
         if (targetCounter == null) return;
 
         IgniteCounterClientRpc(targetCounter.NetworkObject);
+
+        if (NightMarketManager.Instance != null && NightMarketManager.Instance.HasUpgrade(NightMarketManager.UpgradeType.FireSprinklerSystem)) {
+            StartCoroutine(AutoSprinklerExtinguishRoutine(targetCounter.NetworkObject));
+        }
+    }
+
+    private IEnumerator AutoSprinklerExtinguishRoutine(NetworkObjectReference counterRef) {
+        yield return new WaitForSeconds(5.0f);
+        if (counterRef.TryGet(out NetworkObject counterNetObj)) {
+            FireHazard fireHazard = counterNetObj.GetComponent<FireHazard>();
+            if (fireHazard != null && fireHazard.IsBurning()) {
+                ExtinguishCounterClientRpc(counterRef);
+            }
+        }
     }
 
     [Rpc(SendTo.ClientsAndHost)]

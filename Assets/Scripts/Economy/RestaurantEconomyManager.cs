@@ -121,16 +121,18 @@ public class RestaurantEconomyManager : NetworkBehaviour {
         if (isBankrupt.Value) return;
         if (KitchenGameManager.Instance == null || !KitchenGameManager.Instance.IsGamePlaying()) return;
 
-        // Bill cycle countdown
-        nextBillTimer.Value -= Time.deltaTime;
+        // Bill cycle countdown (used only when standalone, DayLoopManager manages daily rent)
+        if (DayLoopManager.Instance == null) {
+            nextBillTimer.Value -= Time.deltaTime;
 
-        if (nextBillTimer.Value <= warningTimeBeforeBill && !warningFiredThisCycle) {
-            warningFiredThisCycle = true;
-            NotifyBillWarningRpc();
-        }
+            if (nextBillTimer.Value <= warningTimeBeforeBill && !warningFiredThisCycle) {
+                warningFiredThisCycle = true;
+                NotifyBillWarningRpc();
+            }
 
-        if (nextBillTimer.Value <= 0f) {
-            ProcessBillPayment();
+            if (nextBillTimer.Value <= 0f) {
+                ProcessBillPayment();
+            }
         }
 
         // Crisis tracking
@@ -178,6 +180,10 @@ public class RestaurantEconomyManager : NetworkBehaviour {
         int totalEarnings = basePayout + tip;
         currentBalance.Value += totalEarnings;
 
+        if (DayLoopManager.Instance != null) {
+            DayLoopManager.Instance.RecordOrderCompleted(basePayout, tip);
+        }
+
         SubmitCustomerReview(reviewStars, tip > 0 ? "Fast & Delicious!" : "Good Food");
     }
 
@@ -185,6 +191,9 @@ public class RestaurantEconomyManager : NetworkBehaviour {
         if (!IsServer) return;
 
         currentBalance.Value -= wrongOrderFine;
+        if (DayLoopManager.Instance != null) {
+            DayLoopManager.Instance.RecordFine(wrongOrderFine);
+        }
         SubmitCustomerReview(1.0f, "Wrong Dish Rejected!");
     }
 
@@ -193,6 +202,9 @@ public class RestaurantEconomyManager : NetworkBehaviour {
 
         int penaltyAmount = fine >= 0 ? fine : wrongOrderFine;
         currentBalance.Value -= penaltyAmount;
+        if (DayLoopManager.Instance != null) {
+            DayLoopManager.Instance.RecordFine(penaltyAmount);
+        }
 
         SubmitCustomerReview(1.0f, "Left Due To Expired Service!");
     }
@@ -238,6 +250,29 @@ public class RestaurantEconomyManager : NetworkBehaviour {
                     KitchenGameManager.Instance.TriggerBankruptcyGameOver();
                 }
             }
+        }
+    }
+
+    public void DeductRentAtEndOfDay(int rentAmount) {
+        if (!IsServer) return;
+        currentBalance.Value -= rentAmount;
+        NotifyBillPaidRpc(rentAmount, currentBillCycle.Value, currentBalance.Value >= 0);
+        currentBillCycle.Value++;
+    }
+
+    public bool DeductBalance(int amount) {
+        if (!IsServer) return false;
+        if (currentBalance.Value < amount) return false;
+        currentBalance.Value -= amount;
+        return true;
+    }
+
+    public void TriggerBankruptcy() {
+        if (!IsServer) return;
+        isBankrupt.Value = true;
+        NotifyBankruptcyRpc();
+        if (KitchenGameManager.Instance != null) {
+            KitchenGameManager.Instance.TriggerBankruptcyGameOver();
         }
     }
 
@@ -292,6 +327,10 @@ public class RestaurantEconomyManager : NetworkBehaviour {
     }
 
     // ===== GETTERS =====
+
+    public int CurrentBalance => currentBalance.Value;
+    public float CurrentStarRating => currentStarRating.Value;
+    public int TotalReviewsCount => totalReviewsCount.Value;
 
     public int GetCurrentBalance() => currentBalance.Value;
     public float GetStarRating() => currentStarRating.Value;

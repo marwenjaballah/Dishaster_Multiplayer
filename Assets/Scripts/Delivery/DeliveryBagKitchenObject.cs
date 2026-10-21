@@ -8,7 +8,9 @@ using UnityEngine;
 /// </summary>
 public class DeliveryBagKitchenObject : KitchenObject
 {
-    public const int MAX_PLATES = 3;
+    public const int DEFAULT_MAX_PLATES = 3;
+    public const int UPGRADED_MAX_PLATES = 5;
+    public int MaxPlates => (NightMarketManager.Instance != null && NightMarketManager.Instance.HasUpgrade(NightMarketManager.UpgradeType.HeavyDutyDeliveryBag)) ? UPGRADED_MAX_PLATES : DEFAULT_MAX_PLATES;
 
     public event EventHandler OnBagContentsChanged;
 
@@ -16,7 +18,7 @@ public class DeliveryBagKitchenObject : KitchenObject
     private readonly List<List<KitchenObjectSO>> _storedDishes = new();
 
     public int StoredCount => _storedDishes.Count;
-    public bool CanAddPlate => _storedDishes.Count < MAX_PLATES;
+    public bool CanAddPlate => _storedDishes.Count < MaxPlates;
 
     /// <summary>
     /// Attempts to add a PlateKitchenObject to the bag.

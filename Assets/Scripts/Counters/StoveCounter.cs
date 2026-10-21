@@ -81,7 +81,11 @@ public class StoveCounter : BaseCounter, IHasProgress {
                 case State.Idle:
                     break;
                 case State.Frying:
-                    fryingTimer.Value += Time.deltaTime;
+                    float cookSpeed = 1f;
+                    if (NightMarketManager.Instance != null && NightMarketManager.Instance.HasUpgrade(NightMarketManager.UpgradeType.SpeedyStove)) {
+                        cookSpeed = 1.30f;
+                    }
+                    fryingTimer.Value += Time.deltaTime * cookSpeed;
 
                     if (fryingTimer.Value > fryingRecipeSO.fryingTimerMax) {
                         // Fried

@@ -8,7 +8,7 @@
 
 ```
 Milestone A: Architecture Stabilization  [████████████████████] 100%
-Milestone B: Vertical Slice (Day Loop)   [░░░░░░░░░░░░░░░░░░░░]   0%
+Milestone B: Vertical Slice (Day Loop)   [███████░░░░░░░░░░░░░]  33%
 Milestone C: Playtesting & Balancing     [░░░░░░░░░░░░░░░░░░░░]   0%
 Milestone D: Content & City Expansion    [░░░░░░░░░░░░░░░░░░░░]   0%
 Milestone E: Hardening & Commercial QA   [░░░░░░░░░░░░░░░░░░░░]   0%
@@ -44,14 +44,14 @@ Milestone E: Hardening & Commercial QA   [░░░░░░░░░░░░�
 
 ### Milestone B: Vertical Slice (Flagship Gameplay Loop)
 
-| Task ID | Type | Priority | Description | Assignee | Status |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| `VRT-001` | Architecture | P0 | Formalize the **Day Loop**: Day Start $\rightarrow$ 4 Shifts $\rightarrow$ Closing Time $\rightarrow$ Summary $\rightarrow$ Night Market | Team | 📋 `BACKLOG` |
-| `VRT-002` | Gameplay | P0 | Finite Plate Economy & **Dishwashing Sink**: Customers leave dirty plates, player scrubs at sink | Team | 📋 `BACKLOG` |
-| `VRT-003` | Art / Rig | P1 | Replace 2-sphere prototype player mesh with stylized Low-Poly Humanoid Rig & animations | Team | 📋 `BACKLOG` |
-| `VRT-004` | Level Design | P1 | Level 1: "The Sunny Side Diner" architectural overhaul with wide aisles and pass-through window | Team | 📋 `BACKLOG` |
-| `VRT-005` | Economy | P1 | Night Market Shop UI: spend daily earnings on 3 initial upgrades (Turbo Scooter, Auto-Chop, Sprinkler) | Team | 📋 `BACKLOG` |
-| `VRT-006` | Social | P2 | Co-op Ping / Emote Wheel ("Need Plates!", "Order Up!", "Going City") for rapid communication | Team | 📋 `BACKLOG` |
+| Task ID | Type | Priority | Description | Assignee | Status | Verification |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| `VRT-001` | Architecture | P0 | Formalize the **Day Loop**: Day Start $\rightarrow$ 4 Shifts $\rightarrow$ Closing Time $\rightarrow$ Summary $\rightarrow$ Night Market | Agent | ✅ `COMPLETED` | `DayLoopManager.cs` server-authoritative state machine with `DayLoopHUDUI`, `DaySummaryUI`, synced to `DifficultyManager` and `TableManager` |
+| `VRT-002` | Gameplay | P0 | Finite Plate Economy & **Dishwashing Sink**: Customers leave dirty plates, player scrubs at sink | Team | 📋 `BACKLOG` | Dirty plate prefab $\rightarrow$ sink scrubbing station $\rightarrow$ clean plate rack |
+| `VRT-003` | Art / Rig | P1 | Replace 2-sphere prototype player mesh with stylized Low-Poly Humanoid Rig & animations | Team | 📋 `BACKLOG` | Low-poly humanoid avatar, walk/run/carry/chop blend tree |
+| `VRT-004` | Level Design | P1 | Level 1: "The Sunny Side Diner" architectural overhaul with wide aisles and pass-through window | Team | 📋 `BACKLOG` | Service pass, booth tables, scooter dock |
+| `VRT-005` | Economy | P1 | Night Market Shop UI: spend daily earnings on 6 upgrades (Turbo Scooter, Auto-Chop, Sprinkler, Bag, Shoes, Stove) | Agent | ✅ `COMPLETED` | `NightMarketManager.cs` catalog & `NightMarketShopUI.cs`, server-authoritative purchases wired to all 6 gameplay mechanics |
+| `VRT-006` | Social | P2 | Co-op Ping / Emote Wheel ("Need Plates!", "Order Up!", "Going City") for rapid communication | Team | 📋 `BACKLOG` | Radial ping wheel with sound effects & world indicators |
 
 ---
 
@@ -90,3 +90,4 @@ Milestone E: Hardening & Commercial QA   [░░░░░░░░░░░░�
 ## 📝 Change & Verification Log
 * **2026-10-21:** Task board initialized. `STAB-001` (MCP Setup) and `STAB-002` (Governance Docs) completed.
 * **2026-10-21:** Milestone A (`STAB-003` through `STAB-009`) completed. 100% of Netcode RPCs migrated to Unity 6 syntax, zero memory leaks across 10 static classes, zero compiler errors and 0 warnings verified via live Unity Editor MCP bridge. Ready for Milestone B (`VRT-001`).
+* **2026-10-21:** Milestone B (`VRT-001` & `VRT-005`) completed. Implemented server-authoritative `DayLoopManager.cs` state machine (Morning $\rightarrow$ Lunch Rush $\rightarrow$ Afternoon $\rightarrow$ Dinner Rush $\rightarrow$ Closing Time $\rightarrow$ Day Summary $\rightarrow$ Night Market), HUD clock (`DayLoopHUDUI`), end-of-day statement (`DaySummaryUI`), `NightMarketManager.cs` upgrade catalog (6 upgrades), and `NightMarketShopUI`. Saved in `GameSceneTableService.unity`. Zero errors, zero warnings.

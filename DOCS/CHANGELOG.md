@@ -8,6 +8,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0-vertical-slice] - 2026-10-21
+*Milestone B: Day Loop Architecture & Night Market Upgrade Shop.*
+
+### Added
+- **Day Loop State Machine (`DayLoopManager.cs`):** Server-authoritative system driving Day Start $\rightarrow$ 4 Shifts (Morning Prep, Lunch Rush, Afternoon Orders, Dinner Rush) $\rightarrow$ Closing Time $\rightarrow$ Day Summary $\rightarrow$ Night Market $\rightarrow$ Day N+1.
+- **Dynamic Rent & Grace Period:** Daily rent formula $150 \times 1.20^{\text{day}-1}$, calculated and billed once per day at closing with a 2-strike debt bankruptcy threshold.
+- **Night Market Equipment Shop (`NightMarketManager.cs`):** Server-authoritative catalog supporting 6 game-changing equipment upgrades:
+  1. *Turbo Electric Scooter:* +35% top speed and faster acceleration.
+  2. *Auto-Chop Knife:* 2x chopping speed on all cutting counters.
+  3. *Kitchen Sprinklers:* Auto-extinguishes grease fires within 5 seconds.
+  4. *Heavy-Duty Thermal Bag:* Expands bag capacity from 3 to 5 meals.
+  5. *Non-Slip Chef Shoes:* Full immunity to water leak slowdown and slips.
+  6. *Turbo Induction Stove:* Patties and ingredients cook 30% faster.
+- **HUD & Shop UIs:**
+  - `DayLoopHUDUI.cs`: Top banner with day number, current shift name, and remaining shift countdown progress bar.
+  - `DaySummaryUI.cs`: End-of-day financial breakdown (Revenue, Tips, Rent, Fines, Net Profit, Dishes Served, 1-3 Stars rating, and Debt Warning).
+  - `NightMarketShopUI.cs`: Full-screen equipment shop overlay with live balance tracking, purchase buttons, and "Start Next Day" action.
+
+### Changed
+- **Pacing & Order Spawning:** Synced `TableManager.cs` and `DeliveryCustomerManager.cs` to `DayLoopManager.CanAcceptNewOrders()`. Spawning pauses automatically during Closing Time and after-hours.
+- **Gameplay Upgrades Wired:** Upgrades dynamically modulate `ElectricScooter.cs`, `CuttingCounter.cs`, `StoveCounter.cs`, `DeliveryBagKitchenObject.cs`, `KitchenCrisisManager.cs`, and `WaterLeakHazard.cs`.
+
 ## [0.3.0-stabilization] - 2026-10-21
 *Milestone A: Architecture Stabilization, Technical Debt Paydown & Netcode Modernization.*
 

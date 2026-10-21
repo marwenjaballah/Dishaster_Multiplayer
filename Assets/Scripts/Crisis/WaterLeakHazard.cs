@@ -209,6 +209,10 @@ public class WaterLeakHazard : NetworkBehaviour, IHasProgress {
 
         // Apply slowdown to local player if standing anywhere inside the expanding puddle range
         if (Player.LocalInstance != null) {
+            if (NightMarketManager.Instance != null && NightMarketManager.Instance.HasUpgrade(NightMarketManager.UpgradeType.NonSlipShoes)) {
+                return;
+            }
+
             Vector3 puddleWorldPos = transform.TransformPoint(puddleLocalOffset);
             puddleWorldPos.y = Player.LocalInstance.transform.position.y;
             float distToPuddle = Vector3.Distance(Player.LocalInstance.transform.position, puddleWorldPos);
@@ -221,6 +225,7 @@ public class WaterLeakHazard : NetworkBehaviour, IHasProgress {
 
     private void OnTriggerStay(Collider other) {
         if (!isLeaking.Value) return;
+        if (NightMarketManager.Instance != null && NightMarketManager.Instance.HasUpgrade(NightMarketManager.UpgradeType.NonSlipShoes)) return;
 
         // Fallback for trigger colliders
         Player player = other.GetComponent<Player>();

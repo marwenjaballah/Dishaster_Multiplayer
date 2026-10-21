@@ -89,7 +89,11 @@ public class CuttingCounter : BaseCounter, IHasProgress {
 
     [Rpc(SendTo.ClientsAndHost)]
     private void CutObjectClientRpc() {
-        cuttingProgress++;
+        int increment = 1;
+        if (NightMarketManager.Instance != null && NightMarketManager.Instance.HasUpgrade(NightMarketManager.UpgradeType.AutoChopStation)) {
+            increment = 2;
+        }
+        cuttingProgress += increment;
 
         OnCut?.Invoke(this, EventArgs.Empty);
         OnAnyCut?.Invoke(this, EventArgs.Empty);
