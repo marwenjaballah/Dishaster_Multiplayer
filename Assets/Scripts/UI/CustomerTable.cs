@@ -14,7 +14,7 @@ public class CustomerTable : BaseCounter {
     public static event EventHandler OnAnyTableDeliverySuccess;
     public static event EventHandler OnAnyTableDeliveryFailed;
 
-    public static void ResetStaticData() {
+    public static new void ResetStaticData() {
         OnAnyTableDeliverySuccess = null;
         OnAnyTableDeliveryFailed = null;
     }
@@ -172,7 +172,7 @@ public class CustomerTable : BaseCounter {
         }
     }
 
-    [ServerRpc(RequireOwnership = false)]
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
     private void DeliverToTableServerRpc(ulong tableNetworkId, NetworkObjectReference plateRef) {
         if (!plateRef.TryGet(out NetworkObject plateNetworkObject)) return;
 
@@ -280,28 +280,28 @@ public class CustomerTable : BaseCounter {
         }
     }
 
-    [ClientRpc]
+    [Rpc(SendTo.ClientsAndHost)]
     private void ShowCorrectDeliveryFeedbackClientRpc() {
         OnAnyTableDeliverySuccess?.Invoke(this, EventArgs.Empty);
         ShowDeliveryResult(true);
         Debug.Log($"SUCCESS: Correct delivery to Table {displayNumber}!");
     }
 
-    [ClientRpc]
+    [Rpc(SendTo.ClientsAndHost)]
     private void ShowWrongDeliveryFeedbackClientRpc() {
         OnAnyTableDeliveryFailed?.Invoke(this, EventArgs.Empty);
         ShowDeliveryResult(false);
         Debug.Log($"FAILED: Wrong delivery to Table {displayNumber}! Order canceled.");
     }
 
-    [ClientRpc]
+    [Rpc(SendTo.ClientsAndHost)]
     private void ShowExpiredOrderFeedbackClientRpc() {
         OnAnyTableDeliveryFailed?.Invoke(this, EventArgs.Empty);
         ShowDeliveryResult(false);
         Debug.Log($"EXPIRED: Order expired at Table {displayNumber}!");
     }
 
-    [ClientRpc]
+    [Rpc(SendTo.ClientsAndHost)]
     private void ShowNoOrderFeedbackClientRpc() {
         Debug.Log($"Table {displayNumber} has no active order");
     }

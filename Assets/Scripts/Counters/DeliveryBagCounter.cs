@@ -44,7 +44,7 @@ public class DeliveryBagCounter : BaseCounter
                 {
                     if (bagOnCounter.TryAddPlate(plate))
                     {
-                        KitchenObject.DestroyKitchenObject(plate);
+                        return;
                     }
                 }
             }
@@ -55,7 +55,7 @@ public class DeliveryBagCounter : BaseCounter
                 {
                     if (playerBag.TryAddPlate(plateOnCounter))
                     {
-                        KitchenObject.DestroyKitchenObject(plateOnCounter);
+                        return;
                     }
                 }
             }

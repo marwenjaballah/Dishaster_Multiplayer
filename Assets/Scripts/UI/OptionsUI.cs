@@ -12,7 +12,7 @@ public class OptionsUI : MonoBehaviour {
     public static OptionsUI Instance {
         get {
             if (instance == null) {
-                instance = FindFirstObjectByType<OptionsUI>(FindObjectsInactive.Include);
+                instance = FindAnyObjectByType<OptionsUI>(FindObjectsInactive.Include);
             }
             return instance;
         }

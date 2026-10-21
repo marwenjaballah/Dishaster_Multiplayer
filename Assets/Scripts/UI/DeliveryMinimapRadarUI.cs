@@ -110,7 +110,7 @@ namespace UI
             }
 
             // Auto-detect center of dining tables & kitchen counters
-            var tables = FindObjectsByType<CustomerTable>(FindObjectsSortMode.None);
+            var tables = FindObjectsByType<CustomerTable>();
             if (tables.Length > 0)
             {
                 Vector3 center = Vector3.zero;
@@ -120,7 +120,7 @@ namespace UI
                 return;
             }
 
-            var counters = FindObjectsByType<BaseCounter>(FindObjectsSortMode.None);
+            var counters = FindObjectsByType<BaseCounter>();
             if (counters.Length > 0)
             {
                 Vector3 center = Vector3.zero;

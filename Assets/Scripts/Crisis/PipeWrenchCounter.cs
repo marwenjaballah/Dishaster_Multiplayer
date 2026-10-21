@@ -14,6 +14,10 @@ public class PipeWrenchCounter : BaseCounter {
 
     public static event EventHandler OnAnyWrenchPickedUp;
     public static event EventHandler OnAnyWrenchReturned;
+    new public static void ResetStaticData() {
+        OnAnyWrenchPickedUp = null;
+        OnAnyWrenchReturned = null;
+    }
 
     public event EventHandler OnWrenchPickedUp;
     public event EventHandler OnWrenchReturned;
@@ -60,7 +64,7 @@ public class PipeWrenchCounter : BaseCounter {
         }
     }
 
-    [ServerRpc(RequireOwnership = false)]
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
     private void InteractPickupServerRpc(NetworkObjectReference playerNetworkObjectReference) {
         if (!hasWrenchOnStand.Value) return;
 
@@ -74,13 +78,13 @@ public class PipeWrenchCounter : BaseCounter {
         }
     }
 
-    [ClientRpc]
+    [Rpc(SendTo.ClientsAndHost)]
     private void InteractPickupClientRpc() {
         OnWrenchPickedUp?.Invoke(this, EventArgs.Empty);
         OnAnyWrenchPickedUp?.Invoke(this, EventArgs.Empty);
     }
 
-    [ServerRpc(RequireOwnership = false)]
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
     private void InteractReturnServerRpc(NetworkObjectReference kitchenObjectNetworkObjectReference) {
         if (hasWrenchOnStand.Value) return;
 
@@ -94,7 +98,7 @@ public class PipeWrenchCounter : BaseCounter {
         }
     }
 
-    [ClientRpc]
+    [Rpc(SendTo.ClientsAndHost)]
     private void InteractReturnClientRpc() {
         OnWrenchReturned?.Invoke(this, EventArgs.Empty);
         OnAnyWrenchReturned?.Invoke(this, EventArgs.Empty);

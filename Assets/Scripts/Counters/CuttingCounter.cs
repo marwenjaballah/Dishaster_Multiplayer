@@ -56,12 +56,12 @@ public class CuttingCounter : BaseCounter, IHasProgress {
         }
     }
 
-    [ServerRpc(RequireOwnership = false)]
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
     private void InteractLogicPlaceObjectOnCounterServerRpc() {
         InteractLogicPlaceObjectOnCounterClientRpc();
     }
 
-    [ClientRpc]
+    [Rpc(SendTo.ClientsAndHost)]
     private void InteractLogicPlaceObjectOnCounterClientRpc() {
         cuttingProgress = 0;
 
@@ -79,7 +79,7 @@ public class CuttingCounter : BaseCounter, IHasProgress {
         }
     }
 
-    [ServerRpc(RequireOwnership = false)]
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
     private void CutObjectServerRpc() {
         if (HasKitchenObject() && HasRecipeWithInput(GetKitchenObject().GetKitchenObjectSO())) {
             // There is a KitchenObject here AND it can be cut
@@ -87,7 +87,7 @@ public class CuttingCounter : BaseCounter, IHasProgress {
         }
     }
 
-    [ClientRpc]
+    [Rpc(SendTo.ClientsAndHost)]
     private void CutObjectClientRpc() {
         cuttingProgress++;
 
@@ -102,7 +102,7 @@ public class CuttingCounter : BaseCounter, IHasProgress {
 
     }
 
-    [ServerRpc(RequireOwnership = false)]
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
     private void TestCuttingProgressDoneServerRpc() {
         if (HasKitchenObject() && HasRecipeWithInput(GetKitchenObject().GetKitchenObjectSO())) {
             // There is a KitchenObject here AND it can be cut

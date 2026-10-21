@@ -14,6 +14,9 @@ using UnityEngine;
 public class FuseBoxCounter : BaseCounter, IHasProgress {
 
     public static event EventHandler OnAnyFuseBoxSpawned;
+    new public static void ResetStaticData() {
+        OnAnyFuseBoxSpawned = null;
+    }
 
     // ===== EVENTS =====
     public event EventHandler<IHasProgress.OnProgressChangedEventArgs> OnProgressChanged;
@@ -120,7 +123,7 @@ public class FuseBoxCounter : BaseCounter, IHasProgress {
         // 'F' key does not interact with the fuse box
     }
 
-    [ServerRpc(RequireOwnership = false)]
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
     private void AdvanceRepairServerRpc() {
         if (!IsFuseTripped()) return;
 
@@ -137,7 +140,7 @@ public class FuseBoxCounter : BaseCounter, IHasProgress {
         currentClicks.Value = 0;
     }
 
-    [ClientRpc]
+    [Rpc(SendTo.ClientsAndHost)]
     private void PlaySparksClientRpc() {
         if (sparkParticleSystem != null) {
             sparkParticleSystem.Play();

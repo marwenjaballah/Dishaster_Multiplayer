@@ -20,6 +20,7 @@ namespace SevenDays.World
 
         [Header("Road Settings")]
         [SerializeField] private float roadWidth = 8f;
+        public float RoadWidth => roadWidth;
         [SerializeField] private int mainRoadInterval = 3; // Every N blocks
 
         [Header("Block & Lot Variation")]

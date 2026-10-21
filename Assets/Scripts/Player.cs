@@ -13,6 +13,7 @@ public class Player : NetworkBehaviour, IKitchenObjectParent {
 
     public static void ResetStaticData() {
         OnAnyPlayerSpawned = null;
+        OnAnyPickedSomething = null;
     }
 
 
@@ -88,12 +89,12 @@ public class Player : NetworkBehaviour, IKitchenObjectParent {
         if (clientId == OwnerClientId && HasKitchenObject()) {
             KitchenObject heldObject = GetKitchenObject();
             if (heldObject is PortablePipeWrench) {
-                PipeWrenchCounter pipeWrenchCounter = FindFirstObjectByType<PipeWrenchCounter>();
+                PipeWrenchCounter pipeWrenchCounter = FindAnyObjectByType<PipeWrenchCounter>();
                 if (pipeWrenchCounter != null) {
                     pipeWrenchCounter.RestoreWrench();
                 }
             } else if (heldObject is PortableFireExtinguisher) {
-                FireExtinguisherCounter fireExtinguisherCounter = FindFirstObjectByType<FireExtinguisherCounter>();
+                FireExtinguisherCounter fireExtinguisherCounter = FindAnyObjectByType<FireExtinguisherCounter>();
                 if (fireExtinguisherCounter != null) {
                     fireExtinguisherCounter.RestoreExtinguisher();
                 }

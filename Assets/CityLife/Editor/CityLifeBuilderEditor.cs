@@ -40,7 +40,7 @@ namespace CityLife.Editor
         public static void WireCurrentScene(bool generateCity = false)
         {
             // Find CityGenerator in current scene
-            var cityGen = Object.FindFirstObjectByType<SevenDays.World.CityGenerator>();
+            var cityGen = Object.FindAnyObjectByType<SevenDays.World.CityGenerator>();
             if (cityGen == null)
             {
                 // Fallback to TestWorld if present
@@ -48,7 +48,7 @@ namespace CityLife.Editor
                 if (File.Exists(scenePath))
                 {
                     EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
-                    cityGen = Object.FindFirstObjectByType<SevenDays.World.CityGenerator>();
+                    cityGen = Object.FindAnyObjectByType<SevenDays.World.CityGenerator>();
                 }
             }
 

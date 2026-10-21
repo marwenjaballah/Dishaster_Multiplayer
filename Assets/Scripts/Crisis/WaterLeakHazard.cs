@@ -240,7 +240,7 @@ public class WaterLeakHazard : NetworkBehaviour, IHasProgress {
         InteractRepairServerRpc();
     }
 
-    [ServerRpc(RequireOwnership = false)]
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
     private void InteractRepairServerRpc() {
         if (!isLeaking.Value) return;
 

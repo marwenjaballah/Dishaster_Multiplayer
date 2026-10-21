@@ -53,7 +53,7 @@ public class DeliveryManager : NetworkBehaviour {
         }
     }
 
-    [ClientRpc]
+    [Rpc(SendTo.ClientsAndHost)]
     private void SpawnNewWaitingRecipeClientRpc(int waitingRecipeSOIndex) {
         RecipeSO waitingRecipeSO = recipeListSO.recipeSOList[waitingRecipeSOIndex];
 
@@ -99,23 +99,31 @@ public class DeliveryManager : NetworkBehaviour {
         DeliverIncorrectRecipeServerRpc();
     }
 
-    [ServerRpc(RequireOwnership = false)]
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
     private void DeliverIncorrectRecipeServerRpc() {
         DeliverIncorrectRecipeClientRpc();
     }
 
-    [ClientRpc]
+    [Rpc(SendTo.ClientsAndHost)]
     private void DeliverIncorrectRecipeClientRpc() {
         OnRecipeFailed?.Invoke(this, EventArgs.Empty);
     }
 
-    [ServerRpc(RequireOwnership = false)]
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
     private void DeliverCorrectRecipeServerRpc(int waitingRecipeSOListIndex) {
+        if (waitingRecipeSOListIndex < 0 || waitingRecipeSOListIndex >= waitingRecipeSOList.Count) {
+            return;
+        }
+
         DeliverCorrectRecipeClientRpc(waitingRecipeSOListIndex);
     }
 
-    [ClientRpc]
+    [Rpc(SendTo.ClientsAndHost)]
     private void DeliverCorrectRecipeClientRpc(int waitingRecipeSOListIndex) {
+        if (waitingRecipeSOListIndex < 0 || waitingRecipeSOListIndex >= waitingRecipeSOList.Count) {
+            return;
+        }
+
         successfulRecipesAmount++;
 
         waitingRecipeSOList.RemoveAt(waitingRecipeSOListIndex);
@@ -139,7 +147,7 @@ public class DeliveryManager : NetworkBehaviour {
         TriggerDeliverySuccessClientRpc();
     }
 
-    [ClientRpc]
+    [Rpc(SendTo.ClientsAndHost)]
     private void TriggerDeliverySuccessClientRpc() {
         successfulRecipesAmount++;
         OnRecipeCompleted?.Invoke(this, EventArgs.Empty);
@@ -150,7 +158,7 @@ public class DeliveryManager : NetworkBehaviour {
         TriggerDeliveryFailedClientRpc();
     }
 
-    [ClientRpc]
+    [Rpc(SendTo.ClientsAndHost)]
     private void TriggerDeliveryFailedClientRpc() {
         OnRecipeFailed?.Invoke(this, EventArgs.Empty);
     }
@@ -159,7 +167,7 @@ public class DeliveryManager : NetworkBehaviour {
     // Called by TableManager (server-side). ClientRpcs so events fire on all clients
     // – sound, delivery result popup, and score all work automatically.
 
-    [ClientRpc]
+    [Rpc(SendTo.ClientsAndHost)]
     public void NotifyTableServiceRecipeSpawnedClientRpc(int recipeSOIndex) {
         if (recipeListSO != null && recipeSOIndex >= 0 && recipeSOIndex < recipeListSO.recipeSOList.Count) {
             RecipeSO waitingRecipeSO = recipeListSO.recipeSOList[recipeSOIndex];
@@ -168,7 +176,7 @@ public class DeliveryManager : NetworkBehaviour {
         OnRecipeSpawned?.Invoke(this, EventArgs.Empty);
     }
 
-    [ClientRpc]
+    [Rpc(SendTo.ClientsAndHost)]
     public void NotifyTableServiceSuccessClientRpc(string tableId, int recipeSOIndex) {
         successfulRecipesAmount++;
         Debug.Log($"[DeliveryManager] Table service SUCCESS RPC received for tableId: {tableId}");
@@ -189,7 +197,7 @@ public class DeliveryManager : NetworkBehaviour {
         }
     }
 
-    [ClientRpc]
+    [Rpc(SendTo.ClientsAndHost)]
     public void NotifyTableServiceFailedClientRpc(string tableId, int recipeSOIndex) {
         Debug.Log($"[DeliveryManager] Table service FAILED RPC received for tableId: {tableId}");
 

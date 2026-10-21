@@ -384,8 +384,8 @@ public class DeliveryCustomerManager : NetworkBehaviour
         }
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    private void RequestDeliverToCustomerServerRpc(int deliveryId, NetworkObjectReference playerNetObjRef, ServerRpcParams rpcParams = default)
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
+    private void RequestDeliverToCustomerServerRpc(int deliveryId, NetworkObjectReference playerNetObjRef, RpcParams rpcParams = default)
     {
         if (playerNetObjRef.TryGet(out NetworkObject playerNetObj))
         {
@@ -425,7 +425,7 @@ public class DeliveryCustomerManager : NetworkBehaviour
         }
 
         // 1. Direct Plate
-        if (held is PlateKitchenObject plate && PlateMatchesRecipe(plate, required))
+        if (!requireDeliveryBag && held is PlateKitchenObject plate && PlateMatchesRecipe(plate, required))
         {
             DestroyThePlate(player, plate);
             PlayDeliveryResultClientRpc(deliveryId, true);
@@ -449,7 +449,7 @@ public class DeliveryCustomerManager : NetworkBehaviour
         DeliveryManager.Instance.TriggerDeliveryFailed();
     }
 
-    [ClientRpc]
+    [Rpc(SendTo.ClientsAndHost)]
     private void PlayDeliveryResultClientRpc(int deliveryId, bool success)
     {
         if (IsServer) return; // Server already processed locally
@@ -587,13 +587,13 @@ public class DeliveryCustomerManager : NetworkBehaviour
 
     // ── Client RPCs (notifications) ───────────────────────────────────────────
 
-    [ClientRpc]
+    [Rpc(SendTo.ClientsAndHost)]
     private void NotifyNewCustomerClientRpc(string recipeName, Vector3 position)
     {
         Debug.Log($"[DeliveryCustomerManager] New sidewalk order: '{recipeName}' at {position}");
     }
 
-    [ClientRpc]
+    [Rpc(SendTo.ClientsAndHost)]
     private void NotifyWrongDeliveryClientRpc(ulong playerId)
     {
         if (NetworkManager.Singleton != null && NetworkManager.Singleton.LocalClientId == playerId)
@@ -606,7 +606,7 @@ public class DeliveryCustomerManager : NetworkBehaviour
     {
         if (cityLifeManager == null)
         {
-            cityLifeManager = FindFirstObjectByType<CityLifeManager>();
+            cityLifeManager = FindAnyObjectByType<CityLifeManager>();
             if (cityLifeManager == null) return null;
         }
 

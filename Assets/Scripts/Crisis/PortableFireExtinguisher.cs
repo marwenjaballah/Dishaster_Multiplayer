@@ -14,6 +14,9 @@ using UnityEngine;
 public class PortableFireExtinguisher : KitchenObject {
 
     public static event EventHandler OnAnyExtinguisherSprayed;
+    public static void ResetStaticData() {
+        OnAnyExtinguisherSprayed = null;
+    }
 
     // ===== EVENTS =====
     public event EventHandler OnSprayStarted;
@@ -64,12 +67,12 @@ public class PortableFireExtinguisher : KitchenObject {
         // Holding F is tracked dynamically in Update()
     }
 
-    [ServerRpc(RequireOwnership = false)]
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
     public void SetSprayingServerRpc(bool spraying) {
         isSpraying.Value = spraying;
     }
 
-    [ServerRpc(RequireOwnership = false)]
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
     public void StopSprayingServerRpc() {
         if (isSpraying.Value) {
             isSpraying.Value = false;
@@ -114,7 +117,7 @@ public class PortableFireExtinguisher : KitchenObject {
             }
         }
 
-        FireHazard[] allHazards = FindObjectsByType<FireHazard>(FindObjectsSortMode.None);
+        FireHazard[] allHazards = FindObjectsByType<FireHazard>();
         foreach (FireHazard hazard in allHazards) {
             if (hazard != null && hazard.IsBurning()) {
                 Vector3 toHazard = hazard.transform.position - sprayOrigin;

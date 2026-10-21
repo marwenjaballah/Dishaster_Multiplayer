@@ -12,7 +12,7 @@ public class GameInput : MonoBehaviour {
     public static GameInput Instance {
         get {
             if (instance == null) {
-                instance = FindFirstObjectByType<GameInput>();
+                instance = FindAnyObjectByType<GameInput>();
                 if (instance == null) {
                     GameObject gameInputGo = new GameObject("GameInput");
                     instance = gameInputGo.AddComponent<GameInput>();
@@ -76,7 +76,7 @@ public class GameInput : MonoBehaviour {
     private void EnsureMobileControls() {
         string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
         if (sceneName == Loader.Scene.GameScene.ToString() || sceneName == "GameSceneTableService") {
-            if (FindFirstObjectByType<UI.MobileTouchControlsUI>() == null) {
+            if (FindAnyObjectByType<UI.MobileTouchControlsUI>() == null) {
                 GameObject mobileControlsGo = new GameObject("MobileTouchControlsUI");
                 mobileControlsGo.AddComponent<UI.MobileTouchControlsUI>();
             }

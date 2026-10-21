@@ -185,9 +185,15 @@ public class RestaurantSurvivalHUDUI : MonoBehaviour {
         int seconds = Mathf.FloorToInt(timer % 60f);
         int billAmount = RestaurantEconomyManager.Instance.GetCurrentBillAmount();
         int billCycle = RestaurantEconomyManager.Instance.GetCurrentBillCycle();
+        int debtStrikes = RestaurantEconomyManager.Instance.GetDebtStrikes();
+        int maxStrikes = RestaurantEconomyManager.Instance.GetMaxDebtStrikes();
 
         if (nextBillText != null) {
-            nextBillText.text = $"RENT #{billCycle} (${billAmount}): {minutes:00}:{seconds:00}";
+            if (debtStrikes > 0) {
+                nextBillText.text = $"RENT #{billCycle} (${billAmount}) <color=#FF4444>[DEBT {debtStrikes}/{maxStrikes}]</color>: {minutes:00}:{seconds:00}";
+            } else {
+                nextBillText.text = $"RENT #{billCycle} (${billAmount}): {minutes:00}:{seconds:00}";
+            }
         }
     }
 

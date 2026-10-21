@@ -30,7 +30,6 @@ public class ClearCounter : BaseCounter {
                 if (GetKitchenObject() is DeliveryBagKitchenObject bagOnCounter && player.GetKitchenObject().TryGetPlate(out PlateKitchenObject heldPlate)) {
                     if (bagOnCounter.CanAddPlate && heldPlate.GetKitchenObjectSOList().Count > 0) {
                         if (bagOnCounter.TryAddPlate(heldPlate)) {
-                            KitchenObject.DestroyKitchenObject(heldPlate);
                             return;
                         }
                     }
@@ -40,7 +39,6 @@ public class ClearCounter : BaseCounter {
                 if (player.GetKitchenObject() is DeliveryBagKitchenObject heldBag && GetKitchenObject().TryGetPlate(out PlateKitchenObject counterPlate)) {
                     if (heldBag.CanAddPlate && counterPlate.GetKitchenObjectSOList().Count > 0) {
                         if (heldBag.TryAddPlate(counterPlate)) {
-                            KitchenObject.DestroyKitchenObject(counterPlate);
                             return;
                         }
                     }

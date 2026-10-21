@@ -26,7 +26,7 @@ public class CameraFollowPlayer : MonoBehaviour {
 
         // Try to find virtual camera if using Cinemachine
         if (useCinemachine && virtualCamera == null) {
-            virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
+            virtualCamera = FindAnyObjectByType<CinemachineVirtualCamera>();
             if (virtualCamera != null) {
                 Debug.Log($"CameraFollowPlayer: Auto-found Virtual Camera: {virtualCamera.name}");
             }

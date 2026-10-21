@@ -7,7 +7,7 @@
 ## 📈 Executive Milestone Overview
 
 ```
-Milestone A: Architecture Stabilization  [████░░░░░░░░░░░░░░░░]  25%
+Milestone A: Architecture Stabilization  [████████████████████] 100%
 Milestone B: Vertical Slice (Day Loop)   [░░░░░░░░░░░░░░░░░░░░]   0%
 Milestone C: Playtesting & Balancing     [░░░░░░░░░░░░░░░░░░░░]   0%
 Milestone D: Content & City Expansion    [░░░░░░░░░░░░░░░░░░░░]   0%
@@ -26,19 +26,19 @@ Milestone E: Hardening & Commercial QA   [░░░░░░░░░░░░�
 
 ## 🛠️ Sprint Backlog by Milestone
 
-### Milestone A: Architecture Stabilization & Cleanup (Current Focus)
+### Milestone A: Architecture Stabilization & Cleanup (Completed)
 
 | Task ID | Type | Priority | Description | Assignee | Status | Verification |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | `STAB-001` | Infra | P0 | Setup & configure Unity MCP Bridge for automated editor operations | Agent | ✅ `COMPLETED` | Verified via live `read_console` RPC test |
 | `STAB-002` | Governance | P0 | Establish Production Rules (`AGENTS.md`), Tracker, Engineering Standards, and Changelog | Agent | ✅ `COMPLETED` | Docs deployed to `/DOCS` and root |
-| `STAB-003` | Bugfix | P0 | Fix static event memory leak in `Player.cs` (`OnAnyPickedSomething`) & register in `ResetStaticDataManager` | Agent | 📋 `BACKLOG` | Verify no duplicated SFX on rematch |
-| `STAB-004` | Cleanup | P1 | Move misplaced `TableOrderUI.cs` from nested path to `Assets/Scripts/UI/` and clean folder debt | Agent | 📋 `BACKLOG` | 0 missing script references in scene |
-| `STAB-005` | Cleanup | P2 | Remove legacy `.backup` files in `Assets/BACKUP_DeliverySystem/` | Agent | 📋 `BACKLOG` | Project file search returns no stale backups |
-| `STAB-006` | Bugfix | P0 | Fix multiplayer pause freeze (`Time.timeScale = 0` only active in offline solo mode) | Agent | 📋 `BACKLOG` | Client pause does not freeze Host gameplay |
-| `STAB-007` | Balance | P0 | Fix runaway exponential rent formula ($\times 1.35$) with sustainable Day Loop formula | Agent | 📋 `BACKLOG` | Rent scales linearly/manageably per Day |
-| `STAB-008` | Netcode | P0 | Migrate obsolete `[ServerRpc(RequireOwnership = false)]` to Unity 6 `[Rpc(SendTo.Server)]` | Agent | 📋 `BACKLOG` | 0 CS0618 warnings in console |
-| `STAB-009` | Netcode | P1 | Server-authoritative plate delivery and bag insertion (`NetworkObjectReference` validation) | Agent | 📋 `BACKLOG` | Prevent client-side despawn desyncs |
+| `STAB-003` | Bugfix | P0 | Fix static event memory leak in `Player.cs` (`OnAnyPickedSomething`) & register in `ResetStaticDataManager` | Agent | ✅ `COMPLETED` | Verified all 10 crisis/player classes reset cleanly in `ResetStaticDataManager` |
+| `STAB-004` | Cleanup | P1 | Move misplaced `TableOrderUI.cs` from nested path to `Assets/Scripts/UI/` and clean folder debt | Agent | ✅ `COMPLETED` | Relocated to `UI/`, archived markdown, removed stale folders |
+| `STAB-005` | Cleanup | P2 | Remove legacy `.backup` files in `Assets/BACKUP_DeliverySystem/` | Agent | ✅ `COMPLETED` | Deleted folder and `.meta` files |
+| `STAB-006` | Bugfix | P0 | Fix multiplayer pause freeze (`Time.timeScale = 0` only active in offline solo mode) | Agent | ✅ `COMPLETED` | Pause in multiplayer keeps `Time.timeScale = 1.0f` |
+| `STAB-007` | Balance | P0 | Fix runaway exponential rent formula ($\times 1.35$) with sustainable Day Loop formula | Agent | ✅ `COMPLETED` | Replaced with linear/manageable 1.15f scaling, 90s cycle, 1-strike debt grace |
+| `STAB-008` | Netcode | P0 | Migrate obsolete `[ServerRpc(RequireOwnership = false)]` to Unity 6 `[Rpc(SendTo.Server)]` | Agent | ✅ `COMPLETED` | Unity 6 `[Rpc]` migration complete; 0 errors and 0 warnings verified via MCP console |
+| `STAB-009` | Netcode | P1 | Server-authoritative plate delivery and bag insertion (`NetworkObjectReference` validation) | Agent | ✅ `COMPLETED` | Bag uses server validation + despawn, client manual Destroy calls removed |
 
 ---
 
@@ -89,3 +89,4 @@ Milestone E: Hardening & Commercial QA   [░░░░░░░░░░░░�
 
 ## 📝 Change & Verification Log
 * **2026-10-21:** Task board initialized. `STAB-001` (MCP Setup) and `STAB-002` (Governance Docs) completed.
+* **2026-10-21:** Milestone A (`STAB-003` through `STAB-009`) completed. 100% of Netcode RPCs migrated to Unity 6 syntax, zero memory leaks across 10 static classes, zero compiler errors and 0 warnings verified via live Unity Editor MCP bridge. Ready for Milestone B (`VRT-001`).

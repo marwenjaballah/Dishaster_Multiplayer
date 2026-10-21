@@ -166,12 +166,12 @@ public class KitchenGameMultiplayer : NetworkBehaviour {
         // Player name and ID will be set in OnNetworkSpawn() when the NetworkBehaviour is ready
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    private void SetPlayerNameServerRpc(string playerName, ServerRpcParams serverRpcParams = default) {
-        int playerDataIndex = GetPlayerDataIndexFromClientId(serverRpcParams.Receive.SenderClientId);
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
+    private void SetPlayerNameServerRpc(string playerName, RpcParams rpcParams = default) {
+        int playerDataIndex = GetPlayerDataIndexFromClientId(rpcParams.Receive.SenderClientId);
 
         if (playerDataIndex == -1) {
-            Debug.LogError($"Player data not found for client {serverRpcParams.Receive.SenderClientId}");
+            Debug.LogError($"Player data not found for client {rpcParams.Receive.SenderClientId}");
             return;
         }
 
@@ -182,12 +182,12 @@ public class KitchenGameMultiplayer : NetworkBehaviour {
         playerDataNetworkList[playerDataIndex] = playerData;
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    private void SetPlayerIdServerRpc(string playerId, ServerRpcParams serverRpcParams = default) {
-        int playerDataIndex = GetPlayerDataIndexFromClientId(serverRpcParams.Receive.SenderClientId);
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
+    private void SetPlayerIdServerRpc(string playerId, RpcParams rpcParams = default) {
+        int playerDataIndex = GetPlayerDataIndexFromClientId(rpcParams.Receive.SenderClientId);
 
         if (playerDataIndex == -1) {
-            Debug.LogError($"Player data not found for client {serverRpcParams.Receive.SenderClientId}");
+            Debug.LogError($"Player data not found for client {rpcParams.Receive.SenderClientId}");
             return;
         }
 
@@ -210,7 +210,7 @@ public class KitchenGameMultiplayer : NetworkBehaviour {
         SpawnKitchenObjectServerRpc(GetKitchenObjectSOIndex(kitchenObjectSO), kitchenObjectParent.GetNetworkObject());
     }
 
-    [ServerRpc(RequireOwnership = false)]
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
     private void SpawnKitchenObjectServerRpc(int kitchenObjectSOIndex, NetworkObjectReference kitchenObjectParentNetworkObjectReference) {
         KitchenObjectSO kitchenObjectSO = GetKitchenObjectSOFromIndex(kitchenObjectSOIndex);
 
@@ -251,7 +251,7 @@ public class KitchenGameMultiplayer : NetworkBehaviour {
         DestroyKitchenObjectServerRpc(kitchenObject.NetworkObject);
     }
 
-    [ServerRpc(RequireOwnership = false)]
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
     private void DestroyKitchenObjectServerRpc(NetworkObjectReference kitchenObjectNetworkObjectReference) {
         kitchenObjectNetworkObjectReference.TryGet(out NetworkObject kitchenObjectNetworkObject);
 
@@ -267,7 +267,7 @@ public class KitchenGameMultiplayer : NetworkBehaviour {
         kitchenObject.DestroySelf();
     }
 
-    [ClientRpc]
+    [Rpc(SendTo.ClientsAndHost)]
     private void ClearKitchenObjectOnParentClientRpc(NetworkObjectReference kitchenObjectNetworkObjectReference) {
         kitchenObjectNetworkObjectReference.TryGet(out NetworkObject kitchenObjectNetworkObject);
         KitchenObject kitchenObject = kitchenObjectNetworkObject.GetComponent<KitchenObject>();
@@ -319,17 +319,17 @@ public class KitchenGameMultiplayer : NetworkBehaviour {
         ChangePlayerColorServerRpc(colorId);
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    private void ChangePlayerColorServerRpc(int colorId, ServerRpcParams serverRpcParams = default) {
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
+    private void ChangePlayerColorServerRpc(int colorId, RpcParams rpcParams = default) {
         if (!IsColorAvailable(colorId)) {
             // Color not available
             return;
         }
 
-        int playerDataIndex = GetPlayerDataIndexFromClientId(serverRpcParams.Receive.SenderClientId);
+        int playerDataIndex = GetPlayerDataIndexFromClientId(rpcParams.Receive.SenderClientId);
 
         if (playerDataIndex == -1) {
-            Debug.LogError($"Player data not found for client {serverRpcParams.Receive.SenderClientId}");
+            Debug.LogError($"Player data not found for client {rpcParams.Receive.SenderClientId}");
             return;
         }
 

@@ -13,6 +13,9 @@ using UnityEngine;
 public class PortablePipeWrench : KitchenObject {
 
     public static event EventHandler OnAnyWrenchUsed;
+    public static void ResetStaticData() {
+        OnAnyWrenchUsed = null;
+    }
 
     public event EventHandler OnWrenchUsed;
 

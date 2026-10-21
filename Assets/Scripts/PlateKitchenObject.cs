@@ -41,12 +41,12 @@ public class PlateKitchenObject : KitchenObject {
         }
     }
 
-    [ServerRpc(RequireOwnership = false)]
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
     private void AddIngredientServerRpc(int kitchenObjectSOIndex) {
         AddIngredientClientRpc(kitchenObjectSOIndex);
     }
 
-    [ClientRpc]
+    [Rpc(SendTo.ClientsAndHost)]
     private void AddIngredientClientRpc(int kitchenObjectSOIndex) {
         KitchenObjectSO kitchenObjectSO = KitchenGameMultiplayer.Instance.GetKitchenObjectSOFromIndex(kitchenObjectSOIndex);
 

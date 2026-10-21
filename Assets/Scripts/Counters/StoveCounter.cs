@@ -159,12 +159,12 @@ public class StoveCounter : BaseCounter, IHasProgress {
         }
     }
 
-    [ServerRpc(RequireOwnership = false)]
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
     private void SetStateIdleServerRpc() {
         state.Value = State.Idle;
     }
 
-    [ServerRpc(RequireOwnership = false)]
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
     private void InteractLogicPlaceObjectOnCounterServerRpc(int kitchenObjectSOIndex) {
         fryingTimer.Value = 0f;
         state.Value = State.Frying;
@@ -172,13 +172,13 @@ public class StoveCounter : BaseCounter, IHasProgress {
         SetFryingRecipeSOClientRpc(kitchenObjectSOIndex);
     }
 
-    [ClientRpc]
+    [Rpc(SendTo.ClientsAndHost)]
     private void SetFryingRecipeSOClientRpc(int kitchenObjectSOIndex) {
         KitchenObjectSO kitchenObjectSO = KitchenGameMultiplayer.Instance.GetKitchenObjectSOFromIndex(kitchenObjectSOIndex);
         fryingRecipeSO = GetFryingRecipeSOWithInput(kitchenObjectSO);
     }
 
-    [ClientRpc]
+    [Rpc(SendTo.ClientsAndHost)]
     private void SetBurningRecipeSOClientRpc(int kitchenObjectSOIndex) {
         KitchenObjectSO kitchenObjectSO = KitchenGameMultiplayer.Instance.GetKitchenObjectSOFromIndex(kitchenObjectSOIndex);
         burningRecipeSO = GetBurningRecipeSOWithInput(kitchenObjectSO);

@@ -140,7 +140,7 @@ namespace Vehicles
             Player player = Player.LocalInstance;
             if (player == null)
             {
-                foreach (Player p in FindObjectsByType<Player>(FindObjectsSortMode.None))
+                foreach (Player p in FindObjectsByType<Player>())
                 {
                     if (p.IsOwner || p.isActiveAndEnabled)
                     {
@@ -160,8 +160,8 @@ namespace Vehicles
 
         // ── Server RPCs ───────────────────────────────────────────────────────────
 
-        [ServerRpc(RequireOwnership = false)]
-        private void RequestMountServerRpc(ServerRpcParams rpcParams = default)
+        [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
+        private void RequestMountServerRpc(RpcParams rpcParams = default)
         {
             if (_riderClientId.Value != ulong.MaxValue) return; // Already occupied
 
@@ -169,8 +169,8 @@ namespace Vehicles
             _riderClientId.Value = senderClientId;
         }
 
-        [ServerRpc(RequireOwnership = false)]
-        private void RequestDismountServerRpc(ServerRpcParams rpcParams = default)
+        [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
+        private void RequestDismountServerRpc(RpcParams rpcParams = default)
         {
             ulong senderClientId = rpcParams.Receive.SenderClientId;
             if (_riderClientId.Value == senderClientId)
@@ -211,7 +211,7 @@ namespace Vehicles
                     _localRider = Player.LocalInstance;
                     if (_localRider == null)
                     {
-                        foreach (Player p in FindObjectsByType<Player>(FindObjectsSortMode.None))
+                        foreach (Player p in FindObjectsByType<Player>())
                         {
                             if (p.IsOwner)
                             {
@@ -341,13 +341,13 @@ namespace Vehicles
             }
         }
 
-        [ServerRpc(RequireOwnership = false)]
+        [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
         private void UpdateServerTransformServerRpc(Vector3 pos, Quaternion rot)
         {
             UpdateClientTransformClientRpc(pos, rot);
         }
 
-        [ClientRpc]
+        [Rpc(SendTo.ClientsAndHost)]
         private void UpdateClientTransformClientRpc(Vector3 pos, Quaternion rot)
         {
             if (_isLocalMounted) return; // Local driver already updated locally

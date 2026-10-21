@@ -8,14 +8,12 @@ using UnityEngine;
 /// Players hold the 'F' key for 3 seconds while holding the Pipe Wrench to turn the valve and stop the flood.
 /// When fixed, the valve cannot be interacted with and shows no prompts.
 /// </summary>
-public class WaterLeakValveCounter : BaseCounter, IHasProgress {
+public class WaterLeakValveCounter : BaseCounter {
 
-    public event EventHandler<IHasProgress.OnProgressChangedEventArgs> OnProgressChanged;
     public event EventHandler OnValveRepaired;
     public event EventHandler OnValveBurst;
 
     [Header("Valve Settings")]
-    [SerializeField] private int clicksRequired = 3;
     [SerializeField] private Transform valveWheelTransform;
     [SerializeField] private KitchenObjectSO requiredPipeWrenchSO;
 
@@ -106,7 +104,7 @@ public class WaterLeakValveCounter : BaseCounter, IHasProgress {
         // Holding 'F' is managed by InteractKeyPromptUI and KeyPromptUI_OnHoldCompleted
     }
 
-    [ServerRpc(RequireOwnership = false)]
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
     private void CompleteRepairServerRpc() {
         if (!isBurst.Value) return;
 

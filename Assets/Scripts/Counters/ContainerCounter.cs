@@ -22,12 +22,12 @@ public class ContainerCounter : BaseCounter {
         }
     }
 
-    [ServerRpc(RequireOwnership = false)]
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
     private void InteractLogicServerRpc() {
         InteractLogicClientRpc();
     }
 
-    [ClientRpc]
+    [Rpc(SendTo.ClientsAndHost)]
     private void InteractLogicClientRpc() {
         OnPlayerGrabbedObject?.Invoke(this, EventArgs.Empty);
     }

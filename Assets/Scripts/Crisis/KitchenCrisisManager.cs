@@ -134,25 +134,25 @@ public class KitchenCrisisManager : NetworkBehaviour {
 
     // ===== SERVER RPCS / CRISIS TRIGGERS =====
 
-    [ServerRpc(RequireOwnership = false)]
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
     public void TriggerBlackoutServerRpc() {
         if (isBlackoutActive.Value) return;
         isBlackoutActive.Value = true;
     }
 
-    [ServerRpc(RequireOwnership = false)]
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
     public void EndBlackoutServerRpc() {
         if (!isBlackoutActive.Value) return;
         isBlackoutActive.Value = false;
     }
 
-    [ServerRpc(RequireOwnership = false)]
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
     public void TriggerWaterLeakServerRpc() {
         if (isWaterLeakActive.Value) return;
         isWaterLeakActive.Value = true;
 
         if (waterLeakValve == null) {
-            waterLeakValve = FindFirstObjectByType<WaterLeakValveCounter>();
+            waterLeakValve = FindAnyObjectByType<WaterLeakValveCounter>();
         }
 
         if (waterLeakValve != null) {
@@ -160,13 +160,13 @@ public class KitchenCrisisManager : NetworkBehaviour {
         }
     }
 
-    [ServerRpc(RequireOwnership = false)]
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
     public void EndWaterLeakServerRpc() {
         if (!isWaterLeakActive.Value) return;
         isWaterLeakActive.Value = false;
 
         if (waterLeakValve == null) {
-            waterLeakValve = FindFirstObjectByType<WaterLeakValveCounter>();
+            waterLeakValve = FindAnyObjectByType<WaterLeakValveCounter>();
         }
 
         if (waterLeakValve != null) {
@@ -174,7 +174,7 @@ public class KitchenCrisisManager : NetworkBehaviour {
         }
     }
 
-    [ServerRpc(RequireOwnership = false)]
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
     public void TriggerFireServerRpc() {
         BaseCounter targetCounter = GetRandomEligibleCounter();
         if (targetCounter == null) return;
@@ -182,7 +182,7 @@ public class KitchenCrisisManager : NetworkBehaviour {
         IgniteCounterClientRpc(targetCounter.NetworkObject);
     }
 
-    [ClientRpc]
+    [Rpc(SendTo.ClientsAndHost)]
     private void IgniteCounterClientRpc(NetworkObjectReference counterRef) {
         if (counterRef.TryGet(out NetworkObject counterNetObj)) {
             BaseCounter counter = counterNetObj.GetComponent<BaseCounter>();
@@ -205,12 +205,12 @@ public class KitchenCrisisManager : NetworkBehaviour {
         }
     }
 
-    [ServerRpc(RequireOwnership = false)]
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
     public void RequestExtinguishCounterServerRpc(NetworkObjectReference counterRef) {
         ExtinguishCounterClientRpc(counterRef);
     }
 
-    [ClientRpc]
+    [Rpc(SendTo.ClientsAndHost)]
     private void ExtinguishCounterClientRpc(NetworkObjectReference counterRef) {
         if (counterRef.TryGet(out NetworkObject counterNetObj)) {
             FireHazard fireHazard = counterNetObj.GetComponent<FireHazard>();
@@ -228,12 +228,12 @@ public class KitchenCrisisManager : NetworkBehaviour {
         }
     }
 
-    [ServerRpc(RequireOwnership = false)]
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
     public void ExtinguishAllFiresServerRpc() {
         ExtinguishAllFiresClientRpc();
     }
 
-    [ClientRpc]
+    [Rpc(SendTo.ClientsAndHost)]
     private void ExtinguishAllFiresClientRpc() {
         foreach (FireHazard fire in activeFires.ToArray()) {
             if (fire != null) {
@@ -244,7 +244,7 @@ public class KitchenCrisisManager : NetworkBehaviour {
         OnCrisisStateChanged?.Invoke(this, EventArgs.Empty);
     }
 
-    [ServerRpc(RequireOwnership = false)]
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
     public void ResetAllCrisesServerRpc() {
         isBlackoutActive.Value = false;
         isWaterLeakActive.Value = false;
@@ -254,7 +254,7 @@ public class KitchenCrisisManager : NetworkBehaviour {
         ExtinguishAllFiresClientRpc();
     }
 
-    [ServerRpc(RequireOwnership = false)]
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
     public void ToggleAutoCrisisServerRpc() {
         isAutoCrisisActive.Value = !isAutoCrisisActive.Value;
         if (isAutoCrisisActive.Value) {
@@ -264,11 +264,11 @@ public class KitchenCrisisManager : NetworkBehaviour {
 
     private BaseCounter GetRandomEligibleCounter() {
         if (potentialFireCounters.Count == 0) {
-            StoveCounter[] stoves = FindObjectsByType<StoveCounter>(FindObjectsSortMode.None);
+            StoveCounter[] stoves = FindObjectsByType<StoveCounter>();
             if (stoves.Length > 0) {
                 return stoves[UnityEngine.Random.Range(0, stoves.Length)];
             }
-            ClearCounter[] clearCounters = FindObjectsByType<ClearCounter>(FindObjectsSortMode.None);
+            ClearCounter[] clearCounters = FindObjectsByType<ClearCounter>();
             if (clearCounters.Length > 0) {
                 return clearCounters[UnityEngine.Random.Range(0, clearCounters.Length)];
             }

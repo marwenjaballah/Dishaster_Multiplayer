@@ -20,7 +20,13 @@ public class RestaurantEconomyManager : NetworkBehaviour {
     public event EventHandler<OnReviewSubmittedEventArgs> OnReviewSubmitted;
     public event EventHandler<OnBillPaidEventArgs> OnBillPaid;
     public event EventHandler OnBillWarning;
+    public event EventHandler<OnDebtWarningEventArgs> OnDebtWarning;
     public event EventHandler OnBankruptcy;
+
+    public class OnDebtWarningEventArgs : EventArgs {
+        public int currentStrikes;
+        public int maxStrikes;
+    }
 
     public class OnBalanceChangedEventArgs : EventArgs {
         public int currentBalance;
@@ -50,10 +56,11 @@ public class RestaurantEconomyManager : NetworkBehaviour {
     [SerializeField] private int initialReviewWeight = 5;
 
     [Header("Bill / Rent Settings")]
-    [SerializeField] private float billInterval = 75f; // Seconds per rent cycle
-    [SerializeField] private int initialBillAmount = 60;
-    [SerializeField] private float billInflationRate = 1.35f; // Multiplier per cycle
-    [SerializeField] private float warningTimeBeforeBill = 15f;
+    [SerializeField] private float billInterval = 90f; // Seconds per rent cycle
+    [SerializeField] private int initialBillAmount = 50;
+    [SerializeField] private float billInflationRate = 1.15f; // Sustainable 15% growth per cycle
+    [SerializeField] private float warningTimeBeforeBill = 20f;
+    [SerializeField] private int maxDebtStrikes = 1; // 1 grace strike before bankruptcy
 
     [Header("Wrong Order & Penalty Settings")]
     [SerializeField] private int wrongOrderFine = 15;
@@ -64,9 +71,10 @@ public class RestaurantEconomyManager : NetworkBehaviour {
     private NetworkVariable<int> currentBalance = new NetworkVariable<int>(100);
     private NetworkVariable<float> currentStarRating = new NetworkVariable<float>(3.5f);
     private NetworkVariable<int> totalReviewsCount = new NetworkVariable<int>(5);
-    private NetworkVariable<float> nextBillTimer = new NetworkVariable<float>(75f);
-    private NetworkVariable<int> currentBillAmount = new NetworkVariable<int>(60);
+    private NetworkVariable<float> nextBillTimer = new NetworkVariable<float>(90f);
+    private NetworkVariable<int> currentBillAmount = new NetworkVariable<int>(50);
     private NetworkVariable<int> currentBillCycle = new NetworkVariable<int>(1);
+    private NetworkVariable<int> debtStrikes = new NetworkVariable<int>(0);
     private NetworkVariable<bool> isBankrupt = new NetworkVariable<bool>(false);
 
     // Crisis tracking
@@ -103,6 +111,7 @@ public class RestaurantEconomyManager : NetworkBehaviour {
             nextBillTimer.Value = billInterval;
             currentBillAmount.Value = initialBillAmount;
             currentBillCycle.Value = 1;
+            debtStrikes.Value = 0;
             isBankrupt.Value = false;
         }
     }
@@ -117,7 +126,7 @@ public class RestaurantEconomyManager : NetworkBehaviour {
 
         if (nextBillTimer.Value <= warningTimeBeforeBill && !warningFiredThisCycle) {
             warningFiredThisCycle = true;
-            NotifyBillWarningClientRpc();
+            NotifyBillWarningRpc();
         }
 
         if (nextBillTimer.Value <= 0f) {
@@ -145,11 +154,11 @@ public class RestaurantEconomyManager : NetworkBehaviour {
         currentStarRating.Value = (float)Math.Round(newRating, 2);
         totalReviewsCount.Value = currentCount + 1;
 
-        NotifyReviewSubmittedClientRpc(stars, reason);
+        NotifyReviewSubmittedRpc(stars, reason);
     }
 
-    [ClientRpc]
-    private void NotifyReviewSubmittedClientRpc(float stars, string reason) {
+    [Rpc(SendTo.ClientsAndHost)]
+    private void NotifyReviewSubmittedRpc(float stars, string reason) {
         OnReviewSubmitted?.Invoke(this, new OnReviewSubmittedEventArgs {
             reviewStars = stars,
             reviewComment = reason
@@ -197,33 +206,56 @@ public class RestaurantEconomyManager : NetworkBehaviour {
         if (currentBalance.Value >= bill) {
             // Bill paid successfully
             currentBalance.Value -= bill;
+            debtStrikes.Value = 0; // Cleared debt
             currentBillCycle.Value = cycle + 1;
             currentBillAmount.Value = Mathf.RoundToInt(initialBillAmount * Mathf.Pow(billInflationRate, cycle));
             nextBillTimer.Value = billInterval;
             warningFiredThisCycle = false;
 
-            NotifyBillPaidClientRpc(bill, cycle, true);
+            NotifyBillPaidRpc(bill, cycle, true);
         } else {
-            // Cannot afford bill -> Bankruptcy!
-            currentBalance.Value -= bill; // Dips into negative
-            isBankrupt.Value = true;
+            // Cannot afford bill
+            if (debtStrikes.Value < maxDebtStrikes) {
+                // First strike: Debt grace warning
+                debtStrikes.Value++;
+                currentBalance.Value -= bill; // Dips into debt/negative
+                currentBillCycle.Value = cycle + 1;
+                currentBillAmount.Value = Mathf.RoundToInt(initialBillAmount * Mathf.Pow(billInflationRate, cycle));
+                nextBillTimer.Value = billInterval;
+                warningFiredThisCycle = false;
 
-            NotifyBillPaidClientRpc(bill, cycle, false);
-            NotifyBankruptcyClientRpc();
+                NotifyBillPaidRpc(bill, cycle, false);
+                NotifyDebtWarningRpc(debtStrikes.Value, maxDebtStrikes);
+            } else {
+                // Out of strikes -> Final Bankruptcy!
+                currentBalance.Value -= bill;
+                isBankrupt.Value = true;
 
-            if (KitchenGameManager.Instance != null) {
-                KitchenGameManager.Instance.TriggerBankruptcyGameOver();
+                NotifyBillPaidRpc(bill, cycle, false);
+                NotifyBankruptcyRpc();
+
+                if (KitchenGameManager.Instance != null) {
+                    KitchenGameManager.Instance.TriggerBankruptcyGameOver();
+                }
             }
         }
     }
 
-    [ClientRpc]
-    private void NotifyBillWarningClientRpc() {
+    [Rpc(SendTo.ClientsAndHost)]
+    private void NotifyBillWarningRpc() {
         OnBillWarning?.Invoke(this, EventArgs.Empty);
     }
 
-    [ClientRpc]
-    private void NotifyBillPaidClientRpc(int amount, int cycle, bool success) {
+    [Rpc(SendTo.ClientsAndHost)]
+    private void NotifyDebtWarningRpc(int currentStrikes, int maxStrikes) {
+        OnDebtWarning?.Invoke(this, new OnDebtWarningEventArgs {
+            currentStrikes = currentStrikes,
+            maxStrikes = maxStrikes
+        });
+    }
+
+    [Rpc(SendTo.ClientsAndHost)]
+    private void NotifyBillPaidRpc(int amount, int cycle, bool success) {
         OnBillPaid?.Invoke(this, new OnBillPaidEventArgs {
             billAmount = amount,
             cycleNumber = cycle,
@@ -231,8 +263,8 @@ public class RestaurantEconomyManager : NetworkBehaviour {
         });
     }
 
-    [ClientRpc]
-    private void NotifyBankruptcyClientRpc() {
+    [Rpc(SendTo.ClientsAndHost)]
+    private void NotifyBankruptcyRpc() {
         OnBankruptcy?.Invoke(this, EventArgs.Empty);
     }
 
@@ -267,6 +299,8 @@ public class RestaurantEconomyManager : NetworkBehaviour {
     public float GetNextBillTimer() => nextBillTimer.Value;
     public int GetCurrentBillAmount() => currentBillAmount.Value;
     public int GetCurrentBillCycle() => currentBillCycle.Value;
+    public int GetDebtStrikes() => debtStrikes.Value;
+    public int GetMaxDebtStrikes() => maxDebtStrikes;
     public bool IsBankrupt() => isBankrupt.Value;
     public int GetWrongOrderFine() => wrongOrderFine;
     public float GetCrisisDurationTimer() => crisisDurationTimer;

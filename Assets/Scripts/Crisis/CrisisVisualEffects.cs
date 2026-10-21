@@ -26,7 +26,7 @@ public class CrisisVisualEffects : MonoBehaviour {
 
     private void Start() {
         if (mainDirectionalLight == null) {
-            Light[] lights = FindObjectsByType<Light>(FindObjectsSortMode.None);
+            Light[] lights = FindObjectsByType<Light>();
             foreach (Light l in lights) {
                 if (l.type == LightType.Directional) {
                     mainDirectionalLight = l;

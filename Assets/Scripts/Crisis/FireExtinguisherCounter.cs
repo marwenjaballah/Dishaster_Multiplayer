@@ -15,6 +15,10 @@ public class FireExtinguisherCounter : BaseCounter {
 
     public static event EventHandler OnAnyExtinguisherPickedUp;
     public static event EventHandler OnAnyExtinguisherReturned;
+    new public static void ResetStaticData() {
+        OnAnyExtinguisherPickedUp = null;
+        OnAnyExtinguisherReturned = null;
+    }
 
     // ===== EVENTS =====
     public event EventHandler OnExtinguisherPickedUp;
@@ -62,7 +66,7 @@ public class FireExtinguisherCounter : BaseCounter {
         }
     }
 
-    [ServerRpc(RequireOwnership = false)]
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
     private void InteractPickupServerRpc(NetworkObjectReference playerNetworkObjectReference) {
         if (!hasExtinguisherOnStand.Value) return;
 
@@ -76,13 +80,13 @@ public class FireExtinguisherCounter : BaseCounter {
         }
     }
 
-    [ClientRpc]
+    [Rpc(SendTo.ClientsAndHost)]
     private void InteractPickupClientRpc() {
         OnExtinguisherPickedUp?.Invoke(this, EventArgs.Empty);
         OnAnyExtinguisherPickedUp?.Invoke(this, EventArgs.Empty);
     }
 
-    [ServerRpc(RequireOwnership = false)]
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
     private void InteractReturnServerRpc(NetworkObjectReference kitchenObjectNetworkObjectReference) {
         if (hasExtinguisherOnStand.Value) return;
 
@@ -96,7 +100,7 @@ public class FireExtinguisherCounter : BaseCounter {
         }
     }
 
-    [ClientRpc]
+    [Rpc(SendTo.ClientsAndHost)]
     private void InteractReturnClientRpc() {
         OnExtinguisherReturned?.Invoke(this, EventArgs.Empty);
         OnAnyExtinguisherReturned?.Invoke(this, EventArgs.Empty);

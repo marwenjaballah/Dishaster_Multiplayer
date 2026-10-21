@@ -10,6 +10,12 @@ public class ResetStaticDataManager : MonoBehaviour {
         BaseCounter.ResetStaticData();
         TrashCounter.ResetStaticData();
         Player.ResetStaticData();
+        CustomerTable.ResetStaticData();
+        FuseBoxCounter.ResetStaticData();
+        PipeWrenchCounter.ResetStaticData();
+        PortablePipeWrench.ResetStaticData();
+        FireExtinguisherCounter.ResetStaticData();
+        PortableFireExtinguisher.ResetStaticData();
     }
 
 }

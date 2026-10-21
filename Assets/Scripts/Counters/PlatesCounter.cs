@@ -35,12 +35,12 @@ public class PlatesCounter : BaseCounter {
         }
     }
 
-    [ServerRpc]
+    [Rpc(SendTo.Server)]
     private void SpawnPlateServerRpc() {
         SpawnPlateClientRpc();
     }
 
-    [ClientRpc]
+    [Rpc(SendTo.ClientsAndHost)]
     private void SpawnPlateClientRpc() {
         platesSpawnedAmount++;
 
@@ -59,12 +59,12 @@ public class PlatesCounter : BaseCounter {
         }
     }
 
-    [ServerRpc(RequireOwnership = false)]
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
     private void InteractLogicServerRpc() {
         InteractLogicClientRpc();
     }
 
-    [ClientRpc]
+    [Rpc(SendTo.ClientsAndHost)]
     private void InteractLogicClientRpc() {
         platesSpawnedAmount--;
 

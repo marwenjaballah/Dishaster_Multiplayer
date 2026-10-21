@@ -91,7 +91,9 @@ public class KitchenGameManager : NetworkBehaviour {
 
     private void IsGamePaused_OnValueChanged(bool previousValue, bool newValue) {
         if (isGamePaused.Value) {
-            Time.timeScale = 0f;
+            if (!KitchenGameMultiplayer.playMultiplayer) {
+                Time.timeScale = 0f;
+            }
 
             OnMultiplayerGamePaused?.Invoke(this, EventArgs.Empty);
         } else {
@@ -103,9 +105,11 @@ public class KitchenGameManager : NetworkBehaviour {
 
     private void State_OnValueChanged(State previousValue, State newValue) {
         if (state.Value == State.GameOver) {
-            Time.timeScale = 0f;
+            if (!KitchenGameMultiplayer.playMultiplayer) {
+                Time.timeScale = 0f;
+            }
         } else if (state.Value == State.CountdownToStart || state.Value == State.GamePlaying || state.Value == State.WaitingToStart) {
-            if (!isGamePaused.Value) {
+            if (!isGamePaused.Value || KitchenGameMultiplayer.playMultiplayer) {
                 Time.timeScale = 1f;
             }
         }
@@ -122,9 +126,9 @@ public class KitchenGameManager : NetworkBehaviour {
         }
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    private void SetPlayerReadyServerRpc(ServerRpcParams serverRpcParams = default) {
-        playerReadyDictionary[serverRpcParams.Receive.SenderClientId] = true;
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
+    private void SetPlayerReadyServerRpc(RpcParams rpcParams = default) {
+        playerReadyDictionary[rpcParams.Receive.SenderClientId] = true;
 
         bool allClientsReady = true;
         foreach (ulong clientId in NetworkManager.Singleton.ConnectedClientsIds) {
@@ -223,8 +227,8 @@ public class KitchenGameManager : NetworkBehaviour {
         }
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    public void TriggerBankruptcyGameOverServerRpc(ServerRpcParams serverRpcParams = default) {
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
+    public void TriggerBankruptcyGameOverServerRpc(RpcParams rpcParams = default) {
         isBankruptcyGameOver.Value = true;
         state.Value = State.GameOver;
     }
@@ -248,9 +252,9 @@ public class KitchenGameManager : NetworkBehaviour {
         OnRematchVotesChanged?.Invoke(this, EventArgs.Empty);
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    private void VoteRematchServerRpc(bool vote, ServerRpcParams serverRpcParams = default) {
-        ulong senderId = serverRpcParams.Receive.SenderClientId;
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
+    private void VoteRematchServerRpc(bool vote, RpcParams rpcParams = default) {
+        ulong senderId = rpcParams.Receive.SenderClientId;
         playerRematchDictionary[senderId] = vote;
 
         int votes = 0;
@@ -297,26 +301,30 @@ public class KitchenGameManager : NetworkBehaviour {
     public void TogglePauseGame() {
         isLocalGamePaused = !isLocalGamePaused;
         if (isLocalGamePaused) {
-            PauseGameServerRpc();
+            if (!KitchenGameMultiplayer.playMultiplayer) {
+                PauseGameServerRpc();
+            }
 
             OnLocalGamePaused?.Invoke(this, EventArgs.Empty);
         } else {
-            UnpauseGameServerRpc();
+            if (!KitchenGameMultiplayer.playMultiplayer) {
+                UnpauseGameServerRpc();
+            }
 
             OnLocalGameUnpaused?.Invoke(this, EventArgs.Empty);
         }
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    private void PauseGameServerRpc(ServerRpcParams serverRpcParams = default) {
-        playerPausedDictionary[serverRpcParams.Receive.SenderClientId] = true;
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
+    private void PauseGameServerRpc(RpcParams rpcParams = default) {
+        playerPausedDictionary[rpcParams.Receive.SenderClientId] = true;
 
         TestGamePausedState();
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    private void UnpauseGameServerRpc(ServerRpcParams serverRpcParams = default) {
-        playerPausedDictionary[serverRpcParams.Receive.SenderClientId] = false;
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
+    private void UnpauseGameServerRpc(RpcParams rpcParams = default) {
+        playerPausedDictionary[rpcParams.Receive.SenderClientId] = false;
 
         TestGamePausedState();
     }

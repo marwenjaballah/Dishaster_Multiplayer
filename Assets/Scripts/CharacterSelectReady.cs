@@ -27,11 +27,11 @@ public class CharacterSelectReady : NetworkBehaviour {
         SetPlayerReadyServerRpc();
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    private void SetPlayerReadyServerRpc(ServerRpcParams serverRpcParams = default) {
-        SetPlayerReadyClientRpc(serverRpcParams.Receive.SenderClientId);
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
+    private void SetPlayerReadyServerRpc(RpcParams rpcParams = default) {
+        SetPlayerReadyClientRpc(rpcParams.Receive.SenderClientId);
 
-        playerReadyDictionary[serverRpcParams.Receive.SenderClientId] = true;
+        playerReadyDictionary[rpcParams.Receive.SenderClientId] = true;
 
         bool allClientsReady = true;
         foreach (ulong clientId in NetworkManager.Singleton.ConnectedClientsIds) {
@@ -53,7 +53,7 @@ public class CharacterSelectReady : NetworkBehaviour {
         }
     }
 
-    [ClientRpc]
+    [Rpc(SendTo.ClientsAndHost)]
     private void SetPlayerReadyClientRpc(ulong clientId) {
         playerReadyDictionary[clientId] = true;
 

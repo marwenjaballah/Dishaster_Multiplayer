@@ -36,17 +36,29 @@ public class DeliveryBagKitchenObject : KitchenObject
             indices[i] = KitchenGameMultiplayer.Instance.GetKitchenObjectSOIndex(ingredients[i]);
         }
 
-        AddDishServerRpc(indices);
+        AddDishServerRpc(indices, plate.NetworkObject);
         return true;
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    private void AddDishServerRpc(int[] ingredientIndices)
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
+    private void AddDishServerRpc(int[] ingredientIndices, NetworkObjectReference plateNetworkObjectReference)
     {
+        if (!CanAddPlate) return;
+
+        // The server validates and despawns the plate safely
+        if (plateNetworkObjectReference.TryGet(out NetworkObject plateNetworkObject))
+        {
+            KitchenObject plateKitchenObject = plateNetworkObject.GetComponent<KitchenObject>();
+            if (plateKitchenObject != null)
+            {
+                KitchenObject.DestroyKitchenObject(plateKitchenObject);
+            }
+        }
+
         AddDishClientRpc(ingredientIndices);
     }
 
-    [ClientRpc]
+    [Rpc(SendTo.ClientsAndHost)]
     private void AddDishClientRpc(int[] ingredientIndices)
     {
         var dish = new List<KitchenObjectSO>();
@@ -106,13 +118,16 @@ public class DeliveryBagKitchenObject : KitchenObject
         return true;
     }
 
-    [ServerRpc(RequireOwnership = false)]
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
     private void RemoveDishServerRpc(int dishIndex)
     {
-        RemoveDishClientRpc(dishIndex);
+        if (dishIndex >= 0 && dishIndex < _storedDishes.Count)
+        {
+            RemoveDishClientRpc(dishIndex);
+        }
     }
 
-    [ClientRpc]
+    [Rpc(SendTo.ClientsAndHost)]
     private void RemoveDishClientRpc(int dishIndex)
     {
         if (dishIndex >= 0 && dishIndex < _storedDishes.Count)
