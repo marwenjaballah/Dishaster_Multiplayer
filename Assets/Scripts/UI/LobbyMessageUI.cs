@@ -48,10 +48,10 @@ public class LobbyMessageUI : MonoBehaviour {
     }
 
     private void KitchenGameMultiplayer_OnFailedToJoinGame(object sender, System.EventArgs e) {
-        if (NetworkManager.Singleton.DisconnectReason == "") {
-            ShowMessage("Failed to connect");
-        } else {
+        if (NetworkManager.Singleton != null && !string.IsNullOrEmpty(NetworkManager.Singleton.DisconnectReason)) {
             ShowMessage(NetworkManager.Singleton.DisconnectReason);
+        } else {
+            ShowMessage("Failed to connect");
         }
     }
 
