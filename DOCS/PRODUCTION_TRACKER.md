@@ -80,12 +80,12 @@ Milestone E: Hardening & Commercial QA   [░░░░░░░░░░░░�
 
 ### Milestone E: Release Hardening & Platform Compliance
 
-| Task ID | Type | Priority | Description | Assignee | Status |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| `REL-001` | Platform | P0 | Steamworks SDK integration (Lobby invites, Rich Presence, Achievements) | Eng | 📋 `BACKLOG` |
-| `REL-002` | Input | P0 | Gamepad glyph auto-detection (Xbox, PlayStation, Steam Deck) and keyboard rebinds | UI/Eng | 📋 `BACKLOG` |
-| `REL-003` | Perf | P0 | Performance profiling: 120 FPS target on PC, solid 60 FPS on mid-tier mobile | Perf | 📋 `BACKLOG` |
-| `REL-004` | Legal | P1 | Final license audit in `CREDITS.md` and third-party asset compliance check | Legal | 📋 `BACKLOG` |
+| Task ID | Type | Priority | Description | Assignee | Status | Verification |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| `REL-001` | Platform | P0 | Steamworks SDK integration (Lobby invites, Rich Presence, Achievements) | Eng | 📋 `BACKLOG` | Steam API wrapper |
+| `REL-002` | Input | P0 | Gamepad glyph auto-detection (Xbox, PlayStation, Steam Deck) and keyboard rebinds | UI/Eng | ✅ `COMPLETED` | Dynamic device auto-detection, platform glyph resolution, options menu binding updates, static cleanup, Play Mode verified |
+| `REL-003` | Perf | P0 | Performance profiling: 120 FPS target on PC, solid 60 FPS on mid-tier mobile | Perf | 📋 `BACKLOG` | Unity Profiler telemetry |
+| `REL-004` | Legal | P1 | Final license audit in `CREDITS.md` and third-party asset compliance check | Legal | 📋 `BACKLOG` | Legal asset audit |
 
 ---
 
@@ -97,5 +97,6 @@ Milestone E: Hardening & Commercial QA   [░░░░░░░░░░░░�
 * **2026-10-22:** Milestone B (`VRT-006`) completed. Implemented Tactical Co-op Ping & Emote Wheel: `CoopPingManager.cs`, `CoopPingWheelUI.cs`, `WorldPingIndicator.cs` (3D billboard beacons, audio cues, HUD toast alerts, mouse/gamepad/mobile input bindings). 0 errors, 0 warnings verified in Play Mode via MCP.
 * **2026-10-22:** Milestone C (`TEST-002` & `TEST-003`) completed. Balanced delivery distances and added distance-based tip bonuses ($1/5m) in `DeliveryCustomerManager.cs`. Implemented dynamic shift tempo/pitch modulation and crisis urgency spikes in `MusicManager.cs`. Tested and verified in Play Mode with 0 errors and 0 warnings.
 * **2026-10-22:** Milestone D (`EXP-003`) completed. Scooter 2.0 physics polish: 18° dynamic corner banking kinematics, high-speed obstacle crash recoil impulse, server-authoritative crash audio broadcasting, and $10 food jolt damage penalty in `RestaurantEconomyManager.cs`. Verified in Play Mode with 0 errors and 0 warnings.
+* **2026-10-22:** Milestone E (`REL-002`) completed. Gamepad glyph auto-detection: input device detection (Xbox, PlayStation, Steam Deck, Keyboard/Mouse, Touchscreen), contextual glyph formatting, options UI live refresh, and `GameInput.ResetStaticData()` wired to `ResetStaticDataManager`. Verified in Play Mode with 0 errors and 0 warnings.
 
 

@@ -20,6 +20,7 @@ public class ResetStaticDataManager : MonoBehaviour {
         NightMarketManager.ResetStaticData();
         SinkCounter.ResetStaticData();
         CoopPingManager.ResetStaticData();
+        GameInput.ResetStaticData();
     }
 
 

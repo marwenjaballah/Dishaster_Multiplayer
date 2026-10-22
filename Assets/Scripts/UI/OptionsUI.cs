@@ -155,6 +155,8 @@ public class OptionsUI : MonoBehaviour {
             DisplaySettingsManager.Instance.OnDisplaySettingsChanged += DisplaySettingsManager_OnDisplaySettingsChanged;
         }
 
+        GameInput.OnActiveDeviceChanged += GameInput_OnActiveDeviceChanged;
+
         SetupResolutionDropdown();
         SetupWindowModeDropdown();
         UpdateVisual();
@@ -325,7 +327,15 @@ public class OptionsUI : MonoBehaviour {
         }
     }
 
+    private void GameInput_OnActiveDeviceChanged(object sender, GameInput.DeviceType e) {
+        if (isShowing) {
+            UpdateVisual();
+        }
+    }
+
     private void OnDestroy() {
+        GameInput.OnActiveDeviceChanged -= GameInput_OnActiveDeviceChanged;
+
         if (DisplaySettingsManager.Instance != null) {
             DisplaySettingsManager.Instance.OnDisplaySettingsChanged -= DisplaySettingsManager_OnDisplaySettingsChanged;
         }

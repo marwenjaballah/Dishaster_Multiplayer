@@ -8,6 +8,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.0-input-glyphs] - 2026-10-22
+*Milestone E: Gamepad Glyph Auto-Detection & Input Customization.*
+
+### Added
+- **Device-Aware Gamepad Auto-Detection (`GameInput.cs`):**
+  - Live listener for active input devices distinguishing between Keyboard/Mouse, Xbox / XInput, PlayStation (DualShock/DualSense), Steam Deck, and Touchscreen.
+  - Fires static `OnActiveDeviceChanged` event for real-time prompt updating across all menus and in-world HUDs.
+  - Wired `GameInput.ResetStaticData()` to `ResetStaticDataManager` for clean scene resets without memory leaks.
+- **Contextual Gamepad Glyphs & Options UI Refresh (`OptionsUI.cs` & `GameInput.cs`):**
+  - Dynamically formats controller button labels matching platform-specific glyphs (e.g. PlayStation: `[X] Cross`, `[Sqr] Square`, `[Options]`; Xbox/Steam Deck: `[A]`, `[X]`, `[Menu]`).
+  - Options UI binds directly to device changes, seamlessly switching prompts when switching between controller and keyboard.
+
 ## [0.7.0-vehicle-physics] - 2026-10-22
 *Milestone D: Scooter 2.0 Physics Polish & Crash Feedback.*
 

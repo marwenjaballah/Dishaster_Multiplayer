@@ -25,7 +25,20 @@ public class GameInput : MonoBehaviour {
         }
     }
 
+    public enum DeviceType {
+        KeyboardMouse,
+        XboxGamepad,
+        PlayStationGamepad,
+        SteamDeck,
+        GenericGamepad,
+        TouchScreen
+    }
 
+    public static event EventHandler<DeviceType> OnActiveDeviceChanged;
+
+    public static void ResetStaticData() {
+        OnActiveDeviceChanged = null;
+    }
 
     public event EventHandler OnInteractAction;
     public event EventHandler OnInteractAlternateAction;
@@ -48,6 +61,9 @@ public class GameInput : MonoBehaviour {
 
 
     private PlayerInputActions playerInputActions;
+    private DeviceType currentDeviceType = DeviceType.KeyboardMouse;
+    public DeviceType CurrentDeviceType => currentDeviceType;
+    private Action<object, InputActionChange> onActionChangeDelegate;
 
 
     private void Awake() {
@@ -70,7 +86,46 @@ public class GameInput : MonoBehaviour {
         playerInputActions.Player.InteractAlternate.performed += InteractAlternate_performed;
         playerInputActions.Player.Pause.performed += Pause_performed;
 
+        onActionChangeDelegate = (obj, change) => {
+            if (change == InputActionChange.ActionPerformed) {
+                InputAction action = obj as InputAction;
+                if (action != null && action.activeControl != null) {
+                    UpdateActiveDevice(action.activeControl.device);
+                }
+            }
+        };
+        InputSystem.onActionChange += onActionChangeDelegate;
+
         EnsureMobileControls();
+    }
+
+    private void UpdateActiveDevice(InputDevice device) {
+        if (device == null) return;
+
+        DeviceType newType = currentDeviceType;
+
+        if (device is Gamepad gamepad) {
+            string deviceName = (gamepad.displayName + " " + gamepad.description.product).ToLowerInvariant();
+
+            if (deviceName.Contains("dualshock") || deviceName.Contains("dualsense") || deviceName.Contains("playstation") || deviceName.Contains("sony") || deviceName.Contains("wireless controller")) {
+                newType = DeviceType.PlayStationGamepad;
+            } else if (deviceName.Contains("deck") || SystemInfo.deviceModel.ToLowerInvariant().Contains("steam deck")) {
+                newType = DeviceType.SteamDeck;
+            } else if (deviceName.Contains("xbox") || deviceName.Contains("xinput")) {
+                newType = DeviceType.XboxGamepad;
+            } else {
+                newType = DeviceType.GenericGamepad;
+            }
+        } else if (device is Touchscreen) {
+            newType = DeviceType.TouchScreen;
+        } else if (device is Keyboard || device is Mouse) {
+            newType = DeviceType.KeyboardMouse;
+        }
+
+        if (newType != currentDeviceType) {
+            currentDeviceType = newType;
+            OnActiveDeviceChanged?.Invoke(this, currentDeviceType);
+        }
     }
 
     private void EnsureMobileControls() {
@@ -84,6 +139,11 @@ public class GameInput : MonoBehaviour {
     }
 
     private void OnDestroy() {
+        if (onActionChangeDelegate != null) {
+            InputSystem.onActionChange -= onActionChangeDelegate;
+            onActionChangeDelegate = null;
+        }
+
         if (playerInputActions != null) {
             playerInputActions.Player.Interact.performed -= Interact_performed;
             playerInputActions.Player.InteractAlternate.performed -= InteractAlternate_performed;
@@ -174,12 +234,34 @@ public class GameInput : MonoBehaviour {
             case Binding.Pause:
                 return playerInputActions.Player.Pause.bindings[0].ToDisplayString();
             case Binding.Gamepad_Interact:
-                return playerInputActions.Player.Interact.bindings[1].ToDisplayString();
+                return FormatGamepadGlyph(playerInputActions.Player.Interact.bindings[1].ToDisplayString(), Binding.Gamepad_Interact);
             case Binding.Gamepad_InteractAlternate:
-                return playerInputActions.Player.InteractAlternate.bindings[1].ToDisplayString();
+                return FormatGamepadGlyph(playerInputActions.Player.InteractAlternate.bindings[1].ToDisplayString(), Binding.Gamepad_InteractAlternate);
             case Binding.Gamepad_Pause:
-                return playerInputActions.Player.Pause.bindings[1].ToDisplayString();
+                return FormatGamepadGlyph(playerInputActions.Player.Pause.bindings[1].ToDisplayString(), Binding.Gamepad_Pause);
         }
+    }
+
+    private string FormatGamepadGlyph(string defaultString, Binding binding) {
+        switch (currentDeviceType) {
+            case DeviceType.PlayStationGamepad:
+                if (binding == Binding.Gamepad_Interact) return "[X] Cross";
+                if (binding == Binding.Gamepad_InteractAlternate) return "[Sqr] Square";
+                if (binding == Binding.Gamepad_Pause) return "[Options]";
+                break;
+            case DeviceType.SteamDeck:
+                if (binding == Binding.Gamepad_Interact) return "[A]";
+                if (binding == Binding.Gamepad_InteractAlternate) return "[X]";
+                if (binding == Binding.Gamepad_Pause) return "[Menu]";
+                break;
+            case DeviceType.XboxGamepad:
+            case DeviceType.GenericGamepad:
+                if (binding == Binding.Gamepad_Interact) return "[A]";
+                if (binding == Binding.Gamepad_InteractAlternate) return "[X]";
+                if (binding == Binding.Gamepad_Pause) return "[Menu]";
+                break;
+        }
+        return defaultString;
     }
 
     public void RebindBinding(Binding binding, Action onActionRebound) {
