@@ -24,6 +24,7 @@ public class ResetStaticDataManager : MonoBehaviour {
         DeepFryerCounter.ResetStaticData();
         BeverageDispenserCounter.ResetStaticData();
         DineInCustomerController.ResetStaticData();
+        Platform.PlatformSteamManager.ResetStaticData();
     }
 
 

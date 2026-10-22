@@ -82,7 +82,7 @@ Milestone E: Hardening & Commercial QA   [░░░░░░░░░░░░�
 
 | Task ID | Type | Priority | Description | Assignee | Status | Verification |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| `REL-001` | Platform | P0 | Steamworks SDK integration (Lobby invites, Rich Presence, Achievements) | Eng | 📋 `BACKLOG` | Steam API wrapper |
+| `REL-001` | Platform | P0 | Steamworks SDK integration (Lobby invites, Rich Presence, Achievements) | Eng | ✅ `COMPLETED` | `PlatformSteamManager.cs` Rich Presence & 5 Achievements with `AchievementToastUI.cs` in-game overlay, static cleanup, Play Mode verified |
 | `REL-002` | Input | P0 | Gamepad glyph auto-detection (Xbox, PlayStation, Steam Deck) and keyboard rebinds | UI/Eng | ✅ `COMPLETED` | Dynamic device auto-detection, platform glyph resolution, options menu binding updates, static cleanup, Play Mode verified |
 | `REL-003` | Perf | P0 | Performance profiling: 120 FPS target on PC, solid 60 FPS on mid-tier mobile | Perf | 📋 `BACKLOG` | Unity Profiler telemetry |
 | `REL-004` | Legal | P1 | Final license audit in `CREDITS.md` and third-party asset compliance check | Legal | 📋 `BACKLOG` | Legal asset audit |
@@ -100,5 +100,6 @@ Milestone E: Hardening & Commercial QA   [░░░░░░░░░░░░�
 * **2026-10-22:** Milestone E (`REL-002`) completed. Gamepad glyph auto-detection: input device detection (Xbox, PlayStation, Steam Deck, Keyboard/Mouse, Touchscreen), contextual glyph formatting, options UI live refresh, and `GameInput.ResetStaticData()` wired to `ResetStaticDataManager`. Verified in Play Mode with 0 errors and 0 warnings.
 * **2026-10-22:** Milestone D (`EXP-002`) completed. Deep Fryer & Beverage Fountain Station: `DeepFryerCounter.cs` & `BeverageDispenserCounter.cs` with server-authoritative Netcode RPCs, sizzling and pouring audio, progress feedback, meal combo integration, and static lifecycle cleanup in `ResetStaticDataManager`. Verified in Play Mode with 0 errors and 0 warnings.
 * **2026-10-22:** Milestone D (`EXP-001`) completed. 3D Animated Dine-In Customers: `DineInCustomerController.cs` procedural walking gait, booth sitting pose, eating animation loops, departure on delivery success or timeout, and `TableManager.SpawnDineInCustomerClientRpc`. Verified in Play Mode with 0 errors and 0 warnings.
+* **2026-10-22:** Milestone E (`REL-001`) completed. Steamworks Platform Integration: `PlatformSteamManager.cs` Rich Presence ("Day X - Shift Y"), 5 core Steam achievements with gameplay event listeners, `AchievementToastUI.cs` in-game popup toast, and `PlatformSteamManager.ResetStaticData()` wired to `ResetStaticDataManager`. Verified in Play Mode with 0 errors and 0 warnings.
 
 

@@ -8,6 +8,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.0-steamworks-platform] - 2026-10-22
+*Milestone E: Steamworks Platform Integration, Rich Presence & Achievements.*
+
+### Added
+- **Steam Platform Architecture (`PlatformSteamManager.cs`):**
+  - Production-ready platform manager handling Steam Rich Presence and Steam Achievement hooks.
+  - Rich Presence dynamically updates with shift state changes (e.g. "Day 3 - Shift 2 Lunch Rush").
+  - 5 core Steam achievements implemented with gameplay event listeners:
+    - `ACH_FIRST_DELIVERY` ("Order Up!"): Delivered first meal to a dining table.
+    - `ACH_NIGHT_MARKET` ("Upgraded Kitchen"): Purchased first commercial upgrade.
+    - `ACH_MASTER_DISHWASHER` ("Sparkling Clean"): Scrubbed 5 dirty plates clean.
+    - `ACH_TEAM_PLAYER` ("Chef Communication"): Coordinated with teammates via tactical ping wheel.
+    - `ACH_DAY_SURVIVOR` ("Seasoned Restaurateur"): Reached Day 3 without going bankrupt.
+  - `PlatformSteamManager.ResetStaticData()` wired to `ResetStaticDataManager`.
+- **Steam Achievement Notification Toast (`AchievementToastUI.cs`):**
+  - Authentic Steam-styled overlay toast in the bottom right corner with gold trophy badge, Cyan header, bold title, description, and celebratory audio chime.
+
 ## [0.10.0-dine-in-customers] - 2026-10-22
 *Milestone D: 3D Animated Dine-In Customer Agents.*
 
