@@ -33,6 +33,7 @@ public class ResetStaticDataManager : MonoBehaviour {
         Delivery.DeliveryTarget3DIndicator.ResetStaticData();
         SoloChefHotSwapManager.ResetStaticData();
         Save.GameSaveManager.ResetStaticData();
+        UI.LevelSelectUI.ResetStaticData();
     }
 
 

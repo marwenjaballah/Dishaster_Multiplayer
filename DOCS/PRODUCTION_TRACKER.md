@@ -84,6 +84,7 @@ Milestone E: Hardening & Commercial QA   [░░░░░░░░░░░░�
 | `EXP-008` | Meta | P1 | Customer Review System ("Yelp for Dishaster") | UI/Economy | ✅ `COMPLETED` | `CustomerReviewManager.cs` dynamic feedback generation (5-star praises, cold food complaints, crisis comments) in `DaySummaryUI.cs`, Play Mode verified |
 | `EXP-009` | Meta/Save | P1 | Local Save System & Campaign Persistence | Eng/Save | ✅ `COMPLETED` | `GameSaveManager.cs` JSON serialization of career bank savings, unlocked levels, star records, Night Market upgrade mask, atomic file writes, static cleanup |
 | `EXP-010` | Mobile/UI | P1 | Mobile Touch Controls Polish & Safe-Area Adaptation | Mobile/UI | ✅ `COMPLETED` | `MobileTouchControlsUI.cs` safe-area notch adaptation, 15% joystick deadzone, touch haptics, dynamic solo chef swap button, Editor tested |
+| `EXP-011` | Level/Prog | P1 | Level 2 & Level 3 Environments, Courier Scaling & Venue Selection | Level/UI | ✅ `COMPLETED` | `LevelSelectionManager.cs` server RPCs, lighting modulation, delivery distance & patience curves, `LevelSelectUI.cs` 3-card venue browser, Play Mode verified |
 
 ---
 
@@ -118,5 +119,6 @@ Milestone E: Hardening & Commercial QA   [░░░░░░░░░░░░�
 * **2026-10-22:** Milestone C (`TEST-001`) completed. Multi-Client Network Synchronization Audit: `MultiClientNetworkAuditRunner.cs` executed in live Play Mode across 7 full test suites validating Day Loop transitions, Restaurant Economy balance tracking, Night Market upgrade catalog, Table seating operations, Co-op ping networking, Steamworks rich presence hooks, and managed heap GC telemetry with 100% pass rate (0 desyncs, 0 exceptions, 0 leaks).
 * **2026-10-22:** Milestone D (`EXP-009`) completed. Local Save System & Campaign Persistence: `GameSaveManager.cs` local JSON persistence in `Application.persistentDataPath` storing career bank balance, unlocked levels, star achievements, and Night Market upgrade masks. Wired to `DayLoopManager`, `NightMarketManager`, and `ResetStaticDataManager`. Verified with 0 errors and 0 warnings.
 * **2026-10-22:** Milestone D (`EXP-010`) completed. Mobile Touch Controls Polish: `MobileTouchControlsUI.cs` enhanced with dynamic safe-area notch adaptation (`Screen.safeArea`), 15% joystick deadzone with smooth response curve, tactile touch haptics (`Handheld.Vibrate()`), and dynamic on-screen Swap Chef button in solo mode. Deployed in `GameSceneTableService.unity`. Verified with 0 errors and 0 warnings.
+* **2026-10-22:** Milestone D (`EXP-011`) completed. Level 2 & Level 3 Environments, Courier Scaling & Venue Selection: `LevelSelectionManager.cs` enhanced with dual online/offline level selection, dynamic directional lighting & ambient modulation, dynamic rent scaling in `DayLoopManager.CalculateRentForDay`, courier distance and patience curves in `DeliveryCustomerManager.cs`, and `LevelSelectUI.cs` 3-card venue browser. Verified in Play Mode with 0 errors and 0 warnings.
 
 

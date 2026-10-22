@@ -8,6 +8,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.27.0-multi-level-environments-progression] - 2026-10-22
+*Milestone D: Level 2 & Level 3 Environments, Courier Scaling & Venue Selection (EXP-011).*
+
+### Added
+- **Multi-Level Progression & Venue System (`LevelSelectionManager.cs`):**
+  - Configured 3 distinct restaurant venue profiles:
+    - **Level 1 (The Sunny Side Diner):** Cozy suburban diner, $150 daily rent, 1.0x delivery distance (18–120m), 1.0x customer patience, warm daylight illumination.
+    - **Level 2 (Downtown Burger Bar):** Bustling urban center, $250 daily rent, 1.4x delivery distance (25–168m), 0.85x fast-paced customer patience, electric cyan evening dusk lighting.
+    - **Level 3 (Boardwalk Grill):** High-stakes coastal venue, $400 daily rent, 1.8x delivery distance (32–216m), 0.75x rush customer patience, golden sunset illumination.
+  - Server-authoritative level selection with `RequestSelectLevelRpc` and campaign unlock validation via `GameSaveManager.IsLevelUnlocked`.
+  - Supports both offline solo play and online multiplayer lobbies.
+- **Dynamic Level Economy & Logistics Scaling:**
+  - Connected `DayLoopManager.CalculateRentForDay` to automatically apply active level base daily rent.
+  - Connected `DeliveryCustomerManager` to scale courier delivery radii (`deliveryDistanceScale`) and customer patience timers (`customerPatienceMultiplier`).
+- **City Venue Browser UI (`LevelSelectUI.cs`):**
+  - Designed interactive modal UI showcasing all 3 restaurant venues with stats, rent requirements, courier distance curves, best shift records, and 1–3 star ratings.
+  - Interactive selection buttons and locked badges based on campaign save data.
+  - Added `LevelSelectUI.ResetStaticData()` wired to `ResetStaticDataManager`.
+  - Deployed `LevelSelectionManager` and `LevelSelectUI` in `GameSceneTableService.unity`.
+  - Verified in Unity 6 Editor and Play Mode with 0 errors and 0 warnings.
+
 ## [0.26.0-mobile-touch-controls-polish] - 2026-10-22
 *Milestone D: Mobile Touch Controls Polish & Safe-Area Adaptation (EXP-010).*
 
@@ -25,6 +46,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Deployed `MobileTouchControlsUI` in `GameSceneTableService.unity`.
   - Verified in Unity 6 Editor with 0 errors and 0 warnings.
 
+## [0.25.0-save-system-campaign-persistence] - 2026-10-22
 *Milestone D: Local Save System & Campaign Persistence (EXP-009).*
 
 ### Added

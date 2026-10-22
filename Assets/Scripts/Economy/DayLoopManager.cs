@@ -358,8 +358,12 @@ public class DayLoopManager : NetworkBehaviour {
     }
 
     public int CalculateRentForDay(int day) {
-        if (day <= 1) return baseDailyRent;
-        return Mathf.RoundToInt(baseDailyRent * Mathf.Pow(rentInflationRate, day - 1));
+        int rent = baseDailyRent;
+        if (LevelSelectionManager.Instance != null && LevelSelectionManager.Instance.ActiveLevel != null) {
+            rent = LevelSelectionManager.Instance.ActiveLevel.baseDailyRent;
+        }
+        if (day <= 1) return rent;
+        return Mathf.RoundToInt(rent * Mathf.Pow(rentInflationRate, day - 1));
     }
 
     // ── Public Getters ────────────────────────────────────────────────────────

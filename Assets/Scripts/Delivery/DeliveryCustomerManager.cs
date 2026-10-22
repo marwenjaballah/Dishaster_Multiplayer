@@ -321,6 +321,13 @@ public class DeliveryCustomerManager : NetworkBehaviour
             }
         }
 
+        if (LevelSelectionManager.Instance != null && LevelSelectionManager.Instance.ActiveLevel != null)
+        {
+            float distScale = LevelSelectionManager.Instance.ActiveLevel.deliveryDistanceScale;
+            effectiveMinDist *= distScale;
+            effectiveMaxDist *= distScale;
+        }
+
         for (int attempt = 0; attempt < 30; attempt++)
         {
             SidewalkWaypoint wp = _waypointGraph.GetRandomSidewalkWaypoint(_rng);
@@ -358,6 +365,10 @@ public class DeliveryCustomerManager : NetworkBehaviour
         if (Difficulty.DifficultyManager.Instance != null)
         {
             currentTimer = Difficulty.DifficultyManager.Instance.CurrentSettings.deliveryOrderTimer;
+        }
+        if (LevelSelectionManager.Instance != null && LevelSelectionManager.Instance.ActiveLevel != null)
+        {
+            currentTimer *= LevelSelectionManager.Instance.ActiveLevel.customerPatienceMultiplier;
         }
 
         int deliveryId = _nextDeliveryId++;
