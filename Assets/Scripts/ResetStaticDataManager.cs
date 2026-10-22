@@ -21,6 +21,8 @@ public class ResetStaticDataManager : MonoBehaviour {
         SinkCounter.ResetStaticData();
         CoopPingManager.ResetStaticData();
         GameInput.ResetStaticData();
+        DeepFryerCounter.ResetStaticData();
+        BeverageDispenserCounter.ResetStaticData();
     }
 
 

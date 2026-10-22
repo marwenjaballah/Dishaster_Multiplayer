@@ -8,6 +8,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.0-fryer-beverage] - 2026-10-22
+*Milestone D: Deep Fryer Station & Beverage Fountain Dispenser.*
+
+### Added
+- **Deep Fryer Station (`DeepFryerCounter.cs` & `DeepFryerCounterVisual.cs`):**
+  - Server-authoritative cooking station supporting fast-food frying (French Fries, Crispy Patties).
+  - Oil sizzling audio loop, progress bar feedback (`IHasProgress`), and state transitions (`Idle`, `Frying`, `Fried`, `Burned`).
+  - Supports Night Market `SpeedyStove` cooking speed boost (+30%) and pauses automatically during blackout crises.
+  - Plating integration: chefs can transfer fried foods directly onto a plate with Alternate Interact (`F`).
+  - `DeepFryerCounter.ResetStaticData()` wired to `ResetStaticDataManager`.
+- **Beverage Fountain Dispenser (`BeverageDispenserCounter.cs` & `BeverageDispenserVisual.cs`):**
+  - Server-authoritative cold drink dispensing station with pouring stream visual and audio feedback.
+  - Fill progress bar (`IHasProgress`) over 2.0s duration.
+  - Meal combo integration: drinks can be carried, placed on counters, packed into delivery bags, or served with meals.
+  - `BeverageDispenserCounter.ResetStaticData()` wired to `ResetStaticDataManager`.
+
 ## [0.8.0-input-glyphs] - 2026-10-22
 *Milestone E: Gamepad Glyph Auto-Detection & Input Customization.*
 
