@@ -94,7 +94,7 @@ public class DeliveryCustomerManager : NetworkBehaviour
     {
         if (Delivery.DeliveryTarget3DIndicator.Instance == null)
         {
-            var existing = FindFirstObjectByType<Delivery.DeliveryTarget3DIndicator>();
+            var existing = FindAnyObjectByType<Delivery.DeliveryTarget3DIndicator>();
             if (existing == null)
             {
                 var compassGo = new GameObject("DeliveryTarget3DIndicator_Auto");

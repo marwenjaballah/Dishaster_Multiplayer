@@ -103,9 +103,20 @@ public class Player : NetworkBehaviour, IKitchenObjectParent {
         }
     }
 
+    public static void SetLocalInstance(Player player) {
+        LocalInstance = player;
+    }
+
+    public void SetInputActive(bool active) {
+        if (!active) {
+            isWalking = false;
+            SetSelectedCounter(null);
+        }
+    }
+
     private void GameInput_OnInteractAlternateAction(object sender, EventArgs e) {
         if (!KitchenGameManager.Instance.IsGamePlaying()) return;
-        if (!IsOwner) return;
+        if (!IsOwner || LocalInstance != this) return;
 
         // If player is holding a portable tool (e.g. Fire Extinguisher), use it
         if (HasKitchenObject() && GetKitchenObject().TryGetComponent(out PortableFireExtinguisher extinguisher)) {
@@ -120,7 +131,7 @@ public class Player : NetworkBehaviour, IKitchenObjectParent {
 
     private void GameInput_OnInteractAction(object sender, System.EventArgs e) {
         if (!KitchenGameManager.Instance.IsGamePlaying()) return;
-        if (!IsOwner) return;
+        if (!IsOwner || LocalInstance != this) return;
 
         if (selectedCounter != null) {
             selectedCounter.Interact(this);
@@ -128,7 +139,7 @@ public class Player : NetworkBehaviour, IKitchenObjectParent {
     }
 
     private void Update() {
-        if (!IsOwner) {
+        if (!IsOwner || LocalInstance != this) {
             return;
         }
 

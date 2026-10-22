@@ -80,6 +80,7 @@ Milestone E: Hardening & Commercial QA   [░░░░░░░░░░░░�
 | `EXP-004` | Level Design | P2 | Level 2 (Downtown Burger Bar) and Level 3 (Boardwalk Grill) | Level | ✅ `COMPLETED` | `LevelProfileSO.cs` & `LevelSelectionManager.cs` server-authoritative level selection, 3 level profiles (Diner, Burger Bar, Boardwalk Grill) |
 | `EXP-005` | Gameplay | P1 | French Fries, Fountain Drinks & Deluxe Combo Meals | Gameplay | ✅ `COMPLETED` | Potato slicing, DeepFryer French Fries, BeverageDispenser SodaCup, Deluxe Combo ($30 bonus, +25s shift time), Play Mode verified |
 | `EXP-006` | Delivery | P1 | Thermal Food Decay & 3D In-World Delivery Compass | Vehicle/UI | ✅ `COMPLETED` | 90s freshness decay in `DeliveryBagKitchenObject`, hot tip bonus & cold penalty in `DeliveryCustomerManager`, neon 3D nav arrow with distance readout in `DeliveryTarget3DIndicator`, Play Mode verified |
+| `EXP-007` | Solo | P1 | Solo Mode Dual-Chef Hot-Swapping System | Gameplay/UI | ✅ `COMPLETED` | Dual-chef spawning in solo mode, [Tab] / Gamepad [Y] control toggling in `SoloChefHotSwapManager`, camera retargeting, `SoloChefHotSwapUI` badge, Play Mode verified |
 
 ---
 

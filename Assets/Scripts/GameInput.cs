@@ -43,6 +43,7 @@ public class GameInput : MonoBehaviour {
     public event EventHandler OnInteractAction;
     public event EventHandler OnInteractAlternateAction;
     public event EventHandler OnPauseAction;
+    public event EventHandler OnSwapChefAction;
     public event EventHandler OnBindingRebind;
 
 
@@ -97,6 +98,17 @@ public class GameInput : MonoBehaviour {
         InputSystem.onActionChange += onActionChangeDelegate;
 
         EnsureMobileControls();
+    }
+
+    private void Update() {
+        if (Keyboard.current != null) {
+            if (Keyboard.current.tabKey.wasPressedThisFrame || Keyboard.current.qKey.wasPressedThisFrame) {
+                OnSwapChefAction?.Invoke(this, EventArgs.Empty);
+            }
+        }
+        if (Gamepad.current != null && Gamepad.current.buttonNorth.wasPressedThisFrame) {
+            OnSwapChefAction?.Invoke(this, EventArgs.Empty);
+        }
     }
 
     private void UpdateActiveDevice(InputDevice device) {

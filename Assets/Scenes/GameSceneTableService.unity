@@ -128388,6 +128388,71 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 945640612}
   m_Mesh: {fileID: -9183064878934367120, guid: c10394c908143eb4fb0d03471bc79184, type: 3}
+--- !u!1 &945858534
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 945858537}
+  - component: {fileID: 945858536}
+  - component: {fileID: 945858535}
+  m_Layer: 0
+  m_Name: SoloChefHotSwapManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &945858535
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 945858534}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3d0f8572096e574297e522ef16c0ebd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoloChefHotSwapUI
+  container: {fileID: 0}
+  chefTitleText: {fileID: 0}
+  hotkeyPromptText: {fileID: 0}
+  activeChefIcon: {fileID: 0}
+  chefAColor: {r: 0.2, g: 0.6, b: 1, a: 1}
+  chefBColor: {r: 0.95, g: 0.75, b: 0.1, a: 1}
+--- !u!114 &945858536
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 945858534}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6dbfb87ad5222da44aff62c0d2ce6c72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoloChefHotSwapManager
+  chefBSpawnPosition: {x: 110.64, y: 0, z: -23}
+  swapCooldown: 0.25
+--- !u!4 &945858537
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 945858534}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &948681674
 GameObject:
   m_ObjectHideFlags: 0
@@ -288664,3 +288729,4 @@ SceneRoots:
   - {fileID: 2100638157}
   - {fileID: 392609692}
   - {fileID: 1135007104}
+  - {fileID: 945858537}

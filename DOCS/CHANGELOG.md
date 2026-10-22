@@ -12,6 +12,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Permanently removed Dash Sprint and Food/Ingredient Throwing from all future milestones and backlog per studio design direction.
   - Retained grounded, tactile chef movement and physical counter placement mechanics.
 
+## [0.23.0-solo-chef-hot-swap] - 2026-10-22
+*Milestone D: Solo Mode Dual-Chef Hot-Swapping System.*
+
+### Added
+- **Dual-Chef Solo Assist (`SoloChefHotSwapManager.cs` & `SoloChefHotSwapUI.cs`):**
+  - Solves single-player pacing bottleneck by auto-spawning Chef B (yellow visual identity) at the Takeout Window in 1-player sessions.
+  - Added `OnSwapChefAction` to `GameInput.cs` triggered via `[Tab]`, `[Q]`, or Gamepad North (`[Y]`/`[Triangle]`).
+  - Seamlessly hot-swaps active control between Chef A (Kitchen) and Chef B (Front-of-House / Courier).
+  - Automatically retargets `Player.LocalInstance` and `CameraFollowPlayer` cinemachine target to the active chef.
+  - Inactive chef safely stays stationary in idle pose and retains active counter engagements.
+  - Designed `SoloChefHotSwapUI` HUD pill showing active chef role with color-coded prompts.
+  - `SoloChefHotSwapManager.ResetStaticData()` wired to `ResetStaticDataManager`.
+  - Verified in Unity 6 Play Mode with 0 errors and 0 warnings.
+
 ## [0.22.0-thermal-freshness-compass] - 2026-10-22
 *Milestone D: Thermal Food Freshness Decay & 3D In-World Delivery Compass.*
 
