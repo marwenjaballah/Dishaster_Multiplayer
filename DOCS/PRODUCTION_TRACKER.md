@@ -52,7 +52,8 @@ Milestone E: Hardening & Commercial QA   [░░░░░░░░░░░░�
 | `VRT-003` | Art / Rig | P1 | Replace 2-sphere prototype player mesh with stylized Low-Poly Humanoid Rig & animations | Team | 📋 `BACKLOG` | Low-poly humanoid avatar, walk/run/carry/chop blend tree |
 | `VRT-004` | Level Design | P1 | Level 1: "The Sunny Side Diner" architectural overhaul with wide aisles and pass-through window | Team | 📋 `BACKLOG` | Service pass, booth tables, scooter dock |
 | `VRT-005` | Economy | P1 | Night Market Shop UI: spend daily earnings on 6 upgrades (Turbo Scooter, Auto-Chop, Sprinkler, Bag, Shoes, Stove) | Agent | ✅ `COMPLETED` | `NightMarketManager.cs` catalog & `NightMarketShopUI.cs`, server-authoritative purchases wired to all 6 gameplay mechanics |
-| `VRT-006` | Social | P2 | Co-op Ping / Emote Wheel ("Need Plates!", "Order Up!", "Going City") for rapid communication | Team | 📋 `BACKLOG` | Radial ping wheel with sound effects & world indicators |
+| `VRT-006` | Social | P2 | Co-op Ping / Emote Wheel ("Need Plates!", "Order Up!", "Going City") for rapid communication | Agent | ✅ `COMPLETED` | `CoopPingManager.cs`, `CoopPingWheelUI.cs`, `WorldPingIndicator.cs` 3D beacons, audio alerts & HUD toasts, 0 errors/0 warnings verified in Play Mode |
+
 
 ---
 
@@ -93,4 +94,6 @@ Milestone E: Hardening & Commercial QA   [░░░░░░░░░░░░�
 * **2026-10-21:** Milestone A (`STAB-003` through `STAB-009`) completed. 100% of Netcode RPCs migrated to Unity 6 syntax, zero memory leaks across 10 static classes, zero compiler errors and 0 warnings verified via live Unity Editor MCP bridge. Ready for Milestone B (`VRT-001`).
 * **2026-10-21:** Milestone B (`VRT-001` & `VRT-005`) completed. Implemented server-authoritative `DayLoopManager.cs` state machine (Morning $\rightarrow$ Lunch Rush $\rightarrow$ Afternoon $\rightarrow$ Dinner Rush $\rightarrow$ Closing Time $\rightarrow$ Day Summary $\rightarrow$ Night Market), HUD clock (`DayLoopHUDUI`), end-of-day statement (`DaySummaryUI`), `NightMarketManager.cs` upgrade catalog (6 upgrades), and `NightMarketShopUI`. Saved in `GameSceneTableService.unity`. Zero errors, zero warnings.
 * **2026-10-22:** Milestone B (`VRT-002`) completed. Implemented Finite Plate Economy & Dishwashing Sink: `DirtyPlateKitchenObject`, `SinkCounter.cs` with server-authoritative scrubbing Netcode RPCs (`IHasProgress`), `SinkCounterVisual.cs`, finite `PlatesCounter` restock/return loop, dirty dishes left on `CustomerTable` blocking next seatings until cleared, and `DeliveryBagKitchenObject` dish pit recycling. Verified in Play Mode with 0 errors/0 warnings.
+* **2026-10-22:** Milestone B (`VRT-006`) completed. Implemented Tactical Co-op Ping & Emote Wheel: `CoopPingManager.cs`, `CoopPingWheelUI.cs`, `WorldPingIndicator.cs` (3D billboard beacons, audio cues, HUD toast alerts, mouse/gamepad/mobile input bindings). 0 errors, 0 warnings verified in Play Mode via MCP.
+
 

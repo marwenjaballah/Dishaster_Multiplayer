@@ -19,7 +19,9 @@ public class ResetStaticDataManager : MonoBehaviour {
         DayLoopManager.ResetStaticData();
         NightMarketManager.ResetStaticData();
         SinkCounter.ResetStaticData();
+        CoopPingManager.ResetStaticData();
     }
+
 
 
 }

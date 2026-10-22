@@ -25,10 +25,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Plates no longer spawn infinitely out of thin air. The rack begins with 5 plates.
   - Players can return empty clean plates to the `PlatesCounter` stack to replenish available dishes for the chefs.
   - At the start of each morning shift (`Shift1_MorningPrep`), the plate rack is automatically restocked to full capacity.
-- **Living Dining Room Flow (`TableManager.cs`):**
-  - New guests will not seat or order at a table that has dirty dishes on it, requiring bussers to clear tables to maintain fast table turnover.
+- **Tactical Co-op Ping & Emote Wheel (`CoopPingManager.cs`, `CoopPingWheelUI.cs`, `WorldPingIndicator.cs`):**
+  - Hold `Q` (Keyboard) or D-Pad Up (Gamepad) to summon a sleek radial communication wheel.
+  - 6 rapid callout presets: `[ORDER UP]`, `[COURIER]`, `[THANKS!]`, `[HELP!]`, `[PLATES]`, and `[FIRE!]`.
+  - Spawns billboarded 3D world beacons at ping coordinates (counter/table/scooter context) that dynamically face the camera and bob in the air.
+  - Audio alert cues triggered via `SoundManager` and top-left HUD toast notifications styled with sender player name and team color.
+  - Dedicated mobile touch button added to `MobileTouchControlsUI`.
+  - `CoopPingManager.ResetStaticData()` wired to `ResetStaticDataManager`.
 
 ## [0.4.0-vertical-slice] - 2026-10-21
+
 
 *Milestone B: Day Loop Architecture & Night Market Upgrade Shop.*
 

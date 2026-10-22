@@ -395,8 +395,22 @@ namespace UI
                 onUp: OnInteractAlternatePointerUp
             );
 
+            // Tactical Co-op Ping Button: PING [Q]
+            CreateActionButton(
+                parent: actionContainer.transform,
+                name: "Btn_Ping",
+                label: "PING\n[Q]",
+                anchoredPos: new Vector2(-150f, 310f),
+                size: new Vector2(90f, 90f),
+                bgColor: new Color(0.15f, 0.45f, 0.92f, 0.85f), // Tactical Blue
+                accentColor: new Color(0.4f, 0.75f, 1f, 1f),
+                onDown: () => CoopPingWheelUI.Instance?.OpenWheel(),
+                onUp: () => CoopPingWheelUI.Instance?.CommitPingAndClose()
+            );
+
             // Mobile Pause Button (Top-Right)
             CreateMobilePauseButton();
+
         }
 
         private void CreateActionButton(Transform parent, string name, string label, Vector2 anchoredPos, Vector2 size,
