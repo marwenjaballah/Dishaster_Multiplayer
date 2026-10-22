@@ -39,6 +39,7 @@ Milestone E: Hardening & Commercial QA   [░░░░░░░░░░░░�
 | `STAB-007` | Balance | P0 | Fix runaway exponential rent formula ($\times 1.35$) with sustainable Day Loop formula | Agent | ✅ `COMPLETED` | Replaced with linear/manageable 1.15f scaling, 90s cycle, 1-strike debt grace |
 | `STAB-008` | Netcode | P0 | Migrate obsolete `[ServerRpc(RequireOwnership = false)]` to Unity 6 `[Rpc(SendTo.Server)]` | Agent | ✅ `COMPLETED` | Unity 6 `[Rpc]` migration complete; 0 errors and 0 warnings verified via MCP console |
 | `STAB-009` | Netcode | P1 | Server-authoritative plate delivery and bag insertion (`NetworkObjectReference` validation) | Agent | ✅ `COMPLETED` | Bag uses server validation + despawn, client manual Destroy calls removed |
+| `STAB-010` | Bugfix | P0 | Table Order UI gating, delivery failure timer close, distance culling, and chair stool seating kinematics | Agent | ✅ `COMPLETED` | Verified in Unity 6 Play Mode: customer seated on designated stool, order UI hidden until seated, timer closes on fail, 0 errors/0 warnings |
 
 ---
 

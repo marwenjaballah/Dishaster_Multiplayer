@@ -35,6 +35,19 @@ public class TableOrderUI : MonoBehaviour {
             iconTemplate.gameObject.SetActive(false);
         }
 
+        if (orderPanel != null) {
+            orderPanel.gameObject.SetActive(false);
+        }
+        if (deliveryResultPanel != null) {
+            deliveryResultPanel.SetActive(false);
+        }
+        if (tableNumberText != null) {
+            tableNumberText.gameObject.SetActive(false);
+            if (tableNumberText.transform.parent != null) {
+                tableNumberText.transform.parent.gameObject.SetActive(false);
+            }
+        }
+
         // Get parent table
         parentTable = GetComponentInParent<CustomerTable>();
         mainCamera = Camera.main;
@@ -61,14 +74,35 @@ public class TableOrderUI : MonoBehaviour {
     }
 
     private void LateUpdate() {
+        if (mainCamera == null) {
+            mainCamera = Camera.main;
+        }
+
+        // Distance & seated check: only show table UI when a customer is seated and within viewing range (25m)
+        bool hasSeatedOrder = parentTable != null && parentTable.HasActiveOrder() && parentTable.IsCustomerSeated();
+        float distToCamera = mainCamera != null ? Vector3.Distance(transform.position, mainCamera.transform.position) : 0f;
+        bool inRange = mainCamera != null && distToCamera <= 25f;
+
+        if (!hasSeatedOrder || !inRange) {
+            if (orderPanel != null && orderPanel.activeSelf) {
+                orderPanel.SetActive(false);
+            }
+            if (tableNumberText != null && tableNumberText.transform.parent != null && tableNumberText.transform.parent.gameObject.activeSelf) {
+                tableNumberText.transform.parent.gameObject.SetActive(false);
+            }
+        } else {
+            // Table has seated order and player camera is in restaurant viewing range
+            if (orderPanel != null && !orderPanel.activeSelf) {
+                orderPanel.SetActive(true);
+            }
+            if (tableNumberText != null && tableNumberText.transform.parent != null && !tableNumberText.transform.parent.gameObject.activeSelf) {
+                tableNumberText.transform.parent.gameObject.SetActive(true);
+            }
+        }
+
         // Billboard effect - always face camera
-        if (faceCamera) {
-            if (mainCamera == null) {
-                mainCamera = Camera.main;
-            }
-            if (mainCamera != null) {
-                transform.LookAt(transform.position + mainCamera.transform.forward);
-            }
+        if (faceCamera && mainCamera != null) {
+            transform.LookAt(transform.position + mainCamera.transform.forward);
         }
     }
 
@@ -76,6 +110,12 @@ public class TableOrderUI : MonoBehaviour {
 
     // Called by CustomerTable when order is assigned
     public void ShowOrder(RecipeSO recipe, int tableNumber) {
+        if (parentTable != null && !parentTable.IsCustomerSeated()) {
+            // Customer is still walking to the table - keep order panel closed until seated!
+            HideOrder();
+            return;
+        }
+
         if (orderPanel != null) {
             orderPanel.gameObject.SetActive(true);
         }
@@ -140,20 +180,19 @@ public class TableOrderUI : MonoBehaviour {
             orderPanel.gameObject.SetActive(false);
         }
 
-        // Make sure table number text AND its parent container (TableId bar) stay active on dining tables
+        if (timerBar != null) {
+            timerBar.fillAmount = 0f;
+        }
+
+        // Only show table number badge when an active order is seated, keeping tables clean when empty
         if (tableNumberText != null) {
-            if (parentTable != null) {
-                tableNumberText.gameObject.SetActive(true);
-                if (tableNumberText.transform.parent != null) {
-                    tableNumberText.transform.parent.gameObject.SetActive(true);
-                    tableNumberText.transform.parent.SetAsLastSibling(); // Bring to front!
-                }
+            bool hasSeatedCustomer = parentTable != null && parentTable.HasActiveOrder() && parentTable.IsCustomerSeated();
+            tableNumberText.gameObject.SetActive(hasSeatedCustomer);
+            if (tableNumberText.transform.parent != null) {
+                tableNumberText.transform.parent.gameObject.SetActive(hasSeatedCustomer);
+            }
+            if (hasSeatedCustomer) {
                 UpdateTableNumberDisplay();
-            } else {
-                tableNumberText.gameObject.SetActive(false);
-                if (tableNumberText.transform.parent != null) {
-                    tableNumberText.transform.parent.gameObject.SetActive(false);
-                }
             }
         }
 
@@ -193,6 +232,9 @@ public class TableOrderUI : MonoBehaviour {
     }
 
     public void ShowDeliveryResult(bool success) {
+        // Immediately close the order panel and timer bar on top
+        HideOrder();
+
         if (deliveryResultPanel == null) return;
 
         deliveryResultPanel.SetActive(true);

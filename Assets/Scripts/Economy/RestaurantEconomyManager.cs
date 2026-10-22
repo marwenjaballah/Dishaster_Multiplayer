@@ -187,12 +187,13 @@ public class RestaurantEconomyManager : NetworkBehaviour {
         SubmitCustomerReview(reviewStars, tip > 0 ? "Fast & Delicious!" : "Good Food");
     }
 
-    public void ProcessWrongDeliveryPenalty() {
+    public void ProcessWrongDeliveryPenalty(int fine = -1) {
         if (!IsServer) return;
 
-        currentBalance.Value -= wrongOrderFine;
+        int penaltyAmount = fine >= 0 ? fine : wrongOrderFine;
+        currentBalance.Value -= penaltyAmount;
         if (DayLoopManager.Instance != null) {
-            DayLoopManager.Instance.RecordFine(wrongOrderFine);
+            DayLoopManager.Instance.RecordFine(penaltyAmount);
         }
         SubmitCustomerReview(1.0f, "Wrong Dish Rejected!");
     }

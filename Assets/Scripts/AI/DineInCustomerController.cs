@@ -46,6 +46,7 @@ public class DineInCustomerController : MonoBehaviour {
 
     private CustomerTable targetTable;
     private Vector3 seatPosition;
+    private Quaternion seatRotation;
     private Vector3 entrancePosition;
     private float gaitPhase;
     private float walkWeight = 1f;
@@ -57,17 +58,45 @@ public class DineInCustomerController : MonoBehaviour {
         targetTable = table;
         entrancePosition = entrancePos;
 
-        // Position seat slightly in front/side of the table
-        Vector3 tablePos = table.transform.position;
-        seatPosition = tablePos + new Vector3(0f, 0f, 1.15f);
-        transform.position = entrancePosition;
+        Transform stool = ResolveStool(table);
+        if (stool != null) {
+            seatPosition = stool.position;
+            Vector3 toTable = table.transform.position - stool.position;
+            toTable.y = 0f;
+            seatRotation = toTable != Vector3.zero ? Quaternion.LookRotation(toTable) : Quaternion.identity;
+        } else {
+            Vector3 tablePos = table.transform.position;
+            seatPosition = tablePos + new Vector3(0f, 0f, 1.15f);
+            seatRotation = Quaternion.LookRotation(table.transform.position - seatPosition);
+        }
 
+        transform.position = entrancePosition;
         currentState = CustomerState.WalkingToTable;
         walkWeight = 1f;
 
         // Subscribe to table events
         CustomerTable.OnAnyTableDeliverySuccess += CustomerTable_OnAnyTableDeliverySuccess;
         CustomerTable.OnAnyTableDeliveryFailed += CustomerTable_OnAnyTableDeliveryFailed;
+    }
+
+    private Transform ResolveStool(CustomerTable table) {
+        if (table == null) return null;
+        int num = table.GetDisplayNumber();
+
+        // 1. Look for designated EggStools by display number
+        GameObject stoolL = GameObject.Find($"EggStool_{num}_Left");
+        if (stoolL != null) return stoolL.transform;
+
+        GameObject stoolR = GameObject.Find($"EggStool_{num}_Right");
+        if (stoolR != null) return stoolR.transform;
+
+        // 2. Overlap search within 2.5m for EggStool
+        Collider[] nearby = Physics.OverlapSphere(table.transform.position, 2.5f);
+        foreach (var col in nearby) {
+            if (col.gameObject.name.Contains("Stool")) return col.transform;
+        }
+
+        return null;
     }
 
     private void EnsureLimbPivots() {
@@ -176,10 +205,16 @@ public class DineInCustomerController : MonoBehaviour {
         switch (currentState) {
             case CustomerState.WalkingToTable:
                 MoveTowards(seatPosition, () => {
-                    // Arrived at table seat
+                    // Arrived at table chair
                     currentState = CustomerState.Sitting;
-                    transform.rotation = Quaternion.LookRotation(targetTable.transform.position - transform.position);
+                    transform.position = seatPosition;
+                    transform.rotation = seatRotation;
                     ApplySittingPose();
+
+                    // Notify table so the order panel and timer top show up only after customer is seated
+                    if (targetTable != null) {
+                        targetTable.SetCustomerSeated(true);
+                    }
                     OnAnyCustomerSeated?.Invoke(this, EventArgs.Empty);
                 });
                 break;
@@ -239,17 +274,17 @@ public class DineInCustomerController : MonoBehaviour {
     }
 
     private void ApplySittingPose() {
-        // Bend hips 80 degrees forward to sit on the diner booth
-        if (hipL != null) hipL.localRotation = Quaternion.Euler(80f, 0f, 0f);
-        if (hipR != null) hipR.localRotation = Quaternion.Euler(80f, 0f, 0f);
+        // Bend hips 85 degrees forward over chair seat
+        if (hipL != null) hipL.localRotation = Quaternion.Euler(85f, -6f, 0f);
+        if (hipR != null) hipR.localRotation = Quaternion.Euler(85f, 6f, 0f);
 
-        // Rest arms on table
-        if (shoulderL != null) shoulderL.localRotation = Quaternion.Euler(45f, 0f, -8f);
-        if (shoulderR != null) shoulderR.localRotation = Quaternion.Euler(45f, 0f, 8f);
+        // Rest arms forward toward table
+        if (shoulderL != null) shoulderL.localRotation = Quaternion.Euler(-42f, 18f, 0f);
+        if (shoulderR != null) shoulderR.localRotation = Quaternion.Euler(-42f, -18f, 0f);
 
-        // Lower torso to seat cushion height
+        // Lower torso to sit squarely on chair cushion
         if (torso != null) {
-            torso.localPosition = initialTorsoPos + new Vector3(0f, -0.25f, 0f);
+            torso.localPosition = initialTorsoPos + new Vector3(0f, -0.22f, 0f);
         }
     }
 
@@ -287,9 +322,11 @@ public class DineInCustomerController : MonoBehaviour {
     }
 
     private void CustomerTable_OnAnyTableDeliveryFailed(object sender, EventArgs e) {
-        if (sender is CustomerTable table && table == targetTable && currentState == CustomerState.Sitting) {
-            // Disappointed customer stands up and leaves
-            StartLeaving();
+        if (sender is CustomerTable table && table == targetTable) {
+            if (currentState == CustomerState.Sitting || currentState == CustomerState.WalkingToTable) {
+                if (eatingRoutine != null) StopCoroutine(eatingRoutine);
+                StartLeaving();
+            }
         }
     }
 
@@ -302,6 +339,7 @@ public class DineInCustomerController : MonoBehaviour {
     private void StartLeaving() {
         currentState = CustomerState.Leaving;
         walkWeight = 1f;
+        targetTable?.SetCustomerSeated(false);
 
         // Reset sitting pose back to standing
         if (hipL != null) hipL.localRotation = Quaternion.identity;

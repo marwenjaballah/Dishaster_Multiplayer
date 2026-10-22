@@ -8,6 +8,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.18.0-table-customer-fixes] - 2026-10-22
+*Milestone A: Dining Table Highlighting, Order Counter Timers, Delivery Failure, & Chair Seating Stabilization.*
+
+### Fixed & Enhanced
+- **Accurate Chair Seating Kinematics (`DineInCustomerController.cs`):**
+  - Resolved designated table stools (`EggStool_{N}_Left` and `EggStool_{N}_Right`) instead of hardcoding arbitrary offsets into dining aisles.
+  - Customers now navigate directly onto the chair cushion, rotate to face the table, and apply an 85° seated hip bend with resting arms on the tabletop.
+  - Customers stand back up to a walking posture and unseat from the table when leaving after meals or upon delivery failure.
+- **Order UI & Patience Timer Gating (`CustomerTable.cs` & `TableOrderUI.cs`):**
+  - Added synchronized `isCustomerSeated` NetworkVariable on `CustomerTable`.
+  - Order card billboards and patience countdown timers remain strictly hidden while the customer is walking from the entrance.
+  - Order UI only reveals and starts the patience timer once the customer is firmly seated at their chair.
+- **Distance & Frustum Culling for Table Highlighting (`TableOrderUI.cs`):**
+  - Deactivated `orderPanel`, `deliveryResultPanel`, and `TableId` badges by default in `Awake()` and `Start()`.
+  - Implemented distance-based (25m) and customer-seated visibility guards in `LateUpdate()`, preventing table UI badges from floating in empty space or rendering through restaurant exterior walls when far away.
+- **Delivery Failure & Timeout Cleanup (`CustomerTable.cs` & `TableOrderUI.cs`):**
+  - On delivery failure (expired order or wrong dish delivered), `ClearOrder()` now immediately calls `HideOrder()`, shutting down the timer bar (`timerBar.fillAmount = 0f`) and closing the order panel instantly.
+  - Deducts wrong delivery fine according to difficulty settings via `RestaurantEconomyManager.ProcessWrongDeliveryPenalty(fine)`.
+  - Dissatisfied customers immediately stand up and exit towards the restaurant entrance.
+
 ## [0.17.0-network-sync-audit] - 2026-10-22
 *Milestone C: Multi-Client Network Synchronization & Session Audit.*
 

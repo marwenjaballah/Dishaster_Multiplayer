@@ -37,8 +37,9 @@ public class CustomerTable : BaseCounter {
 
 
     // ---- Network state ----
-    private NetworkVariable<int>   assignedRecipeIndex = new NetworkVariable<int>(-1);
-    private NetworkVariable<float> orderAssignedTime   = new NetworkVariable<float>(-1f);
+    private readonly NetworkVariable<int>   assignedRecipeIndex = new NetworkVariable<int>(-1);
+    private readonly NetworkVariable<float> orderAssignedTime   = new NetworkVariable<float>(-1f);
+    private readonly NetworkVariable<bool>  isCustomerSeated    = new NetworkVariable<bool>(false);
 
     // ---- Local references ----
     private RecipeSO      currentRecipe;
@@ -92,6 +93,7 @@ public class CustomerTable : BaseCounter {
 
         assignedRecipeIndex.OnValueChanged += OnAssignedRecipeIndexChanged;
         orderAssignedTime.OnValueChanged   += OnOrderAssignedTimeChanged;
+        isCustomerSeated.OnValueChanged    += OnCustomerSeatedChanged;
 
         // Sync state for late-joining clients
         ApplyRecipeState(assignedRecipeIndex.Value);
@@ -110,10 +112,23 @@ public class CustomerTable : BaseCounter {
         }
     }
 
+    private void OnCustomerSeatedChanged(bool previousValue, bool newValue) {
+        if (newValue && HasActiveOrder() && currentRecipe != null) {
+            tableOrderUI?.ShowOrder(currentRecipe, displayNumber);
+        } else {
+            tableOrderUI?.HideOrder();
+        }
+        UpdateVisualState();
+    }
+
     private void ApplyRecipeState(int recipeIndex) {
         if (recipeIndex >= 0 && TableManager.Instance != null && TableManager.Instance.GetRecipeListSO() != null) {
             currentRecipe = TableManager.Instance.GetRecipeListSO().recipeSOList[recipeIndex];
-            tableOrderUI?.ShowOrder(currentRecipe, displayNumber);
+            if (isCustomerSeated.Value) {
+                tableOrderUI?.ShowOrder(currentRecipe, displayNumber);
+            } else {
+                tableOrderUI?.HideOrder();
+            }
         } else {
             currentRecipe = null;
             tableOrderUI?.HideOrder();
@@ -125,7 +140,7 @@ public class CustomerTable : BaseCounter {
     // ---- Per-frame timer (runs on all clients for smooth UI; server also handles expiry) ----
 
     private void Update() {
-        if (!HasActiveOrder()) return;
+        if (!HasActiveOrder() || !isCustomerSeated.Value) return;
         if (orderAssignedTime.Value < 0f) return;
 
         float elapsed     = Time.time - orderAssignedTime.Value;
@@ -243,8 +258,13 @@ public class CustomerTable : BaseCounter {
                 KitchenObject.SpawnKitchenObject(dirtyPlateKitchenObjectSO, this);
             }
         } else {
-
-            // Wrong dish delivered -> Flash ❌ feedback, but player keeps plate and order stays active until timer expires
+            // Wrong dish delivered -> Deduct wrong order fine, cancel order, and close timer
+            if (RestaurantEconomyManager.Instance != null) {
+                int fine = Difficulty.DifficultyManager.Instance != null ? Difficulty.DifficultyManager.Instance.GetTableWrongOrderFine() : 15;
+                RestaurantEconomyManager.Instance.ProcessWrongDeliveryPenalty(fine);
+            }
+            TableManager.Instance?.HandleWrongDelivery(tableId);
+            ClearOrder();
             ShowWrongDeliveryFeedbackClientRpc();
             DeliveryManager.Instance?.TriggerDeliveryFailed();
         }
@@ -278,10 +298,11 @@ public class CustomerTable : BaseCounter {
 
         orderExpiredHandled        = false;
         currentRecipe              = recipe;
+        isCustomerSeated.Value     = false;
         assignedRecipeIndex.Value  = recipeIndex;
-        orderAssignedTime.Value    = Time.time; // synced to all clients
+        orderAssignedTime.Value    = -1f; // Starts when customer is seated
 
-        Debug.Log($"Table {displayNumber} assigned: {recipe.recipeName} (timeout: {orderTimeoutDuration}s)");
+        Debug.Log($"Table {displayNumber} assigned: {recipe.recipeName} (awaiting seated customer)");
     }
 
     public void ClearOrder() {
@@ -290,6 +311,7 @@ public class CustomerTable : BaseCounter {
         currentRecipe             = null;
         assignedRecipeIndex.Value = -1;
         orderAssignedTime.Value   = -1f;
+        isCustomerSeated.Value    = false;
 
         Debug.Log($"Table {displayNumber} order cleared");
 
@@ -297,11 +319,56 @@ public class CustomerTable : BaseCounter {
         TableManager.Instance?.NotifyTableBecameEmpty(tableId);
     }
 
+    public void SetCustomerSeated(bool seated) {
+        if (Unity.Netcode.NetworkManager.Singleton != null && Unity.Netcode.NetworkManager.Singleton.IsListening) {
+            SetCustomerSeatedServerRpc(seated);
+        } else {
+            isCustomerSeated.Value = seated;
+            if (seated) {
+                orderAssignedTime.Value = Time.time;
+                CustomerSeatedClientRpc();
+            } else {
+                tableOrderUI?.HideOrder();
+                UpdateVisualState();
+            }
+        }
+    }
+
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
+    public void SetCustomerSeatedServerRpc(bool seated) {
+        isCustomerSeated.Value = seated;
+        if (seated) {
+            orderAssignedTime.Value = Time.time;
+            CustomerSeatedClientRpc();
+        } else {
+            CustomerUnseatedClientRpc();
+        }
+    }
+
+    [Rpc(SendTo.ClientsAndHost)]
+    private void CustomerSeatedClientRpc() {
+        if (currentRecipe == null && assignedRecipeIndex.Value >= 0 && TableManager.Instance != null && TableManager.Instance.GetRecipeListSO() != null) {
+            currentRecipe = TableManager.Instance.GetRecipeListSO().recipeSOList[assignedRecipeIndex.Value];
+        }
+        if (currentRecipe != null) {
+            tableOrderUI?.ShowOrder(currentRecipe, displayNumber);
+        }
+        UpdateVisualState();
+    }
+
+    [Rpc(SendTo.ClientsAndHost)]
+    private void CustomerUnseatedClientRpc() {
+        tableOrderUI?.HideOrder();
+        UpdateVisualState();
+    }
+
+    public bool IsCustomerSeated() => isCustomerSeated.Value;
+
     // ---- Visuals ----
 
     private void UpdateVisualState() {
         if (orderActiveIndicator != null) {
-            orderActiveIndicator.SetActive(HasActiveOrder());
+            orderActiveIndicator.SetActive(HasActiveOrder() && isCustomerSeated.Value);
         }
     }
 
@@ -313,6 +380,7 @@ public class CustomerTable : BaseCounter {
 
     [Rpc(SendTo.ClientsAndHost)]
     private void ShowCorrectDeliveryFeedbackClientRpc() {
+        tableOrderUI?.HideOrder();
         OnAnyTableDeliverySuccess?.Invoke(this, EventArgs.Empty);
         ShowDeliveryResult(true);
         Debug.Log($"SUCCESS: Correct delivery to Table {displayNumber}!");
@@ -320,16 +388,18 @@ public class CustomerTable : BaseCounter {
 
     [Rpc(SendTo.ClientsAndHost)]
     private void ShowWrongDeliveryFeedbackClientRpc() {
+        tableOrderUI?.HideOrder();
         OnAnyTableDeliveryFailed?.Invoke(this, EventArgs.Empty);
         ShowDeliveryResult(false);
-        Debug.Log($"FAILED: Wrong delivery to Table {displayNumber}! Order canceled.");
+        Debug.Log($"FAILED: Wrong delivery to Table {displayNumber}! Order canceled and timer closed.");
     }
 
     [Rpc(SendTo.ClientsAndHost)]
     private void ShowExpiredOrderFeedbackClientRpc() {
+        tableOrderUI?.HideOrder();
         OnAnyTableDeliveryFailed?.Invoke(this, EventArgs.Empty);
         ShowDeliveryResult(false);
-        Debug.Log($"EXPIRED: Order expired at Table {displayNumber}!");
+        Debug.Log($"EXPIRED: Order expired at Table {displayNumber}! Timer closed.");
     }
 
     [Rpc(SendTo.ClientsAndHost)]
