@@ -40,6 +40,7 @@ Milestone E: Hardening & Commercial QA   [░░░░░░░░░░░░�
 | `STAB-008` | Netcode | P0 | Migrate obsolete `[ServerRpc(RequireOwnership = false)]` to Unity 6 `[Rpc(SendTo.Server)]` | Agent | ✅ `COMPLETED` | Unity 6 `[Rpc]` migration complete; 0 errors and 0 warnings verified via MCP console |
 | `STAB-009` | Netcode | P1 | Server-authoritative plate delivery and bag insertion (`NetworkObjectReference` validation) | Agent | ✅ `COMPLETED` | Bag uses server validation + despawn, client manual Destroy calls removed |
 | `STAB-010` | Bugfix | P0 | Table Order UI gating, delivery failure timer close, distance culling, and chair stool seating kinematics | Agent | ✅ `COMPLETED` | Verified in Unity 6 Play Mode: customer seated on designated stool, order UI hidden until seated, timer closes on fail, 0 errors/0 warnings |
+| `STAB-011` | Bugfix | P0 | Fix Input System legacy exceptions, permanent counter highlighting, distinct thematic UIs, and 3D appliance models | Agent | ✅ `COMPLETED` | Verified in Unity 6 Play Mode: 0 Input exceptions on fire extinguisher, distinct Sink/Fryer/Dispenser UIs, highlights toggle only on focus, 0 errors/0 warnings |
 
 ---
 

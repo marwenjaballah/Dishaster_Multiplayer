@@ -8,6 +8,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.19.0-counter-visuals-input-fixes] - 2026-10-22
+*Milestone A: Input System Legacy Exceptions, Permanent Counter Highlighting, Distinct UIs, & Appliance 3D Models.*
+
+### Fixed
+- **Input System Package Compatibility (`PortableFireExtinguisher.cs`, `WaterLeakValveCounter.cs`, `InteractKeyPromptUI.cs`, `PerformanceTelemetryManager.cs`):**
+  - Removed all legacy `UnityEngine.Input.GetKey(KeyCode)` calls that threw `InvalidOperationException` with Unity's new Input System package active.
+  - Replaced with `GameInput.Instance.IsInteractAlternatePressed()`, `GameInput.Instance.IsInteractPressed()`, and `UnityEngine.InputSystem.Keyboard.current` queries.
+- **Permanent Highlight Bug on Counters (`SelectedCounterVisual.cs`):**
+  - Fixed false-positive `e.selectedCounter == baseCounter` comparison when both were `null`, which permanently highlighted counters whenever the player looked away.
+  - Implemented automatic parent `BaseCounter` resolution in `Awake()`.
+  - Added explicit `baseCounter != null && e.selectedCounter == baseCounter` guard and guaranteed all visual children start inactive.
+
+### Added & Enhanced
+- **Distinct Thematic World-Space UIs for Kitchen Stations:**
+  - **Sink Counter UI (`SinkCounterUI.cs`):** Dedicated aqua cyan (`#06B6D4`) UI with `"SCRUBBING DISHES"`, progress fill gauge, and `"SPARKLING CLEAN!"` emerald completion flash.
+  - **Deep Fryer UI (`DeepFryerCounterUI.cs`):** Dedicated golden amber (`#F59E0B`) UI with `"DEEP FRYING..."`, `"CRISPY & READY!"` green status, and pulsing danger-red `"BURNING OIL!"` warning.
+  - **Beverage Dispenser UI (`BeverageDispenserCounterUI.cs`):** Dedicated cold soda violet/cyan (`#8B5CF6`) UI with `"DISPENSING SODA..."` and `"CUP FULL!"` ready status.
+- **Stylized Low-Poly Counter Appliance 3D Models:**
+  - Constructed stylized 3D appliances matching standard `Kitchen Counter` dimensions, scale `(1, 1, 1)`, and heights (`CounterTopPoint = (0, 1.3, 0)`):
+    - *Sink:* Stainless steel drop-in basin, curved chrome gooseneck faucet spout, hot/cold tap knobs, and drain plug.
+    - *Deep Fryer:* Stainless steel dual-vat housing, golden sizzling oil bath, twin wire fryer baskets with black heat-resistant handles, and front dial knobs.
+    - *Beverage Dispenser:* Commercial stainless soda fountain tower, branded logo marquee, 3 dispenser spouts with push-levers (Cola, Lime, Orange), and drip tray grill.
+  - Integrated appliances seamlessly into `SelectedCounterVisual` so the entire appliance glows with `CounterSelected` material when approached by players.
+
 ## [0.18.0-table-customer-fixes] - 2026-10-22
 *Milestone A: Dining Table Highlighting, Order Counter Timers, Delivery Failure, & Chair Seating Stabilization.*
 

@@ -94,8 +94,8 @@ public class PortableFireExtinguisher : KitchenObject {
             if (GameInput.Instance != null) {
                 isHoldingF = GameInput.Instance.IsInteractAlternatePressed();
             }
-            if (!isHoldingF) {
-                isHoldingF = Input.GetKey(KeyCode.F);
+            if (!isHoldingF && UnityEngine.InputSystem.Keyboard.current != null) {
+                isHoldingF = UnityEngine.InputSystem.Keyboard.current.fKey.isPressed;
             }
 
             if (isHoldingF != isSpraying.Value) {

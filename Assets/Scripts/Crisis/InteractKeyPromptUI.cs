@@ -210,11 +210,11 @@ public class InteractKeyPromptUI : MonoBehaviour {
         }
 
         // Fallback for direct keyboard input
-        if (!isKeyPressed) {
+        if (!isKeyPressed && UnityEngine.InputSystem.Keyboard.current != null) {
             if (isFKey) {
-                isKeyPressed = Input.GetKey(KeyCode.F);
+                isKeyPressed = UnityEngine.InputSystem.Keyboard.current.fKey.isPressed;
             } else {
-                isKeyPressed = Input.GetKey(KeyCode.E);
+                isKeyPressed = UnityEngine.InputSystem.Keyboard.current.eKey.isPressed;
             }
         }
 

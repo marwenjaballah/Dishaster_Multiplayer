@@ -69,7 +69,7 @@ namespace Perf
         private void Update()
         {
             // Toggle performance HUD with F3
-            if (Input.GetKeyDown(KeyCode.F3))
+            if (UnityEngine.InputSystem.Keyboard.current != null && UnityEngine.InputSystem.Keyboard.current.f3Key.wasPressedThisFrame)
             {
                 _showOverlay = !_showOverlay;
             }

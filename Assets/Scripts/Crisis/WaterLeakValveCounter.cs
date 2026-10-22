@@ -83,8 +83,8 @@ public class WaterLeakValveCounter : BaseCounter {
             if (GameInput.Instance != null) {
                 isFPressed = GameInput.Instance.IsInteractAlternatePressed();
             }
-            if (!isFPressed) {
-                isFPressed = Input.GetKey(KeyCode.F);
+            if (!isFPressed && UnityEngine.InputSystem.Keyboard.current != null) {
+                isFPressed = UnityEngine.InputSystem.Keyboard.current.fKey.isPressed;
             }
 
             if (isWrench && isFPressed) {
