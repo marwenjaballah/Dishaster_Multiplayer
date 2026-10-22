@@ -30,6 +30,7 @@ namespace UI
         [SerializeField] private TextMeshProUGUI dishesDeliveredText;
         [SerializeField] private TextMeshProUGUI starsAwardedText;
         [SerializeField] private TextMeshProUGUI ratingText;
+        [SerializeField] private TextMeshProUGUI customerReviewsText;
 
         [Header("Debt Warning Alert")]
         [SerializeField] private GameObject debtWarningPanel;
@@ -130,6 +131,33 @@ namespace UI
                     2 => "★★☆ GREAT SHIFT",
                     _ => "★☆☆ SURVIVED"
                 };
+            }
+
+            // Generate Yelp Customer Reviews
+            var reviews = CustomerReviewManager.GenerateDailyReviews(
+                data.dishesDelivered, 
+                data.starRating, 
+                data.tips, 
+                data.fines, 
+                data.isDebtStrike
+            );
+
+            if (customerReviewsText != null)
+            {
+                var sb = new System.Text.StringBuilder();
+                sb.AppendLine("<b>CUSTOMER REVIEWS:</b>");
+                foreach (var rev in reviews)
+                {
+                    string starsStr = new string('★', rev.stars) + new string('☆', 5 - rev.stars);
+                    sb.AppendLine($"<color=#F59E0B>{starsStr}</color> <b>{rev.authorHandle}:</b> <i>\"{rev.comment}\"</i>");
+                }
+                customerReviewsText.text = sb.ToString();
+            }
+            else if (subtitleText != null && reviews.Count > 0)
+            {
+                var primaryRev = reviews[0];
+                string starsStr = new string('★', primaryRev.stars);
+                subtitleText.text = $"\"{primaryRev.comment}\" — {primaryRev.authorHandle} ({starsStr})";
             }
 
             // Debt Strike Banner

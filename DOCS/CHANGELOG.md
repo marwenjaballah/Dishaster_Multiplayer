@@ -12,6 +12,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Permanently removed Dash Sprint and Food/Ingredient Throwing from all future milestones and backlog per studio design direction.
   - Retained grounded, tactile chef movement and physical counter placement mechanics.
 
+## [0.24.0-customer-reviews-yelp] - 2026-10-22
+*Milestone D: Customer Review Cards System ("Yelp for Dishaster").*
+
+### Added
+- **Dynamic Customer Review Engine (`CustomerReviewManager.cs`):**
+  - Generates 3 contextual Yelp-style review cards at the conclusion of every day based on player performance metrics.
+  - Generates humorous user handles (`@BurgerLover99`, `@SpeedyScooterFan`, `@KarenReviews`, `@ChaosEnthusiast`).
+  - Evaluates dishes delivered, rating stars, crisis occurrences, and food warmth to output customized customer quotes (e.g. praising sizzling deliveries vs. comedic commentary on kitchen fires and water leaks).
+- **Day Summary UI Integration (`DaySummaryUI.cs`):**
+  - Added review quotes and star formatting to the end-of-day statement screen.
+  - Fallback support gracefully surfacing the headline review in `subtitleText` without requiring inspector canvas rebinding.
+  - Verified in Unity 6 Play Mode with 0 errors and 0 warnings.
+
 ## [0.23.0-solo-chef-hot-swap] - 2026-10-22
 *Milestone D: Solo Mode Dual-Chef Hot-Swapping System.*
 

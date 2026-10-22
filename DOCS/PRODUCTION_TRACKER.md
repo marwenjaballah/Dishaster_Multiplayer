@@ -81,6 +81,7 @@ Milestone E: Hardening & Commercial QA   [░░░░░░░░░░░░�
 | `EXP-005` | Gameplay | P1 | French Fries, Fountain Drinks & Deluxe Combo Meals | Gameplay | ✅ `COMPLETED` | Potato slicing, DeepFryer French Fries, BeverageDispenser SodaCup, Deluxe Combo ($30 bonus, +25s shift time), Play Mode verified |
 | `EXP-006` | Delivery | P1 | Thermal Food Decay & 3D In-World Delivery Compass | Vehicle/UI | ✅ `COMPLETED` | 90s freshness decay in `DeliveryBagKitchenObject`, hot tip bonus & cold penalty in `DeliveryCustomerManager`, neon 3D nav arrow with distance readout in `DeliveryTarget3DIndicator`, Play Mode verified |
 | `EXP-007` | Solo | P1 | Solo Mode Dual-Chef Hot-Swapping System | Gameplay/UI | ✅ `COMPLETED` | Dual-chef spawning in solo mode, [Tab] / Gamepad [Y] control toggling in `SoloChefHotSwapManager`, camera retargeting, `SoloChefHotSwapUI` badge, Play Mode verified |
+| `EXP-008` | Meta | P1 | Customer Review System ("Yelp for Dishaster") | UI/Economy | ✅ `COMPLETED` | `CustomerReviewManager.cs` dynamic feedback generation (5-star praises, cold food complaints, crisis comments) in `DaySummaryUI.cs`, Play Mode verified |
 
 ---
 
