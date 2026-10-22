@@ -378,23 +378,33 @@ namespace Environment
                     new Vector3(0.035f, 0.035f, 0.035f),
                     wainscotingMat);
 
-                // Brass Stem for Table Number Badge (resting on tray at Y = tableTopY + 0.02m)
-                CreatePrimitiveCylinder(set.transform, "NumberStandStem",
-                    basePos + new Vector3(0f, 0.05f, 0.045f),
-                    new Vector3(0.015f, 0.04f, 0.015f),
+                // Brass Table Number Tent Block (resting on tray at Y = tableTopY + 0.02m)
+                GameObject tentStand = CreatePrimitiveCube(set.transform, "TableNumberTent",
+                    basePos + new Vector3(0f, 0.035f, 0.045f),
+                    new Vector3(0.11f, 0.05f, 0.06f),
                     brassGoldMat);
 
-                // Sleek Tabletop Number Badge matching the existing UI design (LookAtCamera, dark card, gold outline, LiberationSans bold)
-                CreateExistingStyleCardUI(set.transform,
-                    basePos + new Vector3(0f, 0.12f, 0.045f),
-                    new Vector2(46f, 32f),
-                    0.0035f,
+                // South Face (#i facing South towards dining room approach, reading left-to-right)
+                CreateWallSignUI(tentStand.transform,
+                    new Vector3(0f, 0.005f, -0.032f),
+                    Quaternion.Euler(-15f, 0f, 0f),
+                    new Vector2(60f, 35f),
+                    0.0022f,
                     $"#{i}",
-                    18,
-                    Color.white,
-                    new Color(0.08f, 0.10f, 0.14f, 0.94f),
-                    new Color(0.85f, 0.72f, 0.35f, 0.95f),
-                    useLookAtCamera: true);
+                    22,
+                    new Color(0.12f, 0.08f, 0.02f),
+                    isLocal: true);
+
+                // North Face (#i facing North towards kitchen aisle, reading left-to-right)
+                CreateWallSignUI(tentStand.transform,
+                    new Vector3(0f, 0.005f, 0.032f),
+                    Quaternion.Euler(-15f, 180f, 0f),
+                    new Vector2(60f, 35f),
+                    0.0022f,
+                    $"#{i}",
+                    22,
+                    new Color(0.12f, 0.08f, 0.02f),
+                    isLocal: true);
             }
         }
 
@@ -482,17 +492,15 @@ namespace Environment
                 new Vector3(0.04f, 0.40f, 2.6f),
                 neonCyanMat);
 
-            // Takeout & Delivery Header Card matching existing UI design (LookAtCamera, cyan outline, LiberationSans bold)
-            CreateExistingStyleCardUI(extGroup.transform,
-                new Vector3(110.53f, 2.95f, -23.0f),
+            // Takeout & Delivery Header Sign written flat on awning header facing West towards courier parking lot (reading left-to-right)
+            CreateWallSignUI(extGroup.transform,
+                new Vector3(110.54f, 2.95f, -23.0f),
+                Quaternion.Euler(0f, 90f, 0f),
                 new Vector2(340f, 50f),
                 0.007f,
-                "TAKE OUT & DELIVERY",
+                "<b>TAKE OUT & DELIVERY</b>",
                 20,
-                Color.cyan,
-                new Color(0.08f, 0.10f, 0.14f, 0.94f),
-                new Color(0.0f, 0.85f, 0.95f, 0.95f),
-                useLookAtCamera: true);
+                new Color(0.0f, 0.95f, 1.0f));
         }
 
         // ── 8. Dining Room Decor, Planters & Neon Wall Sign ────────────────────
@@ -521,19 +529,17 @@ namespace Environment
                 new Vector3(0.04f, 1.25f, 2.4f),
                 kitchenTileMat);
 
-            // Framed Chalkboard Menu Card on West Wall matching existing UI design (LookAtCamera, gold outline, LiberationSans)
-            CreateExistingStyleCardUI(decorGroup.transform,
-                new Vector3(88.75f, 2.1f, -20.8f),
-                new Vector2(300f, 180f),
-                0.0065f,
+            // Framed Chalkboard Menu written flat on blackboard on West Wall facing East (+X into dining room, reading left-to-right)
+            CreateWallSignUI(decorGroup.transform,
+                new Vector3(88.69f, 2.1f, -20.8f),
+                Quaternion.Euler(0f, 270f, 0f),
+                new Vector2(280f, 170f),
+                0.007f,
                 "<b>TODAY'S SPECIALS</b>\n\n• Deluxe Combo Meal  +$30\n• Crispy French Fries\n• Fountain Drinks\n\n<i>Fast Delivery • Hot & Fresh!</i>",
                 14,
-                new Color(0.95f, 0.95f, 0.88f),
-                new Color(0.08f, 0.10f, 0.14f, 0.95f),
-                new Color(0.85f, 0.72f, 0.35f, 0.90f),
-                useLookAtCamera: true);
+                new Color(0.95f, 0.95f, 0.88f));
 
-            // Neon Sign: "DISH-ASTER DINER" on South Wall (facing North 0°)
+            // Neon Sign: "DISH-ASTER DINER" on South Wall facing North (+Z into dining room)
             CreatePrimitiveCube(decorGroup.transform, "NeonSign_Backdrop",
                 new Vector3(99.25f, 2.45f, -36.25f),
                 new Vector3(4.5f, 0.85f, 0.08f),
@@ -544,17 +550,15 @@ namespace Environment
                 new Vector3(4.3f, 0.72f, 0.04f),
                 neonAmberMat);
 
-            // Glowing Neon Diner Header Card matching existing UI design (LookAtCamera, amber outline, LiberationSans bold)
-            CreateExistingStyleCardUI(decorGroup.transform,
-                new Vector3(99.25f, 2.45f, -36.10f),
-                new Vector2(360f, 65f),
-                0.009f,
-                "DISH-ASTER DINER",
-                26,
-                new Color(1f, 0.85f, 0.25f),
-                new Color(0.08f, 0.10f, 0.14f, 0.95f),
-                new Color(1.0f, 0.65f, 0.15f, 0.95f),
-                useLookAtCamera: true);
+            // Glowing Neon Diner Header written flat on South Wall facing North (reading left-to-right)
+            CreateWallSignUI(decorGroup.transform,
+                new Vector3(99.25f, 2.45f, -36.15f),
+                Quaternion.Euler(0f, 180f, 0f),
+                new Vector2(380f, 65f),
+                0.010f,
+                "<b>DISH-ASTER DINER</b>",
+                28,
+                new Color(1f, 0.85f, 0.25f));
 
             CreatePointLight(decorGroup.transform, "NeonSign_AmbientGlow",
                 new Vector3(99.25f, 2.3f, -35.8f),
@@ -707,21 +711,29 @@ namespace Environment
             l.range = range;
         }
 
-        private GameObject CreateExistingStyleCardUI(
+        private GameObject CreateWallSignUI(
             Transform parent,
             Vector3 pos,
+            Quaternion rot,
             Vector2 sizeDelta,
             float scaleFactor,
             string text,
             float fontSize,
             Color textColor,
-            Color bgColor,
-            Color borderColor,
-            bool useLookAtCamera = true)
+            bool isLocal = false)
         {
-            GameObject canvasGo = new GameObject("WorldCardUI");
+            GameObject canvasGo = new GameObject("WallSignUI");
             canvasGo.transform.SetParent(parent, false);
-            canvasGo.transform.position = pos;
+            if (isLocal)
+            {
+                canvasGo.transform.localPosition = pos;
+                canvasGo.transform.localRotation = rot;
+            }
+            else
+            {
+                canvasGo.transform.position = pos;
+                canvasGo.transform.rotation = rot;
+            }
             canvasGo.transform.localScale = Vector3.one * scaleFactor;
 
             Canvas canvas = canvasGo.AddComponent<Canvas>();
@@ -730,22 +742,11 @@ namespace Environment
             RectTransform rt = canvas.GetComponent<RectTransform>();
             rt.sizeDelta = sizeDelta;
 
-            // Background card matching existing UI styling (DeepFryer, Sink, TableId)
-            Image bg = canvasGo.AddComponent<Image>();
-            bg.color = bgColor;
-            bg.raycastTarget = false;
-
-            // Accent Outline matching existing UI
-            Outline outline = canvasGo.AddComponent<Outline>();
-            outline.effectColor = borderColor;
-            outline.effectDistance = new Vector2(1.5f, -1.5f);
-
-            // Text Label using LiberationSans SDF
             GameObject textObj = new GameObject("Text_Label");
             textObj.transform.SetParent(canvasGo.transform, false);
 
             TextMeshProUGUI tmp = textObj.AddComponent<TextMeshProUGUI>();
-            tmp.rectTransform.sizeDelta = sizeDelta - new Vector2(8f, 8f);
+            tmp.rectTransform.sizeDelta = sizeDelta;
             tmp.rectTransform.anchoredPosition = Vector2.zero;
 
             #if UNITY_EDITOR
@@ -759,22 +760,6 @@ namespace Environment
             tmp.alignment = TextAlignmentOptions.Center;
             tmp.color = textColor;
             tmp.raycastTarget = false;
-
-            // LookAtCamera to guarantee left-to-right reading & seamless camera alignment
-            if (useLookAtCamera)
-            {
-                LookAtCamera la = canvasGo.AddComponent<LookAtCamera>();
-                var field = typeof(LookAtCamera).GetField("mode", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-                if (field != null)
-                {
-                    var modeEnum = typeof(LookAtCamera).GetNestedType("Mode", System.Reflection.BindingFlags.NonPublic);
-                    if (modeEnum != null)
-                    {
-                        var val = System.Enum.Parse(modeEnum, "LookAtInverted");
-                        field.SetValue(la, val);
-                    }
-                }
-            }
 
             return canvasGo;
         }

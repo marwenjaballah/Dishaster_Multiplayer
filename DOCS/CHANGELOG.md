@@ -44,11 +44,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Diegetic Typography & World-Space Canvas Scaling:**
   - Replaced legacy 3D `TextMeshPro` text meshes (which suffered from non-uniform parent scale distortions causing oversized 15–30m floating letters) with dedicated `Canvas` components configured in `RenderMode.WorldSpace` using `TextMeshProUGUI` with micro-scale anchoring (`0.001f - 0.0035f`).
   - Clamped all diegetic signage (chalkboard daily specials, neon diner logo, takeout header, and table number tents `#1`–`#6`) neatly inside their respective architectural backdrops.
-- **Text Orientation & UI Alignment with Existing Game Style (`RestaurantEnvironmentEnhancer.cs`, `TableOrderUI.cs`):**
-  - Resolved right-to-left mirrored text caused by inverted canvas rotations and single-sided rendering when viewed from camera angles.
-  - Implemented `CreateExistingStyleCardUI` applying the game's exact design language: dark rounded background (`RGBA(0.08, 0.10, 0.14, 0.94)`), accent `Outline`, standard `LiberationSans SDF` font, and `LookAtCamera` (`Mode.LookAtInverted`).
-  - Guaranteed all table numbers, daily specials chalkboard, neon diner logo, and takeout window signage always face the active camera, reading strictly left-to-right from any vantage point.
-  - Updated `TableOrderUI.cs` so table numbers (`TableId`) remain visible at all times within viewing range (25m), while keeping food recipe panels gated until customers are seated.
+- **Static Architectural Wall Signage & Left-to-Right Orientation (`RestaurantEnvironmentEnhancer.cs`):**
+  - Removed `LookAtCamera` from all architectural wall signage to preserve realistic, flush in-world decor (Chalkboard Menu, South Wall Neon Sign, Takeout Header) and tabletop brass tents.
+  - Implemented `CreateWallSignUI` with mathematically verified fixed rotations:
+    - West Wall Chalkboard: `rot = (0, 270, 0)` flush on blackboard, reading strictly left-to-right when viewed from the dining hall.
+    - South Wall Neon Sign: `rot = (0, 180, 0)` flush on South wall, reading strictly left-to-right when viewed looking South.
+    - Takeout Window Header: `rot = (0, 90, 0)` flush on awning canopy, reading strictly left-to-right when approaching from the courier driveway.
+    - Tabletop Condiment Tents: 3D brass tent blocks with dual-sided angled faces (South face `rot = (-15, 0, 0)`, North face `rot = (-15, 180, 0)`), both reading `#1`–`#6` strictly left-to-right without dynamic camera billboarding.
+  - Updated `TableOrderUI.cs` so floating table numbers (`TableId`) remain visible within viewing range (25m), keeping recipe food panels hidden until customers are seated.
 
 *Milestone D: Level 2 & Level 3 Environments, Courier Scaling & Venue Selection (EXP-011).*
 

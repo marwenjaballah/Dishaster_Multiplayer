@@ -85,7 +85,7 @@ Milestone E: Hardening & Commercial QA   [░░░░░░░░░░░░�
 | `EXP-009` | Meta/Save | P1 | Local Save System & Campaign Persistence | Eng/Save | ✅ `COMPLETED` | `GameSaveManager.cs` JSON serialization of career bank savings, unlocked levels, star records, Night Market upgrade mask, atomic file writes, static cleanup |
 | `EXP-010` | Mobile/UI | P1 | Mobile Touch Controls Polish & Safe-Area Adaptation | Mobile/UI | ✅ `COMPLETED` | `MobileTouchControlsUI.cs` safe-area notch adaptation, 15% joystick deadzone, touch haptics, dynamic solo chef swap button, Editor tested |
 | `EXP-011` | Level/Prog | P1 | Level 2 & Level 3 Environments, Courier Scaling & Venue Selection | Level/UI | ✅ `COMPLETED` | `LevelSelectionManager.cs` server RPCs, lighting modulation, delivery distance & patience curves, `LevelSelectUI.cs` 3-card venue browser, Play Mode verified |
-| `EXP-012` | Art/Level | P0 | Restaurant Interior Environment & Architectural Overhaul | Level/Art | ✅ `COMPLETED` | `RestaurantEnvironmentEnhancer.cs` zoned flooring, wainscoting, subway splashbacks, exhaust hood, pendant lights, tabletop condiments (flush at Y=1.005m), takeout awning, existing UI design alignment (`LookAtCamera` Mode `LookAtInverted`, LiberationSans SDF, dark cards), Play Mode verified |
+| `EXP-012` | Art/Level | P0 | Restaurant Interior Environment & Architectural Overhaul | Level/Art | ✅ `COMPLETED` | `RestaurantEnvironmentEnhancer.cs` zoned flooring, wainscoting, subway splashbacks, exhaust hood, pendant lights, tabletop condiments (flush at Y=1.005m), static wall signs & 2-sided table tents (0 LookAtCamera, strictly left-to-right), Play Mode verified |
 
 ---
 
