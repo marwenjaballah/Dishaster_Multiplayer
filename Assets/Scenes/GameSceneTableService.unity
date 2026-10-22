@@ -92548,6 +92548,56 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 688528404}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &688706523
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 688706525}
+  - component: {fileID: 688706524}
+  m_Layer: 0
+  m_Name: MobileTouchControlsUI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &688706524
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 688706523}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c2e5cc01ecd2b8439597aefe085ff34, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UI.MobileTouchControlsUI
+  forceShowInEditor: 0
+  joystickRadius: 80
+  joystickDeadzone: 0.15
+  restingAlpha: 0.4
+  activeAlpha: 0.95
+  enableHaptics: 1
+--- !u!4 &688706525
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 688706523}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &689042376
 GameObject:
   m_ObjectHideFlags: 0
@@ -192811,12 +192861,30 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Save.GameSaveManager
   currentSaveData:
     saveVersion: 1
-    careerSavings: 100
+    careerSavings: 350
     lastPlayedLevelIndex: 0
     purchasedUpgradesMask: 0
-    totalDaysCompleted: 0
-    lastSavedTimestamp: 
-    levelProgress: []
+    totalDaysCompleted: 1
+    lastSavedTimestamp: 2026-10-22T09:25:46.7433236Z
+    levelProgress:
+    - levelIndex: 0
+      levelName: The Sunny Side Diner
+      isUnlocked: 1
+      bestStars: 3
+      bestDailyRevenue: 250
+      totalDishesServed: 8
+    - levelIndex: 1
+      levelName: Downtown Burger Bar
+      isUnlocked: 1
+      bestStars: 0
+      bestDailyRevenue: 0
+      totalDishesServed: 0
+    - levelIndex: 2
+      levelName: Boardwalk Grill
+      isUnlocked: 0
+      bestStars: 0
+      bestDailyRevenue: 0
+      totalDishesServed: 0
 --- !u!4 &1437515779
 Transform:
   m_ObjectHideFlags: 0
@@ -288783,3 +288851,4 @@ SceneRoots:
   - {fileID: 1135007104}
   - {fileID: 945858537}
   - {fileID: 1437515779}
+  - {fileID: 688706525}

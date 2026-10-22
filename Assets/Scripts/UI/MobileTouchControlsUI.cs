@@ -9,13 +9,16 @@ namespace UI
     /// <summary>
     /// Cross-platform mobile touch control system for Android & iOS.
     /// Provides:
-    /// 1. Floating Dynamic Virtual Joystick on the left half of the screen.
+    /// 1. Floating Dynamic Virtual Joystick with configurable deadzone & smooth curvature.
     /// 2. Primary Action Button (Interact / Pick / Drop / Deliver).
     /// 3. Secondary Action Button (Chop / Scooter Mount / Extinguisher / Tool).
-    /// 4. Mobile Pause Button.
+    /// 4. Tactical Co-op Ping Button (Emote Wheel).
+    /// 5. Solo Chef Hot-Swap Button (Tab assist for 1-player mode).
+    /// 6. Mobile Pause Button.
+    /// 7. Screen Safe-Area notch & cutout adaptation.
+    /// 8. Subtle tactile touch haptics.
     /// 
     /// Automatically activates ONLY on mobile platforms (Android/iOS) or when forced in Editor.
-    /// Completely hidden on PC/Mac builds to ensure clean desktop UI.
     /// </summary>
     public class MobileTouchControlsUI : MonoBehaviour
     {
@@ -27,19 +30,26 @@ namespace UI
 
         [Header("Joystick Settings")]
         [SerializeField] private float joystickRadius = 80f;
+        [SerializeField] private float joystickDeadzone = 0.15f;
         [SerializeField] private float restingAlpha = 0.4f;
         [SerializeField] private float activeAlpha = 0.95f;
 
-        // UI hierarchy references (auto-created if not assigned)
+        [Header("Tactile Haptics")]
+        [SerializeField] private bool enableHaptics = true;
+
+        // UI hierarchy references
         private Canvas _canvas;
         private CanvasGroup _joystickCanvasGroup;
+        private RectTransform _safeAreaRect;
         private RectTransform _joystickBaseRect;
         private RectTransform _joystickKnobRect;
         private RectTransform _touchZoneLeft;
+        private GameObject _btnSwapChefGo;
 
         private Vector2 _joystickOrigin;
         private int _joystickFingerId = -1;
         private bool _isJoystickActive;
+        private Rect _lastSafeArea = Rect.zero;
 
         private void Awake()
         {
@@ -72,6 +82,7 @@ namespace UI
             }
 
             EnsureUIHierarchy();
+            ApplySafeArea();
         }
 
         private void Start()
@@ -92,6 +103,11 @@ namespace UI
         private void OnDestroy()
         {
             UnityEngine.SceneManagement.SceneManager.sceneLoaded -= OnSceneLoaded;
+
+            if (Instance == this)
+            {
+                Instance = null;
+            }
         }
 
         private void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode)
@@ -100,6 +116,32 @@ namespace UI
             {
                 _canvas.enabled = ShouldShowControls();
             }
+            ApplySafeArea();
+        }
+
+        /// <summary>
+        /// Adjusts safe-area anchors to avoid phone camera cutouts, notches, and home indicator bars.
+        /// </summary>
+        private void ApplySafeArea()
+        {
+            if (_safeAreaRect == null) return;
+
+            Rect safeArea = Screen.safeArea;
+            if (safeArea == _lastSafeArea) return;
+            _lastSafeArea = safeArea;
+
+            Vector2 anchorMin = safeArea.position;
+            Vector2 anchorMax = safeArea.position + safeArea.size;
+
+            anchorMin.x /= Screen.width;
+            anchorMin.y /= Screen.height;
+            anchorMax.x /= Screen.width;
+            anchorMax.y /= Screen.height;
+
+            _safeAreaRect.anchorMin = anchorMin;
+            _safeAreaRect.anchorMax = anchorMax;
+            _safeAreaRect.offsetMin = Vector2.zero;
+            _safeAreaRect.offsetMax = Vector2.zero;
         }
 
         /// <summary>
@@ -115,10 +157,8 @@ namespace UI
 
         private bool ShouldShowControls()
         {
-            // 1. Must be in an active gameplay scene (never on MainMenu, Lobby, CharacterSelect, or LoadingScene)
             if (!IsInGameplayScene()) return false;
 
-            // 2. Must have active KitchenGameManager in playing or countdown state, not paused or game over
             if (KitchenGameManager.Instance != null)
             {
                 if (KitchenGameManager.Instance.IsGameOver()) return false;
@@ -133,24 +173,52 @@ namespace UI
 
         private void Update()
         {
+            ApplySafeArea();
+
             bool show = ShouldShowControls();
             if (_canvas != null && _canvas.enabled != show)
             {
                 _canvas.enabled = show;
                 if (!show)
                 {
-                    // Reset any active touch drag
-                    _isJoystickActive = false;
-                    _joystickFingerId = -1;
-                    if (_joystickKnobRect != null) _joystickKnobRect.anchoredPosition = Vector2.zero;
-                    if (GameInput.Instance != null)
-                    {
-                        GameInput.Instance.SetMobileMovementVector(Vector2.zero);
-                        GameInput.Instance.SetMobileInteractPressed(false);
-                        GameInput.Instance.SetMobileInteractAlternatePressed(false);
-                    }
+                    ResetJoystickState();
                 }
             }
+
+            // Dynamically show/hide the Swap Chef button in solo assist mode
+            if (_btnSwapChefGo != null && show)
+            {
+                bool isSolo = SoloChefHotSwapManager.Instance != null && SoloChefHotSwapManager.Instance.IsSoloMode();
+                if (_btnSwapChefGo.activeSelf != isSolo)
+                {
+                    _btnSwapChefGo.SetActive(isSolo);
+                }
+            }
+        }
+
+        private void ResetJoystickState()
+        {
+            _isJoystickActive = false;
+            _joystickFingerId = -1;
+            if (_joystickKnobRect != null) _joystickKnobRect.anchoredPosition = Vector2.zero;
+            if (GameInput.Instance != null)
+            {
+                GameInput.Instance.SetMobileMovementVector(Vector2.zero);
+                GameInput.Instance.SetMobileInteractPressed(false);
+                GameInput.Instance.SetMobileInteractAlternatePressed(false);
+            }
+        }
+
+        private void TriggerHapticFeedback()
+        {
+            if (!enableHaptics) return;
+            #if UNITY_ANDROID || UNITY_IOS
+            try
+            {
+                Handheld.Vibrate();
+            }
+            catch {}
+            #endif
         }
 
         // ── Touch Handling (Virtual Joystick) ─────────────────────────────────
@@ -232,7 +300,16 @@ namespace UI
                 _joystickKnobRect.anchoredPosition = clamped;
             }
 
-            Vector2 normalizedDir = clamped / joystickRadius;
+            // Deadzone and smooth remapping calculation
+            float magnitude = clamped.magnitude / joystickRadius;
+            Vector2 normalizedDir = Vector2.zero;
+
+            if (magnitude >= joystickDeadzone)
+            {
+                float remapped = (magnitude - joystickDeadzone) / (1f - joystickDeadzone);
+                normalizedDir = clamped.normalized * Mathf.Clamp01(remapped);
+            }
+
             if (GameInput.Instance != null)
             {
                 GameInput.Instance.SetMobileMovementVector(normalizedDir);
@@ -243,6 +320,7 @@ namespace UI
 
         public void OnInteractPointerDown()
         {
+            TriggerHapticFeedback();
             if (GameInput.Instance != null)
             {
                 GameInput.Instance.SetMobileInteractPressed(true);
@@ -260,6 +338,7 @@ namespace UI
 
         public void OnInteractAlternatePointerDown()
         {
+            TriggerHapticFeedback();
             if (GameInput.Instance != null)
             {
                 GameInput.Instance.SetMobileInteractAlternatePressed(true);
@@ -277,6 +356,7 @@ namespace UI
 
         public void OnPauseButtonClicked()
         {
+            TriggerHapticFeedback();
             if (GameInput.Instance != null)
             {
                 GameInput.Instance.TriggerMobilePause();
@@ -292,7 +372,7 @@ namespace UI
             {
                 _canvas = gameObject.AddComponent<Canvas>();
                 _canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-                _canvas.sortingOrder = 999; // Top overlay
+                _canvas.sortingOrder = 999;
             }
 
             var scaler = GetComponent<CanvasScaler>();
@@ -309,9 +389,18 @@ namespace UI
                 gameObject.AddComponent<GraphicRaycaster>();
             }
 
+            // Safe Area Root Container
+            var safeAreaGo = new GameObject("SafeAreaContainer", typeof(RectTransform));
+            safeAreaGo.transform.SetParent(transform, false);
+            _safeAreaRect = safeAreaGo.GetComponent<RectTransform>();
+            _safeAreaRect.anchorMin = Vector2.zero;
+            _safeAreaRect.anchorMax = Vector2.one;
+            _safeAreaRect.offsetMin = Vector2.zero;
+            _safeAreaRect.offsetMax = Vector2.zero;
+
             // 1. Touch Zone (Left 45% of screen for floating joystick)
             var touchZoneGo = new GameObject("TouchZone_Left", typeof(RectTransform), typeof(Image));
-            touchZoneGo.transform.SetParent(transform, false);
+            touchZoneGo.transform.SetParent(_safeAreaRect, false);
             _touchZoneLeft = touchZoneGo.GetComponent<RectTransform>();
             _touchZoneLeft.anchorMin = new Vector2(0f, 0f);
             _touchZoneLeft.anchorMax = new Vector2(0.45f, 0.85f);
@@ -319,7 +408,7 @@ namespace UI
             _touchZoneLeft.offsetMax = Vector2.zero;
 
             var touchZoneImg = touchZoneGo.GetComponent<Image>();
-            touchZoneImg.color = new Color(0f, 0f, 0f, 0.001f); // Transparent raycast target
+            touchZoneImg.color = new Color(0f, 0f, 0f, 0.001f);
 
             var trigger = touchZoneGo.AddComponent<EventTrigger>();
             AddEventTriggerEntry(trigger, EventTriggerType.PointerDown, OnJoystickPointerDown);
@@ -337,7 +426,7 @@ namespace UI
             _joystickCanvasGroup.blocksRaycasts = false;
 
             var baseImg = baseGo.GetComponent<Image>();
-            baseImg.color = new Color(0.10f, 0.14f, 0.22f, 0.65f); // Translucent Dark Glass
+            baseImg.color = new Color(0.10f, 0.14f, 0.22f, 0.65f);
             baseImg.raycastTarget = false;
 
             // Base border ring
@@ -346,7 +435,7 @@ namespace UI
             var borderRect = borderGo.GetComponent<RectTransform>();
             borderRect.sizeDelta = _joystickBaseRect.sizeDelta;
             var borderImg = borderGo.GetComponent<Image>();
-            borderImg.color = new Color(0.2f, 0.85f, 1f, 0.45f); // Cyan accent
+            borderImg.color = new Color(0.2f, 0.85f, 1f, 0.45f);
             borderImg.raycastTarget = false;
 
             // Joystick Knob (Handle)
@@ -357,12 +446,12 @@ namespace UI
             _joystickKnobRect.anchoredPosition = Vector2.zero;
 
             var knobImg = knobGo.GetComponent<Image>();
-            knobImg.color = new Color(0.25f, 0.88f, 1f, 0.90f); // Bright Cyan
+            knobImg.color = new Color(0.25f, 0.88f, 1f, 0.90f);
             knobImg.raycastTarget = false;
 
             // 3. Action Buttons Container (Bottom-Right)
             var actionContainer = new GameObject("ActionButtons_Right", typeof(RectTransform));
-            actionContainer.transform.SetParent(transform, false);
+            actionContainer.transform.SetParent(_safeAreaRect, false);
             var actRect = actionContainer.GetComponent<RectTransform>();
             actRect.anchorMin = new Vector2(0.65f, 0f);
             actRect.anchorMax = new Vector2(1f, 0.55f);
@@ -376,7 +465,7 @@ namespace UI
                 label: "INTERACT\n[E]",
                 anchoredPos: new Vector2(-150f, 160f),
                 size: new Vector2(130f, 130f),
-                bgColor: new Color(0.12f, 0.75f, 0.45f, 0.85f), // Emerald Green
+                bgColor: new Color(0.12f, 0.75f, 0.45f, 0.85f),
                 accentColor: new Color(0.4f, 1f, 0.7f, 1f),
                 onDown: OnInteractPointerDown,
                 onUp: OnInteractPointerUp
@@ -389,7 +478,7 @@ namespace UI
                 label: "ACTION\n[F]",
                 anchoredPos: new Vector2(-310f, 110f),
                 size: new Vector2(110f, 110f),
-                bgColor: new Color(0.95f, 0.55f, 0.12f, 0.85f), // Amber Orange
+                bgColor: new Color(0.95f, 0.55f, 0.12f, 0.85f),
                 accentColor: new Color(1f, 0.8f, 0.3f, 1f),
                 onDown: OnInteractAlternatePointerDown,
                 onUp: OnInteractAlternatePointerUp
@@ -402,19 +491,38 @@ namespace UI
                 label: "PING\n[Q]",
                 anchoredPos: new Vector2(-150f, 310f),
                 size: new Vector2(90f, 90f),
-                bgColor: new Color(0.15f, 0.45f, 0.92f, 0.85f), // Tactical Blue
+                bgColor: new Color(0.15f, 0.45f, 0.92f, 0.85f),
                 accentColor: new Color(0.4f, 0.75f, 1f, 1f),
-                onDown: () => CoopPingWheelUI.Instance?.OpenWheel(),
+                onDown: () => {
+                    TriggerHapticFeedback();
+                    CoopPingWheelUI.Instance?.OpenWheel();
+                },
                 onUp: () => CoopPingWheelUI.Instance?.CommitPingAndClose()
             );
 
-            // Mobile Pause Button (Top-Right)
-            CreateMobilePauseButton();
+            // Solo Mode Assist: SWAP CHEF [TAB] Button
+            _btnSwapChefGo = CreateActionButton(
+                parent: actionContainer.transform,
+                name: "Btn_SwapChef",
+                label: "SWAP\nCHEF",
+                anchoredPos: new Vector2(-310f, 250f),
+                size: new Vector2(95f, 95f),
+                bgColor: new Color(0.95f, 0.75f, 0.15f, 0.90f), // Golden Yellow
+                accentColor: new Color(1f, 0.95f, 0.5f, 1f),
+                onDown: () => {
+                    TriggerHapticFeedback();
+                    SoloChefHotSwapManager.Instance?.SwapActiveChef();
+                },
+                onUp: () => {}
+            );
+            _btnSwapChefGo.SetActive(false); // Shown conditionally in Update() if solo mode
 
+            // Mobile Pause Button (Top-Right)
+            CreateMobilePauseButton(_safeAreaRect);
         }
 
-        private void CreateActionButton(Transform parent, string name, string label, Vector2 anchoredPos, Vector2 size,
-                                        Color bgColor, Color accentColor, Action onDown, Action onUp)
+        private GameObject CreateActionButton(Transform parent, string name, string label, Vector2 anchoredPos, Vector2 size,
+                                              Color bgColor, Color accentColor, Action onDown, Action onUp)
         {
             var btnGo = new GameObject(name, typeof(RectTransform), typeof(Image), typeof(EventTrigger));
             btnGo.transform.SetParent(parent, false);
@@ -466,18 +574,20 @@ namespace UI
                 img.color = bgColor;
                 onUp?.Invoke();
             });
+
+            return btnGo;
         }
 
-        private void CreateMobilePauseButton()
+        private void CreateMobilePauseButton(Transform parent)
         {
             var pauseGo = new GameObject("Btn_MobilePause", typeof(RectTransform), typeof(Image), typeof(Button));
-            pauseGo.transform.SetParent(transform, false);
+            pauseGo.transform.SetParent(parent, false);
 
             var rect = pauseGo.GetComponent<RectTransform>();
             rect.anchorMin = new Vector2(1f, 1f);
             rect.anchorMax = new Vector2(1f, 1f);
             rect.pivot = new Vector2(1f, 1f);
-            rect.anchoredPosition = new Vector2(-30f, -30f);
+            rect.anchoredPosition = new Vector2(-20f, -20f);
             rect.sizeDelta = new Vector2(65f, 65f);
 
             var img = pauseGo.GetComponent<Image>();

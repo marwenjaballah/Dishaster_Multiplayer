@@ -8,7 +8,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.25.0-save-system-campaign-persistence] - 2026-10-22
+## [0.26.0-mobile-touch-controls-polish] - 2026-10-22
+*Milestone D: Mobile Touch Controls Polish & Safe-Area Adaptation (EXP-010).*
+
+### Added
+- **Mobile Safe-Area Notch Adaptation (`MobileTouchControlsUI.cs`):**
+  - Implemented dynamic `Screen.safeArea` anchor calculation and root padding container, ensuring HUD buttons and virtual joystick avoid display cutouts, camera notches, and home indicator bars across iOS and Android devices.
+- **Virtual Joystick Deadzone & Smooth Response Curve:**
+  - Added configurable 15% joystick deadzone (`joystickDeadzone = 0.15f`) to eliminate idle thumb jitter and drift.
+  - Implemented smooth normalized remapping above deadzone for precise analog steering and walking kinematics.
+- **Tactile Touch Haptics:**
+  - Added optional tactile haptic pulses (`Handheld.Vibrate()`) on button down for Interact, Action, Ping, and Pause.
+- **Solo Mode On-Screen Swap Chef Button:**
+  - Added dedicated on-screen `SWAP CHEF` touch button dynamically visible during 1-player sessions, allowing mobile players to hot-swap between Chef A and Chef B without requiring physical keyboard/gamepad inputs.
+- **Scene Deployment:**
+  - Deployed `MobileTouchControlsUI` in `GameSceneTableService.unity`.
+  - Verified in Unity 6 Editor with 0 errors and 0 warnings.
+
 *Milestone D: Local Save System & Campaign Persistence (EXP-009).*
 
 ### Added
