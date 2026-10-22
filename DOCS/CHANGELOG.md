@@ -8,6 +8,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.12.0-perf-telemetry] - 2026-10-22
+*Milestone E: Performance Profiling, Frame Pacing & Telemetry.*
+
+### Added
+- **Performance Telemetry Architecture (`PerformanceTelemetryManager.cs`):**
+  - Targets 120 FPS on Desktop/PC and 60 FPS on Mobile devices (`QualitySettings.vSyncCount = 0`, platform-aware `targetFrameRate`).
+  - Rolling 120-frame ring buffer tracking average FPS, frame times (ms), and 1% Low FPS.
+  - Managed heap memory tracking via `GC.GetTotalMemory(false)`.
+  - In-engine performance telemetry HUD overlay toggleable with `F3` key, displaying real-time FPS, 1% Lows, Frame time, and Allocated GC memory.
+  - `PerformanceTelemetryManager.ResetStaticData()` wired to `ResetStaticDataManager`.
+
 ## [0.11.0-steamworks-platform] - 2026-10-22
 *Milestone E: Steamworks Platform Integration, Rich Presence & Achievements.*
 
