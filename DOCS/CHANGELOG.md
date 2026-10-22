@@ -8,6 +8,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.14.0-pass-through-window] - 2026-10-22
+*Milestone B: Kitchen-to-Diner Pass-Through Service Window.*
+
+### Added
+- **Pass-Through Window Counter (`PassThroughWindowCounter.cs` & `PassThroughWindowVisual.cs`):**
+  - Dedicated service pass counter connecting kitchen cooking lines directly to the dining room and courier pickup station.
+  - Server-authoritative dual-sided access allowing kitchen staff to place plated meals and front-of-house runners/couriers to grab them from the opposite side.
+  - Interactive heat-lamp warming system to keep prepared dishes warm before pickup.
+  - Audible 'Order Up!' bell ding and visual prompt indicator upon food delivery to the shelf.
+  - Full delivery bag packing support (plating directly into bags or bagging from the shelf).
+  - Static event `OnAnyPassOrderPlaced` enabling co-op notifications.
+  - `PassThroughWindowCounter.ResetStaticData()` wired to `ResetStaticDataManager`.
+
 ## [0.13.0-legal-credits] - 2026-10-22
 *Milestone E: Legal & Third-Party License Compliance Audit.*
 
