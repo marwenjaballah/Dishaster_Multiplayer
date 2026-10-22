@@ -83,20 +83,22 @@ public class TableOrderUI : MonoBehaviour {
         float distToCamera = mainCamera != null ? Vector3.Distance(transform.position, mainCamera.transform.position) : 0f;
         bool inRange = mainCamera != null && distToCamera <= 25f;
 
+        // Recipe Order Panel (food icons & timer): Only visible when a customer is seated with an active order
         if (!hasSeatedOrder || !inRange) {
             if (orderPanel != null && orderPanel.activeSelf) {
                 orderPanel.SetActive(false);
             }
-            if (tableNumberText != null && tableNumberText.transform.parent != null && tableNumberText.transform.parent.gameObject.activeSelf) {
-                tableNumberText.transform.parent.gameObject.SetActive(false);
-            }
         } else {
-            // Table has seated order and player camera is in restaurant viewing range
             if (orderPanel != null && !orderPanel.activeSelf) {
                 orderPanel.SetActive(true);
             }
-            if (tableNumberText != null && tableNumberText.transform.parent != null && !tableNumberText.transform.parent.gameObject.activeSelf) {
-                tableNumberText.transform.parent.gameObject.SetActive(true);
+        }
+
+        // Table Number (TableId): Always visible when within range (25m) so players can identify tables at a glance
+        if (tableNumberText != null && tableNumberText.transform.parent != null) {
+            bool shouldShowTableNum = inRange;
+            if (tableNumberText.transform.parent.gameObject.activeSelf != shouldShowTableNum) {
+                tableNumberText.transform.parent.gameObject.SetActive(shouldShowTableNum);
             }
         }
 

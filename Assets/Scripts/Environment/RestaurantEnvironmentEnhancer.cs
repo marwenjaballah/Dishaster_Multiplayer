@@ -378,22 +378,23 @@ namespace Environment
                     new Vector3(0.035f, 0.035f, 0.035f),
                     wainscotingMat);
 
-                // Table Number Tent Block (resting on tray at Y = tableTopY + 0.02m)
-                GameObject tentStand = CreatePrimitiveCube(set.transform, "TableNumberTent",
+                // Brass Stem for Table Number Badge (resting on tray at Y = tableTopY + 0.02m)
+                CreatePrimitiveCylinder(set.transform, "NumberStandStem",
                     basePos + new Vector3(0f, 0.05f, 0.045f),
-                    new Vector3(0.10f, 0.06f, 0.05f),
+                    new Vector3(0.015f, 0.04f, 0.015f),
                     brassGoldMat);
 
-                // Small, crisp table number label on the tent stand (local coordinates)
-                CreateWorldText(tentStand.transform,
-                    new Vector3(0f, 0.005f, -0.026f),
-                    Quaternion.Euler(0f, 0f, 0f),
-                    new Vector2(90f, 50f),
-                    0.001f,
+                // Sleek Tabletop Number Badge matching the existing UI design (LookAtCamera, dark card, gold outline, LiberationSans bold)
+                CreateExistingStyleCardUI(set.transform,
+                    basePos + new Vector3(0f, 0.12f, 0.045f),
+                    new Vector2(46f, 32f),
+                    0.0035f,
                     $"#{i}",
-                    28,
-                    Color.black,
-                    isLocal: true);
+                    18,
+                    Color.white,
+                    new Color(0.08f, 0.10f, 0.14f, 0.94f),
+                    new Color(0.85f, 0.72f, 0.35f, 0.95f),
+                    useLookAtCamera: true);
             }
         }
 
@@ -481,15 +482,17 @@ namespace Environment
                 new Vector3(0.04f, 0.40f, 2.6f),
                 neonCyanMat);
 
-            // Crisp World-Space Canvas text facing West towards parking lot
-            CreateWorldText(extGroup.transform,
+            // Takeout & Delivery Header Card matching existing UI design (LookAtCamera, cyan outline, LiberationSans bold)
+            CreateExistingStyleCardUI(extGroup.transform,
                 new Vector3(110.53f, 2.95f, -23.0f),
-                Quaternion.Euler(0f, 270f, 0f),
-                new Vector2(700f, 110f),
-                0.0035f,
+                new Vector2(340f, 50f),
+                0.007f,
                 "TAKE OUT & DELIVERY",
-                30,
-                Color.cyan);
+                20,
+                Color.cyan,
+                new Color(0.08f, 0.10f, 0.14f, 0.94f),
+                new Color(0.0f, 0.85f, 0.95f, 0.95f),
+                useLookAtCamera: true);
         }
 
         // ── 8. Dining Room Decor, Planters & Neon Wall Sign ────────────────────
@@ -518,15 +521,17 @@ namespace Environment
                 new Vector3(0.04f, 1.25f, 2.4f),
                 kitchenTileMat);
 
-            // Crisp Chalkboard Menu Canvas facing East (+X into dining room)
-            CreateWorldText(decorGroup.transform,
-                new Vector3(88.70f, 2.1f, -20.8f),
-                Quaternion.Euler(0f, 90f, 0f),
-                new Vector2(650f, 380f),
-                0.003f,
-                "<b>TODAY'S SPECIALS</b>\n\n• Deluxe Combo Meal  +$30\n• Crispy Hot French Fries\n• Refreshing Fountain Drinks\n\n<i>Fast Delivery • Hot & Fresh!</i>",
-                24,
-                new Color(0.95f, 0.95f, 0.88f));
+            // Framed Chalkboard Menu Card on West Wall matching existing UI design (LookAtCamera, gold outline, LiberationSans)
+            CreateExistingStyleCardUI(decorGroup.transform,
+                new Vector3(88.75f, 2.1f, -20.8f),
+                new Vector2(300f, 180f),
+                0.0065f,
+                "<b>TODAY'S SPECIALS</b>\n\n• Deluxe Combo Meal  +$30\n• Crispy French Fries\n• Fountain Drinks\n\n<i>Fast Delivery • Hot & Fresh!</i>",
+                14,
+                new Color(0.95f, 0.95f, 0.88f),
+                new Color(0.08f, 0.10f, 0.14f, 0.95f),
+                new Color(0.85f, 0.72f, 0.35f, 0.90f),
+                useLookAtCamera: true);
 
             // Neon Sign: "DISH-ASTER DINER" on South Wall (facing North 0°)
             CreatePrimitiveCube(decorGroup.transform, "NeonSign_Backdrop",
@@ -539,14 +544,17 @@ namespace Environment
                 new Vector3(4.3f, 0.72f, 0.04f),
                 neonAmberMat);
 
-            CreateWorldText(decorGroup.transform,
-                new Vector3(99.25f, 2.45f, -36.14f),
-                Quaternion.Euler(0f, 0f, 0f),
-                new Vector2(1000f, 220f),
-                0.0035f,
+            // Glowing Neon Diner Header Card matching existing UI design (LookAtCamera, amber outline, LiberationSans bold)
+            CreateExistingStyleCardUI(decorGroup.transform,
+                new Vector3(99.25f, 2.45f, -36.10f),
+                new Vector2(360f, 65f),
+                0.009f,
                 "DISH-ASTER DINER",
-                52,
-                new Color(1f, 0.82f, 0.25f));
+                26,
+                new Color(1f, 0.85f, 0.25f),
+                new Color(0.08f, 0.10f, 0.14f, 0.95f),
+                new Color(1.0f, 0.65f, 0.15f, 0.95f),
+                useLookAtCamera: true);
 
             CreatePointLight(decorGroup.transform, "NeonSign_AmbientGlow",
                 new Vector3(99.25f, 2.3f, -35.8f),
@@ -699,20 +707,21 @@ namespace Environment
             l.range = range;
         }
 
-        private void CreateWorldText(Transform parent, Vector3 pos, Quaternion rot, Vector2 sizeDelta, float scaleFactor, string text, float fontSize, Color color, bool isLocal = false)
+        private GameObject CreateExistingStyleCardUI(
+            Transform parent,
+            Vector3 pos,
+            Vector2 sizeDelta,
+            float scaleFactor,
+            string text,
+            float fontSize,
+            Color textColor,
+            Color bgColor,
+            Color borderColor,
+            bool useLookAtCamera = true)
         {
-            GameObject canvasGo = new GameObject("WorldCanvas_Text");
+            GameObject canvasGo = new GameObject("WorldCardUI");
             canvasGo.transform.SetParent(parent, false);
-            if (isLocal)
-            {
-                canvasGo.transform.localPosition = pos;
-                canvasGo.transform.localRotation = rot;
-            }
-            else
-            {
-                canvasGo.transform.position = pos;
-                canvasGo.transform.rotation = rot;
-            }
+            canvasGo.transform.position = pos;
             canvasGo.transform.localScale = Vector3.one * scaleFactor;
 
             Canvas canvas = canvasGo.AddComponent<Canvas>();
@@ -721,17 +730,53 @@ namespace Environment
             RectTransform rt = canvas.GetComponent<RectTransform>();
             rt.sizeDelta = sizeDelta;
 
-            GameObject textObj = new GameObject("TMP_Label");
+            // Background card matching existing UI styling (DeepFryer, Sink, TableId)
+            Image bg = canvasGo.AddComponent<Image>();
+            bg.color = bgColor;
+            bg.raycastTarget = false;
+
+            // Accent Outline matching existing UI
+            Outline outline = canvasGo.AddComponent<Outline>();
+            outline.effectColor = borderColor;
+            outline.effectDistance = new Vector2(1.5f, -1.5f);
+
+            // Text Label using LiberationSans SDF
+            GameObject textObj = new GameObject("Text_Label");
             textObj.transform.SetParent(canvasGo.transform, false);
 
             TextMeshProUGUI tmp = textObj.AddComponent<TextMeshProUGUI>();
-            tmp.rectTransform.sizeDelta = sizeDelta;
+            tmp.rectTransform.sizeDelta = sizeDelta - new Vector2(8f, 8f);
+            tmp.rectTransform.anchoredPosition = Vector2.zero;
+
+            #if UNITY_EDITOR
+            var font = UnityEditor.AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF.asset");
+            if (font != null) tmp.font = font;
+            #endif
+
             tmp.text = text;
             tmp.fontSize = fontSize;
             tmp.fontStyle = FontStyles.Bold;
             tmp.alignment = TextAlignmentOptions.Center;
-            tmp.color = color;
+            tmp.color = textColor;
             tmp.raycastTarget = false;
+
+            // LookAtCamera to guarantee left-to-right reading & seamless camera alignment
+            if (useLookAtCamera)
+            {
+                LookAtCamera la = canvasGo.AddComponent<LookAtCamera>();
+                var field = typeof(LookAtCamera).GetField("mode", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                if (field != null)
+                {
+                    var modeEnum = typeof(LookAtCamera).GetNestedType("Mode", System.Reflection.BindingFlags.NonPublic);
+                    if (modeEnum != null)
+                    {
+                        var val = System.Enum.Parse(modeEnum, "LookAtInverted");
+                        field.SetValue(la, val);
+                    }
+                }
+            }
+
+            return canvasGo;
         }
     }
 }

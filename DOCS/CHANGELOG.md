@@ -44,6 +44,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Diegetic Typography & World-Space Canvas Scaling:**
   - Replaced legacy 3D `TextMeshPro` text meshes (which suffered from non-uniform parent scale distortions causing oversized 15–30m floating letters) with dedicated `Canvas` components configured in `RenderMode.WorldSpace` using `TextMeshProUGUI` with micro-scale anchoring (`0.001f - 0.0035f`).
   - Clamped all diegetic signage (chalkboard daily specials, neon diner logo, takeout header, and table number tents `#1`–`#6`) neatly inside their respective architectural backdrops.
+- **Text Orientation & UI Alignment with Existing Game Style (`RestaurantEnvironmentEnhancer.cs`, `TableOrderUI.cs`):**
+  - Resolved right-to-left mirrored text caused by inverted canvas rotations and single-sided rendering when viewed from camera angles.
+  - Implemented `CreateExistingStyleCardUI` applying the game's exact design language: dark rounded background (`RGBA(0.08, 0.10, 0.14, 0.94)`), accent `Outline`, standard `LiberationSans SDF` font, and `LookAtCamera` (`Mode.LookAtInverted`).
+  - Guaranteed all table numbers, daily specials chalkboard, neon diner logo, and takeout window signage always face the active camera, reading strictly left-to-right from any vantage point.
+  - Updated `TableOrderUI.cs` so table numbers (`TableId`) remain visible at all times within viewing range (25m), while keeping food recipe panels gated until customers are seated.
 
 *Milestone D: Level 2 & Level 3 Environments, Courier Scaling & Venue Selection (EXP-011).*
 
