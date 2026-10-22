@@ -276,13 +276,47 @@ public class DeliveryCustomerManager : NetworkBehaviour
 
     private SidewalkWaypoint GetFreeWaypointSpot()
     {
-        const float minCustomerSeparation = 6f;
+        const float minCustomerSeparation = 8f;
         float sqrMin = minCustomerSeparation * minCustomerSeparation;
 
-        for (int attempt = 0; attempt < 20; attempt++)
+        Vector3 restaurantPos = RestaurantEconomyManager.Instance != null ? RestaurantEconomyManager.Instance.transform.position : Vector3.zero;
+        float effectiveMinDist = 20f;
+        float effectiveMaxDist = 110f;
+
+        if (DayLoopManager.Instance != null)
+        {
+            switch (DayLoopManager.Instance.CurrentPhase)
+            {
+                case DayLoopManager.DayPhase.Shift1_MorningPrep:
+                    effectiveMinDist = 18f;
+                    effectiveMaxDist = 55f;
+                    break;
+                case DayLoopManager.DayPhase.Shift2_LunchRush:
+                    effectiveMinDist = 25f;
+                    effectiveMaxDist = 85f;
+                    break;
+                case DayLoopManager.DayPhase.Shift3_Afternoon:
+                    effectiveMinDist = 20f;
+                    effectiveMaxDist = 70f;
+                    break;
+
+                case DayLoopManager.DayPhase.Shift4_DinnerRush:
+                    effectiveMinDist = 30f;
+                    effectiveMaxDist = 120f;
+                    break;
+            }
+        }
+
+        for (int attempt = 0; attempt < 30; attempt++)
         {
             SidewalkWaypoint wp = _waypointGraph.GetRandomSidewalkWaypoint(_rng);
             if (wp == null) continue;
+
+            float distToRestaurant = Vector3.Distance(restaurantPos, wp.Position);
+            if (distToRestaurant < effectiveMinDist || distToRestaurant > effectiveMaxDist)
+            {
+                continue;
+            }
 
             // Make sure it's not too close to an existing customer
             bool tooClose = false;
@@ -298,8 +332,11 @@ public class DeliveryCustomerManager : NetworkBehaviour
 
             if (!tooClose) return wp;
         }
-        return null;
+
+        // Fallback: return any valid sidewalk waypoint if distance range search timed out
+        return _waypointGraph.GetRandomSidewalkWaypoint(_rng);
     }
+
 
     private void SpawnCustomerAtSpot(Vector3 position, RecipeSO recipe, int recipeIndex)
     {
@@ -527,10 +564,18 @@ public class DeliveryCustomerManager : NetworkBehaviour
             stars = patience >= 0.75f ? 5f : (patience >= 0.4f ? 4.5f : (patience >= 0.2f ? 4f : 3f));
         }
 
+        // Award distance tip bonus ($1 per 5 meters distance from restaurant)
+        Vector3 restaurantPos = RestaurantEconomyManager.Instance != null ? RestaurantEconomyManager.Instance.transform.position : Vector3.zero;
+        float deliveryDistance = Vector3.Distance(restaurantPos, customer.transform.position);
+        int distanceTipBonus = Mathf.RoundToInt(deliveryDistance * 0.2f);
+        tip += distanceTipBonus;
+
+
         if (RestaurantEconomyManager.Instance != null)
         {
             RestaurantEconomyManager.Instance.ProcessDeliveryReward(basePayout, tip, stars);
         }
+
 
         // Award score & audio via DeliveryManager
         DeliveryManager.Instance.TriggerDeliverySuccess();

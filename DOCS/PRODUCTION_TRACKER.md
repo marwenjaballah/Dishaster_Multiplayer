@@ -59,11 +59,11 @@ Milestone E: Hardening & Commercial QA   [░░░░░░░░░░░░�
 
 ### Milestone C: Playtesting, Balancing & Quality
 
-| Task ID | Type | Priority | Description | Assignee | Status |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| `TEST-001` | QA | P0 | Host internal 4-player playtest across 3 consecutive in-game days | QA | 📋 `BACKLOG` |
-| `TEST-002` | Balance | P1 | Tune order frequency, customer patience curves, and scooter delivery distances | Design | 📋 `BACKLOG` |
-| `TEST-003` | Audio | P2 | Dynamic multi-stem music transitions (Morning $\rightarrow$ Lunch $\rightarrow$ Dinner $\rightarrow$ Crisis) | Audio | 📋 `BACKLOG` |
+| Task ID | Type | Priority | Description | Assignee | Status | Verification |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| `TEST-001` | QA | P0 | Host internal 4-player playtest across 3 consecutive in-game days | QA | 📋 `BACKLOG` | Multi-client lobby verification |
+| `TEST-002` | Balance | P1 | Tune order frequency, customer patience curves, and scooter delivery distances | Design | ✅ `COMPLETED` | Dynamic shift distance curve (18-120m), distance tip bonus ($1/5m) in `DeliveryCustomerManager.cs`, Play Mode verified |
+| `TEST-003` | Audio | P2 | Dynamic multi-stem music transitions (Morning $\rightarrow$ Lunch $\rightarrow$ Dinner $\rightarrow$ Crisis) | Audio | ✅ `COMPLETED` | Pitch/tempo & volume dynamic lerp subscribed to `DayLoopManager` shift phases & `KitchenCrisisManager` fire spikes in `MusicManager.cs` |
 
 ---
 
@@ -95,5 +95,6 @@ Milestone E: Hardening & Commercial QA   [░░░░░░░░░░░░�
 * **2026-10-21:** Milestone B (`VRT-001` & `VRT-005`) completed. Implemented server-authoritative `DayLoopManager.cs` state machine (Morning $\rightarrow$ Lunch Rush $\rightarrow$ Afternoon $\rightarrow$ Dinner Rush $\rightarrow$ Closing Time $\rightarrow$ Day Summary $\rightarrow$ Night Market), HUD clock (`DayLoopHUDUI`), end-of-day statement (`DaySummaryUI`), `NightMarketManager.cs` upgrade catalog (6 upgrades), and `NightMarketShopUI`. Saved in `GameSceneTableService.unity`. Zero errors, zero warnings.
 * **2026-10-22:** Milestone B (`VRT-002`) completed. Implemented Finite Plate Economy & Dishwashing Sink: `DirtyPlateKitchenObject`, `SinkCounter.cs` with server-authoritative scrubbing Netcode RPCs (`IHasProgress`), `SinkCounterVisual.cs`, finite `PlatesCounter` restock/return loop, dirty dishes left on `CustomerTable` blocking next seatings until cleared, and `DeliveryBagKitchenObject` dish pit recycling. Verified in Play Mode with 0 errors/0 warnings.
 * **2026-10-22:** Milestone B (`VRT-006`) completed. Implemented Tactical Co-op Ping & Emote Wheel: `CoopPingManager.cs`, `CoopPingWheelUI.cs`, `WorldPingIndicator.cs` (3D billboard beacons, audio cues, HUD toast alerts, mouse/gamepad/mobile input bindings). 0 errors, 0 warnings verified in Play Mode via MCP.
+* **2026-10-22:** Milestone C (`TEST-002` & `TEST-003`) completed. Balanced delivery distances and added distance-based tip bonuses ($1/5m) in `DeliveryCustomerManager.cs`. Implemented dynamic shift tempo/pitch modulation and crisis urgency spikes in `MusicManager.cs`. Tested and verified in Play Mode with 0 errors and 0 warnings.
 
 

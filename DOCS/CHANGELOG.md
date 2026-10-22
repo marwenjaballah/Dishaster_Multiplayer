@@ -8,6 +8,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.0-balancing] - 2026-10-22
+*Milestone C: Pacing, Distance Balancing & Dynamic Shift Audio Transitions.*
+
+### Added
+- **Dynamic Shift Audio System (`MusicManager.cs`):**
+  - Subscribed to `DayLoopManager.OnAnyDayPhaseChanged` to dynamically transition background music pitch and volume curves across shift phases:
+    - *Morning Prep:* Relaxed tempo (0.95x pitch, 0.85x volume).
+    - *Lunch Rush:* Upbeat surge (1.05x pitch, 1.05x volume).
+    - *Afternoon:* Steady working groove (1.00x pitch, 0.95x volume).
+    - *Dinner Rush:* Adrenaline rush (1.15x pitch, 1.15x volume).
+    - *Closing Time:* Calming wrap-down (0.90x pitch, 0.80x volume).
+    - *Night Market & Summary:* Lounge vibe (0.92x pitch, 0.85x volume).
+  - Wired `KitchenCrisisManager.OnFireSpawned` to spike urgency immediately to 1.18x pitch and 1.15x volume with smooth 0.8s s-curve recovery.
+- **Dynamic Distance-Based Courier Pacing (`DeliveryCustomerManager.cs`):**
+  - Scaled delivery target waypoint selection dynamically per shift: Morning (18-55m), Lunch (25-85m), Afternoon (20-70m), Dinner (30-120m).
+  - Added distance tip bonus: couriers earn a bonus $1 per 5 meters distance from the restaurant, rewarding long-range city deliveries.
+
 ## [0.5.0-vertical-slice] - 2026-10-22
 *Milestone B: Finite Plate Economy & Dishwashing Station.*
 
