@@ -7,10 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ---
 
 ## [Unreleased]
-### Changed
-- **Roadmap Scope Alignment (`PRODUCTION_ROADMAP_MASTERPLAN.md`):**
-  - Permanently removed Dash Sprint and Food/Ingredient Throwing from all future milestones and backlog per studio design direction.
-  - Retained grounded, tactile chef movement and physical counter placement mechanics.
+
+## [0.25.0-save-system-campaign-persistence] - 2026-10-22
+*Milestone D: Local Save System & Campaign Persistence (EXP-009).*
+
+### Added
+- **Campaign Persistence Architecture (`GameSaveManager.cs`):**
+  - Robust JSON serialization storing career bank savings, unlocked levels, best star ratings (1–3 stars), highest daily revenue, total dishes delivered, and Night Market upgrade masks.
+  - Stored safely in `Application.persistentDataPath/dishaster_savegame.json` with atomic temporary file swapping to prevent save corruption.
+  - Automatic campaign progression rules:
+    - Completing Level 0 (The Sunny Side Diner) with $\ge 1$ star unlocks Level 1 (Downtown Burger Bar).
+    - Completing Level 1 with $\ge 2$ stars unlocks Level 2 (Boardwalk Grill).
+  - Listens to `DayLoopManager.OnAnyDaySummaryCalculated` to automatically bank profits and log shift stats.
+  - Listens to `NightMarketManager.OnAnyUpgradePurchased` to persist unlocked kitchen equipment.
+  - Automatically restores saved Night Market upgrades and career bank balance upon starting active sessions.
+  - Added `GameSaveManager.ResetStaticData()` wired to `ResetStaticDataManager.cs`.
+  - Added `GameSaveManager` scene object in `GameSceneTableService.unity`.
+  - Verified in Unity 6 Editor with 0 errors and 0 warnings.
+
 
 ## [0.24.0-customer-reviews-yelp] - 2026-10-22
 *Milestone D: Customer Review Cards System ("Yelp for Dishaster").*

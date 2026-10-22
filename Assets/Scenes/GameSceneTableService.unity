@@ -192780,6 +192780,58 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1437050099}
   m_Mesh: {fileID: -3754954494518142796, guid: be2bfa14ede5a484e8619ba52c7a3d97, type: 3}
+--- !u!1 &1437515777
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1437515779}
+  - component: {fileID: 1437515778}
+  m_Layer: 0
+  m_Name: GameSaveManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1437515778
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1437515777}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 426e574bbf6b7e64f877b18cdafbb2f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Save.GameSaveManager
+  currentSaveData:
+    saveVersion: 1
+    careerSavings: 100
+    lastPlayedLevelIndex: 0
+    purchasedUpgradesMask: 0
+    totalDaysCompleted: 0
+    lastSavedTimestamp: 
+    levelProgress: []
+--- !u!4 &1437515779
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1437515777}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1439217965
 GameObject:
   m_ObjectHideFlags: 0
@@ -288730,3 +288782,4 @@ SceneRoots:
   - {fileID: 392609692}
   - {fileID: 1135007104}
   - {fileID: 945858537}
+  - {fileID: 1437515779}

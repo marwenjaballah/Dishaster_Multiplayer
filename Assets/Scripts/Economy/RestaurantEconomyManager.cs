@@ -359,6 +359,11 @@ public class RestaurantEconomyManager : NetworkBehaviour {
     public float GetCrisisPenaltyTimer() => crisisPenaltyTimer;
     public float GetCrisisPenaltyInterval() => crisisPenaltyInterval;
 
+    public void SetStartingBalanceServer(int balance) {
+        if (!IsServer) return;
+        currentBalance.Value = balance;
+    }
+
     public override void OnDestroy() {
         base.OnDestroy();
         if (Instance == this) {

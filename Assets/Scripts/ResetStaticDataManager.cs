@@ -32,6 +32,7 @@ public class ResetStaticDataManager : MonoBehaviour {
         Testing.MultiClientNetworkAuditRunner.ResetStaticData();
         Delivery.DeliveryTarget3DIndicator.ResetStaticData();
         SoloChefHotSwapManager.ResetStaticData();
+        Save.GameSaveManager.ResetStaticData();
     }
 
 

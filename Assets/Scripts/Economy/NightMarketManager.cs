@@ -167,4 +167,11 @@ public class NightMarketManager : NetworkBehaviour {
     }
 
     public IReadOnlyList<UpgradeInfo> GetAllUpgrades() => Catalog;
+
+    public ulong GetPurchasedUpgradesMask() => purchasedUpgradesMask.Value;
+
+    public void SetPurchasedUpgradesMaskServer(ulong mask) {
+        if (!IsServer) return;
+        purchasedUpgradesMask.Value = mask;
+    }
 }
