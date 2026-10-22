@@ -12,6 +12,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Permanently removed Dash Sprint and Food/Ingredient Throwing from all future milestones and backlog per studio design direction.
   - Retained grounded, tactile chef movement and physical counter placement mechanics.
 
+## [0.22.0-thermal-freshness-compass] - 2026-10-22
+*Milestone D: Thermal Food Freshness Decay & 3D In-World Delivery Compass.*
+
+### Added
+- **Thermal Freshness Economy (`DeliveryBagKitchenObject.cs` & `DeliveryCustomerManager.cs`):**
+  - Added timestamp tracking for every dish placed inside the insulated delivery bag.
+  - Implemented 90-second linear thermal decay curve (expanded to 150 seconds with Night Market HeavyDutyDeliveryBag upgrade).
+  - Wired freshness rating evaluation upon sidewalk customer hand-off:
+    - **HOT & FRESH ($\ge 65\%$):** Grants +$15 customer tip bonus and 5-star customer review rating.
+    - **WARM ($30\% - 65\%$):** Standard delivery payout.
+    - **STONE COLD ($< 30\%$):** Applies -$15 tip penalty and lowers star rating.
+  - Updated `DeliveryBagUI.cs` with live thermal color badges (`HOT`, `WARM`, `COLD`) and per-dish warmth percentages.
+- **3D City Delivery Navigation Compass (`DeliveryTarget3DIndicator.cs`):**
+  - Generates a procedural emissive neon chevron arrow floating 2.4m above the player with gentle bobbing.
+  - Dynamically activates when carrying food deliveries or mounted on the scooter.
+  - Horizontally rotates to point directly at the closest active city customer.
+  - Displays real-time billboarded distance readouts (e.g., `45m`) switching from cyan to emerald green within 8 meters.
+  - Auto-instantiated in `DeliveryCustomerManager.Awake()` and wired to `ResetStaticDataManager`.
+  - Verified in Unity 6 Play Mode with 0 errors and 0 warnings.
+
 ## [0.21.0-french-fries-combos] - 2026-10-22
 *Milestone D: French Fries, Fountain Drinks & Deluxe Combo Meals.*
 

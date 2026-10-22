@@ -30,6 +30,7 @@ public class ResetStaticDataManager : MonoBehaviour {
         PlayerAvatarVisual.ResetStaticData();
         LevelSelectionManager.ResetStaticData();
         Testing.MultiClientNetworkAuditRunner.ResetStaticData();
+        Delivery.DeliveryTarget3DIndicator.ResetStaticData();
     }
 
 

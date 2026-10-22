@@ -87,6 +87,20 @@ public class DeliveryCustomerManager : NetworkBehaviour
 
         _activeDeliveryDataList = new NetworkList<SidewalkDeliveryData>();
         InitializePool();
+        EnsureNavCompassIndicator();
+    }
+
+    private void EnsureNavCompassIndicator()
+    {
+        if (Delivery.DeliveryTarget3DIndicator.Instance == null)
+        {
+            var existing = FindFirstObjectByType<Delivery.DeliveryTarget3DIndicator>();
+            if (existing == null)
+            {
+                var compassGo = new GameObject("DeliveryTarget3DIndicator_Auto");
+                compassGo.AddComponent<Delivery.DeliveryTarget3DIndicator>();
+            }
+        }
     }
 
     public override void OnNetworkSpawn()
@@ -484,7 +498,22 @@ public class DeliveryCustomerManager : NetworkBehaviour
         // 2. Delivery Bag containing matching dish
         if (held is DeliveryBagKitchenObject bag && bag.HasMatchingDish(required))
         {
-            bag.TryConsumeMatchingDish(required);
+            bag.TryConsumeMatchingDish(required, out float freshness);
+
+            // Thermal Freshness Quality Modifier
+            if (freshness >= 0.65f)
+            {
+                tip += 15; // Bonus for piping hot delivery!
+                stars = Mathf.Max(stars, 4.5f);
+                Debug.Log($"[DeliveryCustomerManager] Order delivered HOT & FRESH ({freshness:P0})! +$15 Tip Bonus.");
+            }
+            else if (freshness < 0.30f)
+            {
+                tip = Mathf.Max(0, tip - 15); // Cold food penalty
+                stars = Mathf.Min(stars, 2.0f);
+                Debug.Log($"[DeliveryCustomerManager] Order delivered STONE COLD ({freshness:P0})! Tip penalized.");
+            }
+
             PlayDeliveryResultClientRpc(deliveryId, true);
             customer.CompleteDelivery(basePayout + tip);
             return;

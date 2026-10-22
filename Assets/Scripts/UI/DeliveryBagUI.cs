@@ -78,7 +78,17 @@ namespace UI
 
             if (headerText != null)
             {
-                headerText.text = $"DELIVERY BAG ({count}/3)";
+                if (count > 0)
+                {
+                    float avgFreshness = _currentBag.GetAverageFreshnessNormalized();
+                    string tempColor = avgFreshness >= 0.65f ? "#EF4444" : (avgFreshness >= 0.30f ? "#F59E0B" : "#06B6D4");
+                    string tempLabel = avgFreshness >= 0.65f ? "HOT" : (avgFreshness >= 0.30f ? "WARM" : "COLD");
+                    headerText.text = $"DELIVERY BAG ({count}/{_currentBag.MaxPlates}) • <color={tempColor}>{tempLabel} ({avgFreshness * 100:F0}%)</color>";
+                }
+                else
+                {
+                    headerText.text = $"DELIVERY BAG (0/{_currentBag.MaxPlates}) • EMPTY";
+                }
             }
 
             if (slots == null) return;
@@ -99,7 +109,10 @@ namespace UI
 
                     if (slot.dishNameText != null)
                     {
-                        slot.dishNameText.text = matchingRecipe != null ? matchingRecipe.recipeName : "Packed Dish";
+                        float slotFreshness = _currentBag.GetDishFreshnessNormalized(i);
+                        string tempIcon = slotFreshness >= 0.65f ? "♨️" : (slotFreshness >= 0.30f ? "💨" : "❄️");
+                        string name = matchingRecipe != null ? matchingRecipe.recipeName : "Packed Dish";
+                        slot.dishNameText.text = $"{tempIcon} {name} ({slotFreshness * 100:F0}%)";
                     }
 
                     // Render ingredient icons

@@ -16,6 +16,13 @@ public class DeliveryBagKitchenObject : KitchenObject
 
     // List of dishes stored in the bag. Each dish is a list of KitchenObjectSO ingredients.
     private readonly List<List<KitchenObjectSO>> _storedDishes = new();
+    private readonly List<float> _dishAddedTimes = new();
+
+    public const float DEFAULT_FRESHNESS_DURATION = 90f;
+    public const float UPGRADED_FRESHNESS_DURATION = 150f;
+    public float FreshnessDuration => (NightMarketManager.Instance != null && NightMarketManager.Instance.HasUpgrade(NightMarketManager.UpgradeType.HeavyDutyDeliveryBag)) 
+        ? UPGRADED_FRESHNESS_DURATION 
+        : DEFAULT_FRESHNESS_DURATION;
 
     public int StoredCount => _storedDishes.Count;
     public bool CanAddPlate => _storedDishes.Count < MaxPlates;
@@ -82,6 +89,7 @@ public class DeliveryBagKitchenObject : KitchenObject
         }
 
         _storedDishes.Add(dish);
+        _dishAddedTimes.Add(Time.time);
         OnBagContentsChanged?.Invoke(this, EventArgs.Empty);
     }
 
@@ -120,15 +128,40 @@ public class DeliveryBagKitchenObject : KitchenObject
     }
 
     /// <summary>
-    /// Removes and consumes the matching dish from the bag (server-authoritative).
+    /// Removes and consumes the matching dish from the bag, outputting its thermal freshness ratio.
     /// </summary>
-    public bool TryConsumeMatchingDish(RecipeSO recipe)
+    public bool TryConsumeMatchingDish(RecipeSO recipe, out float freshnessNormalized)
     {
+        freshnessNormalized = 1.0f;
         int index = FindMatchingDishIndex(recipe);
         if (index < 0) return false;
 
+        freshnessNormalized = GetDishFreshnessNormalized(index);
         RemoveDishServerRpc(index);
         return true;
+    }
+
+    public bool TryConsumeMatchingDish(RecipeSO recipe)
+    {
+        return TryConsumeMatchingDish(recipe, out _);
+    }
+
+    public float GetDishFreshnessNormalized(int index)
+    {
+        if (index < 0 || index >= _dishAddedTimes.Count) return 1.0f;
+        float elapsed = Time.time - _dishAddedTimes[index];
+        return Mathf.Clamp01(1.0f - (elapsed / FreshnessDuration));
+    }
+
+    public float GetAverageFreshnessNormalized()
+    {
+        if (_dishAddedTimes.Count == 0) return 1.0f;
+        float sum = 0f;
+        for (int i = 0; i < _dishAddedTimes.Count; i++)
+        {
+            sum += GetDishFreshnessNormalized(i);
+        }
+        return sum / _dishAddedTimes.Count;
     }
 
     [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
@@ -146,6 +179,7 @@ public class DeliveryBagKitchenObject : KitchenObject
         if (dishIndex >= 0 && dishIndex < _storedDishes.Count)
         {
             _storedDishes.RemoveAt(dishIndex);
+            if (dishIndex < _dishAddedTimes.Count) _dishAddedTimes.RemoveAt(dishIndex);
             OnBagContentsChanged?.Invoke(this, EventArgs.Empty);
         }
     }
