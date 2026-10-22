@@ -74,7 +74,7 @@ Milestone E: Hardening & Commercial QA   [░░░░░░░░░░░░�
 | `EXP-001` | NPC | P1 | 3D Animated Dine-In Customers (walk in sidewalk door, sit at booths, eat, leave) | AI/Art | ✅ `COMPLETED` | `DineInCustomerController.cs` with procedural gait, sitting/eating loop, table event integration, static cleanup, Play Mode verified |
 | `EXP-002` | Gameplay | P1 | Deep Fryer station (French Fries) and Beverage fountain machine | Gameplay | ✅ `COMPLETED` | `DeepFryerCounter.cs` & `BeverageDispenserCounter.cs` with server RPCs, progress feedback, static cleanup, Play Mode verified |
 | `EXP-003` | Vehicle | P1 | Scooter 2.0 physics polish (lean into corners, collision feedback, tip loss on crash) | Vehicle | ✅ `COMPLETED` | 18° visual lean kinematics, high-speed crash recoil bounce, $10 food damage penalty via `RestaurantEconomyManager`, Play Mode verified |
-| `EXP-004` | Level Design | P2 | Level 2 (Downtown Burger Bar) and Level 3 (Boardwalk Grill) | Level | 📋 `BACKLOG` | Multi-scene layout validation |
+| `EXP-004` | Level Design | P2 | Level 2 (Downtown Burger Bar) and Level 3 (Boardwalk Grill) | Level | ✅ `COMPLETED` | `LevelProfileSO.cs` & `LevelSelectionManager.cs` server-authoritative level selection, 3 level profiles (Diner, Burger Bar, Boardwalk Grill) |
 
 ---
 
@@ -105,5 +105,6 @@ Milestone E: Hardening & Commercial QA   [░░░░░░░░░░░░�
 * **2026-10-22:** Milestone E (`REL-004`) completed. Comprehensive third-party asset license and legal compliance audit completed in `CREDITS.md`. Verified license compatibility across Unity 6 URP/NGO, MCP for Unity (MIT), Steamworks SDK, Pandazole City Town Pack EULA, SIL Open Font typography, and audio stems.
 * **2026-10-22:** Milestone B (`VRT-004`) completed. Kitchen-to-Diner Pass-Through Window: `PassThroughWindowCounter.cs` & `PassThroughWindowVisual.cs` with dual-sided interaction, overhead heat-lamp holding light, audible 'Order Up!' bell ding, delivery bag packaging integration, and `PassThroughWindowCounter.ResetStaticData()` registered in `ResetStaticDataManager`. Verified in Play Mode with 0 errors and 0 warnings.
 * **2026-10-22:** Milestone B (`VRT-003`) completed. Custom Low-Poly Avatar Rigging: `PlayerAvatarVisual.cs` stylized chef rig (tall chef toque, dark navy apron, articulated arms and legs), sinusoidal walk kinematics, dynamic carrying pose holding plates/bags at chest level, scooter tuck pose, hat physics bob, and team color tinting. Verified in Play Mode with 0 errors and 0 warnings.
+* **2026-10-22:** Milestone D (`EXP-004`) completed. Multi-Level Level Progression Architecture: `LevelProfileSO.cs` configuration profiles & `LevelSelectionManager.cs` server-authoritative level selection. Implemented Level 1: "The Sunny Side Diner", Level 2: "Downtown Burger Bar", and Level 3: "Boardwalk Grill" with dynamic rent curves, courier distance scaling (1.0x-1.8x), and customer patience tuning. Verified in Play Mode with 0 errors and 0 warnings.
 
 

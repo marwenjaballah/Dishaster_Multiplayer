@@ -8,6 +8,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.16.0-multi-level-progression] - 2026-10-22
+*Milestone D: Multi-Level Level Progression Architecture.*
+
+### Added
+- **Multi-Level Architecture (`LevelProfileSO.cs` & `LevelSelectionManager.cs`):**
+  - Implemented modular level profile system configuring distinct restaurant environments, rent rates, courier distance scaling, and patience curves.
+  - Three distinct level profiles created and validated:
+    1. *Level 1: The Sunny Side Diner:* Starting suburban diner ($150 base rent, 1.0x courier distance, $600 target revenue).
+    2. *Level 2: Downtown Burger Bar:* High-volume urban joint ($250 base rent, 1.4x courier distance across avenues, $1,000 target revenue).
+    3. *Level 3: Boardwalk Grill:* Expansive beachside restaurant ($400 base rent, 1.8x courier distance, combo meals, $1,600 target revenue).
+  - Server-authoritative level selection synced via Netcode `NetworkVariable<int>`.
+  - `LevelSelectionManager.ResetStaticData()` wired to `ResetStaticDataManager`.
+
 ## [0.15.0-low-poly-avatar] - 2026-10-22
 *Milestone B: Stylized Low-Poly Avatar Rigging & Kinematics.*
 

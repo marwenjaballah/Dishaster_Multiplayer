@@ -28,6 +28,7 @@ public class ResetStaticDataManager : MonoBehaviour {
         Perf.PerformanceTelemetryManager.ResetStaticData();
         PassThroughWindowCounter.ResetStaticData();
         PlayerAvatarVisual.ResetStaticData();
+        LevelSelectionManager.ResetStaticData();
     }
 
 
