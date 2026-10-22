@@ -34,6 +34,7 @@ public class DeepFryerCounter : BaseCounter, IHasProgress {
     [Header("Fryer Settings")]
     [SerializeField] private float fryTimerMax = 4.0f;
     [SerializeField] private float burnTimerMax = 6.0f;
+    [SerializeField] private KitchenObjectSO fryInputSO;
     [SerializeField] private KitchenObjectSO friedOutputSO;
     [SerializeField] private KitchenObjectSO burnedOutputSO;
     [SerializeField] private AudioSource sizzleAudioSource;
@@ -161,6 +162,15 @@ public class DeepFryerCounter : BaseCounter, IHasProgress {
             // Fryer is empty
             if (player.HasKitchenObject()) {
                 KitchenObject kitchenObject = player.GetKitchenObject();
+                // Reject plates
+                if (kitchenObject.TryGetPlate(out _)) {
+                    return;
+                }
+                // Verify ingredient can be fried (e.g. PotatoSlices)
+                KitchenObjectSO inputSO = kitchenObject.GetKitchenObjectSO();
+                if (fryInputSO != null && inputSO != fryInputSO) {
+                    return;
+                }
                 // Transfer ingredient into fryer
                 kitchenObject.SetKitchenObjectParent(this);
                 StartFryingServerRpc();

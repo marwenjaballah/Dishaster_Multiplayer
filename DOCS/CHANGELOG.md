@@ -8,6 +8,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.29.0-kitchen-collision-potato-pipeline] - 2026-10-22
+*Milestone D: Kitchen Enhancement, Zero-Collision Layout & Complete Potato Culinary Pipeline (EXP-013).*
+
+### Added
+- **Dedicated Container Counter for Potatoes (`ContainerCounter_Potato.prefab`):**
+  - Created and registered `ContainerCounter_Potato.prefab` in `Assets/DefaultNetworkPrefabs.asset` with standard `ContainerCounter` Netcode logic.
+  - Custom 2D HUD/Container icon `Assets/_Assets/Textures/Icons/Potato.png` assigned to `ObjectSprite`.
+  - Added a diegetic 3D rustic wooden potato crate on top of the counter holding 6 miniature textured potatoes for immediate visual recognition.
+  - Replaced the scene's empty `ClearCounter` placeholder with this new prefab instance at `(112.14, 0.00, -26.14)`.
+- **High-Resolution Culinary 2D Sprites & URP Lit Materials:**
+  - `Potato.png`, `PotatoSlices.png`, `FrenchFries.png`, `SodaCup.png` with crisp pixel-perfect UI alpha transparency.
+  - 6 calibrated URP Lit materials in `Assets/_Assets/Materials/Food/` for realistic golden fries, potato skin/flesh, and delivery soda cups.
+- **Complete Culinary Recipe Pipeline:**
+  - Wired `Potato-PotatoSlices` cutting recipe to `CuttingCounter.prefab` and all scene cutting stations.
+  - Configured `DeepFryerCounter` with `fryInputSO = PotatoSlices`, frying into `FrenchFries` and burning to `MeatPattyBurned`.
+  - Added ingredient validation in `DeepFryerCounter.Interact()` to prevent plates or invalid food items from entering the boiling oil.
+  - Registered `FrenchFries` and `SodaCup` in `Plate.prefab`'s valid ingredient list and verified procedural 3D plate visualization.
+- **Kitchen Collision & Pass-Through Clearance Overhaul:**
+  - Relocated `FireExtinguisherCounter` from the front of the pass-through window to North utility station `(109.18, 0.00, -13.90)`.
+  - Relocated `PipeWrenchCounter` from the front of the pass-through window to South utility station `(108.94, 0.00, -27.14)` adjacent to `WaterLeakValveCounter`.
+  - Pass-Through window (`PassThrough_Counter_1` & `PassThrough_Counter_2`) now has over 2 meters of clear unobstructed floor space on both kitchen and dining room sides.
+  - Shifted `Splashback_KitchenSubwayTile` flush against the East wall at $X = 121.90\text{m}$ (0 penetration into cook line counters).
+  - Added stainless steel chef spice rack with condiment cruets and warm overhead island prep spotlight (`Island_PrepSpotlight`).
+  - Removed redundant mesh colliders on customer tables. Scene collision audit verified **0 volumetric overlaps across all 80 colliders**.
+
 ## [0.28.0-restaurant-interior-design-overhaul] - 2026-10-22
 *Milestone D: Restaurant Interior Environment & Architectural Overhaul (EXP-012).*
 

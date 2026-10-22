@@ -26,6 +26,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 793094337483793349}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -2.16, y: 0, z: 0.75}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -35,7 +36,6 @@ Transform:
   - {fileID: 6930724009087459619}
   - {fileID: 3640849958297674829}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1835268662461903738
 MonoBehaviour:
@@ -49,6 +49,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 645777f8ef0513b40a5357bb044e1265, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   kitchenObjectSO: {fileID: 11400000, guid: c2b29260396631a4792f2e3e10773a1d, type: 2}
   validKitchenObjectSOList:
   - {fileID: 11400000, guid: dc7206a372e873e44945cb9155f8c1ba, type: 2}
@@ -57,6 +58,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: c2481a7688752a94582d77f514752584, type: 2}
   - {fileID: 11400000, guid: b01aa11918052354fa65a950245d8dec, type: 2}
   - {fileID: 11400000, guid: 455ac2b492a3c3442bf926b427bb40d2, type: 2}
+  - {fileID: 11400000, guid: 2b692dbb187f7e84ba49486a0d23051f, type: 2}
+  - {fileID: 11400000, guid: 97b80c16db26403419cd43ef70d1b39a, type: 2}
 --- !u!114 &-5658698143619456571
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -69,10 +72,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 100000009
+  GlobalObjectIdHash: 1257924394
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
   AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  m_InScenePlaced: 0
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!114 &-2948320626480514293
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -116,7 +129,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3354021886746931587}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -198,7 +210,6 @@ RectTransform:
   m_Children:
   - {fileID: 3354021886746931587}
   m_Father: {fileID: 1778288183289012027}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -222,6 +233,8 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
+  m_UseReflectionProbes: 0
   m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
@@ -350,7 +363,6 @@ RectTransform:
   - {fileID: 4893866860366058118}
   - {fileID: 9010481177651942973}
   m_Father: {fileID: 3640849958297674829}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -401,7 +413,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3354021886746931587}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}

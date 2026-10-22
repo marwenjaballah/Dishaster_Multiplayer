@@ -48,6 +48,11 @@ namespace Environment
         [SerializeField] private Material mustardYellowMat;
         [SerializeField] private Material plantGreenMat;
 
+        public static void ResetStaticData()
+        {
+            Instance = null;
+        }
+
         private void Awake()
         {
             if (Instance != null && Instance != this)
@@ -231,8 +236,8 @@ namespace Environment
 
             // Kitchen Subway Tile Splashback (East Wall behind Stoves, Deep Fryer, Sink)
             CreatePrimitiveCube(wallGroup.transform, "Splashback_KitchenSubwayTile",
-                new Vector3(121.32f, 1.4f, -20.89f),
-                new Vector3(0.08f, 2.8f, 13.5f),
+                new Vector3(121.90f, 1.4f, -20.89f),
+                new Vector3(0.04f, 2.8f, 13.5f),
                 subwayTileMat);
         }
 
@@ -615,25 +620,54 @@ namespace Environment
             GameObject kitchenDetails = new GameObject("09_KitchenOrganization");
             kitchenDetails.transform.SetParent(parent, false);
 
-            // Magnetic Knife Strip on North Wall (X: 118.0, Z: -15.55, Y: 1.55)
+            // Magnetic Knife Strip on North Wall (X: 118.0, Z: -14.85, Y: 1.55)
             CreatePrimitiveCube(kitchenDetails.transform, "MagneticKnifeStrip",
-                new Vector3(118.0f, 1.55f, -15.58f),
+                new Vector3(118.0f, 1.55f, -14.85f),
                 new Vector3(1.6f, 0.12f, 0.05f),
                 stainlessSteelMat);
 
             for (int k = -1; k <= 2; k++)
             {
                 CreatePrimitiveCube(kitchenDetails.transform, $"Knife_{k + 2}",
-                    new Vector3(118.0f + (k * 0.32f), 1.50f, -15.52f),
+                    new Vector3(118.0f + (k * 0.32f), 1.50f, -14.82f),
                     new Vector3(0.04f, 0.32f, 0.02f),
                     stainlessSteelMat);
             }
 
-            // Hanging Pot Rack above Sink (X: 121.14, Z: -20.14, Y: 2.2)
+            // Hanging Pot Rack above Sink (X: 121.0, Z: -20.14, Y: 2.2)
             CreatePrimitiveCube(kitchenDetails.transform, "HangingPotRack_Bar",
                 new Vector3(121.0f, 2.2f, -20.14f),
                 new Vector3(0.06f, 0.06f, 1.6f),
                 brassGoldMat);
+
+            // Chef Spice & Oil Rack on Subway Tile (East Wall behind Cook Line)
+            CreatePrimitiveCube(kitchenDetails.transform, "ChefSpiceShelf",
+                new Vector3(121.84f, 1.65f, -17.80f),
+                new Vector3(0.12f, 0.04f, 1.80f),
+                stainlessSteelMat);
+
+            // Spice jars and oil cruets on shelf
+            Vector3[] jarPositions = new Vector3[] {
+                new Vector3(121.84f, 1.74f, -18.50f),
+                new Vector3(121.84f, 1.74f, -18.25f),
+                new Vector3(121.84f, 1.74f, -18.00f),
+                new Vector3(121.84f, 1.74f, -17.75f),
+                new Vector3(121.84f, 1.74f, -17.50f),
+                new Vector3(121.84f, 1.74f, -17.25f),
+            };
+            for (int j = 0; j < jarPositions.Length; j++)
+            {
+                CreatePrimitiveCylinder(kitchenDetails.transform, $"SpiceJar_{j+1}",
+                    jarPositions[j],
+                    new Vector3(0.08f, 0.07f, 0.08f),
+                    (j % 2 == 0) ? brassGoldMat : awningWhiteMat);
+            }
+
+            // Island Food Prep Task Spotlight (Warm downlight over Center Island)
+            CreatePointLight(kitchenDetails.transform, "Island_PrepSpotlight",
+                new Vector3(115.89f, 2.35f, -20.89f),
+                new Color(1.0f, 0.94f, 0.82f),
+                2.8f, 4.0f);
 
             // Analog Wall Clock above Pass-Through Window (facing West 270°)
             Vector3 clockPos = new Vector3(110.64f, 2.35f, -19.0f);

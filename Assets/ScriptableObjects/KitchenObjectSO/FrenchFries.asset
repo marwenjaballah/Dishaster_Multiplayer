@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: FrenchFries
   m_EditorClassIdentifier: Assembly-CSharp::KitchenObjectSO
   prefab: {fileID: 3712347090776898037, guid: 433a8b4d83c09074d840cf4f7b23285c, type: 3}
-  sprite: {fileID: 0}
+  sprite: {fileID: 21300000, guid: f67d11d5cce1425428bd20fccb4255cd, type: 3}
   objectName: FrenchFries
