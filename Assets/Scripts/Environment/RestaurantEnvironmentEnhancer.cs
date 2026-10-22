@@ -48,11 +48,6 @@ namespace Environment
         [SerializeField] private Material mustardYellowMat;
         [SerializeField] private Material plantGreenMat;
 
-        public static void ResetStaticData()
-        {
-            Instance = null;
-        }
-
         private void Awake()
         {
             if (Instance != null && Instance != this)
