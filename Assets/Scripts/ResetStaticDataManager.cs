@@ -29,6 +29,7 @@ public class ResetStaticDataManager : MonoBehaviour {
         PassThroughWindowCounter.ResetStaticData();
         PlayerAvatarVisual.ResetStaticData();
         LevelSelectionManager.ResetStaticData();
+        Testing.MultiClientNetworkAuditRunner.ResetStaticData();
     }
 
 

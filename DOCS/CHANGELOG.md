@@ -8,6 +8,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.17.0-network-sync-audit] - 2026-10-22
+*Milestone C: Multi-Client Network Synchronization & Session Audit.*
+
+### Added
+- **Multi-Client Network Synchronization Test Runner (`MultiClientNetworkAuditRunner.cs`):**
+  - Production-grade automated network test harness simulating 4-player multiplayer sessions across consecutive in-game days.
+  - 7 integrated test suites verified live in Unity 6 Play Mode:
+    1. *Day Loop State Machine:* Validated all 8 day phases and shift pacing transitions.
+    2. *Restaurant Economy:* Verified balance deductions, tipping rewards, and rent billing.
+    3. *Night Market Upgrades:* Verified bitmask serialization across all 6 equipment upgrades.
+    4. *Table Service Registry:* Verified table order creation, customer dining, and dirty dish drops.
+    5. *Co-op Communication Channel:* Verified ping RPCs, 3D world beacons, and audio queues.
+    6. *Steamworks Platform Hooks:* Verified Rich Presence and achievement triggers.
+    7. *Performance & Memory Telemetry:* Confirmed stable managed heap allocations and zero memory leaks.
+  - `MultiClientNetworkAuditRunner.ResetStaticData()` wired to `ResetStaticDataManager`.
+
 ## [0.16.0-multi-level-progression] - 2026-10-22
 *Milestone D: Multi-Level Level Progression Architecture.*
 
