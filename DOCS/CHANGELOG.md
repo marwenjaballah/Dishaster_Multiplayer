@@ -38,6 +38,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Added `RestaurantEnvironmentEnhancer.ResetStaticData()` wired to `ResetStaticDataManager`.
   - Verified in Unity 6 Editor and live Play Mode with 0 errors and 0 warnings.
 
+### Fixed
+- **Tabletop Prop Elevations & Bounds Clamping (`RestaurantEnvironmentEnhancer.cs`):**
+  - Recalculated tabletop heights directly from `TableTop` renderer bounds ($Y = 0.995\text{m}$). Raised condiment caddies, ketchup/mustard bottles, salt/pepper shakers, and table number tent stands from floor level to sit flush on table surfaces ($Y = 1.005\text{m} - 1.155\text{m}$) offset to the back edge ($Z + 0.40\text{m}$) with colliders stripped to preserve clean plate delivery interaction zones.
+- **Diegetic Typography & World-Space Canvas Scaling:**
+  - Replaced legacy 3D `TextMeshPro` text meshes (which suffered from non-uniform parent scale distortions causing oversized 15–30m floating letters) with dedicated `Canvas` components configured in `RenderMode.WorldSpace` using `TextMeshProUGUI` with micro-scale anchoring (`0.001f - 0.0035f`).
+  - Clamped all diegetic signage (chalkboard daily specials, neon diner logo, takeout header, and table number tents `#1`–`#6`) neatly inside their respective architectural backdrops.
+
 *Milestone D: Level 2 & Level 3 Environments, Courier Scaling & Venue Selection (EXP-011).*
 
 ### Added
