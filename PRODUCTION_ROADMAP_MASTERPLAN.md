@@ -214,7 +214,7 @@ The current `GameSceneTableService` places counters inside a box of generic grey
 ### 6.2 Key Zone Specifications
 1. **The Commercial Kitchen (Back-of-House):**
    - **Ergonomic Work Triangle:** Linear placement from raw ingredient crates $\rightarrow$ chopping boards $\rightarrow$ stoves/fryers $\rightarrow$ assembly counters $\rightarrow$ pass-through window.
-   - **Corridor Width:** Minimum 1.8 meters between counter islands to allow two players to dash past each other without getting caught on colliders.
+   - **Corridor Width:** Minimum 1.8 meters between counter islands to allow two players to pass each other comfortably without getting caught on colliders.
    - **Strategic Pressure Points:** A swinging double kitchen door connecting kitchen to dining room creates intentional, hilarious co-op close calls ("Coming in hot!").
 2. **The Dining Room (Front-of-House):**
    - Built using checkered tile flooring, warm pendant ceiling lamps, brick wall accents, and the existing `EggTable` / `EggStool` prefabs arranged in cozy dining booths.
@@ -498,27 +498,26 @@ graph LR
 
 ### 10.5 New Ideas (ranked by fun per effort)
 **High impact, low cost**
-1. **Dash + ingredient throwing.** The core of Overcooked's co-op comedy. Throw a tomato across a counter to a teammate.
-2. **Ping / emote wheel** ("Need plates!", "Order up!", "On my way", point at a counter). Essential for online co-op without voice chat and for mobile players.
-3. **Kitchen ticket rail.** One diegetic rail that merges dine-in and delivery tickets, color-coded by type, instead of separate floating UIs.
-4. **Level select on a city map** with 1–3 stars per level. Replayability for almost no code.
+1. **Ping / emote wheel** ("Need plates!", "Order up!", "On my way", point at a counter). Essential for online co-op without voice chat and for mobile players.
+2. **Kitchen ticket rail.** One diegetic rail that merges dine-in and delivery tickets, color-coded by type, instead of separate floating UIs.
+3. **Level select on a city map** with 1–3 stars per level. Replayability for almost no code.
 
 **Medium**
 
-5. **Special events:** a food critic (hidden VIP table with double reward/penalty), rain (slippery scooter, more delivery demand), game night (delivery surge).
-6. **Customer archetypes:** patient retiree, impatient business person, big tipper, group of 4 that takes two tables.
-7. **Scooter battery + charging dock.** Real resource tension for the courier role and a reason to come back.
-8. **Cosmetic unlocks** (hats, aprons, scooter skins) earned through stars. Never pay-to-win.
-9. **Save system:** JSON in `Application.persistentDataPath` now, Cloud Save later.
+4. **Special events:** a food critic (hidden VIP table with double reward/penalty), rain (slippery scooter, more delivery demand), game night (delivery surge).
+5. **Customer archetypes:** patient retiree, impatient business person, big tipper, group of 4 that takes two tables.
+6. **Scooter battery + charging dock.** Real resource tension for the courier role and a reason to come back.
+7. **Cosmetic unlocks** (hats, aprons, scooter skins) earned through stars. Never pay-to-win.
+8. **Save system:** JSON in `Application.persistentDataPath` now, Cloud Save later.
 
 **Production & platform**
 
-10. **Multiplayer Play Mode** (`com.unity.multiplayer.playmode`) to test 4 players inside one Editor.
-11. **Accessibility:** player colors that also carry a **shape/icon** on the apron (colorblind-safe), screen-shake toggle, text scale, hold-to-chop option.
-12. **Localization** package, set up early so strings aren't hard-coded.
-13. **Analytics + crash reporting** to balance the economy on real data.
-14. **CI builds** with GameCI GitHub Actions (Windows + Android on every push to `main`).
-15. **Steam networking option:** Steam friend invites + a Steam P2P transport cut Relay costs for a PC release.
+9. **Multiplayer Play Mode** (`com.unity.multiplayer.playmode`) to test 4 players inside one Editor.
+10. **Accessibility:** player colors that also carry a **shape/icon** on the apron (colorblind-safe), screen-shake toggle, text scale, hold-to-chop option.
+11. **Localization** package, set up early so strings aren't hard-coded.
+12. **Analytics + crash reporting** to balance the economy on real data.
+13. **CI builds** with GameCI GitHub Actions (Windows + Android on every push to `main`).
+14. **Steam networking option:** Steam friend invites + a Steam P2P transport cut Relay costs for a PC release.
 
 ### 10.6 Revised Priority: Vertical Slice First
 The 8 sprints are too much to build before learning whether the game is fun. Do this instead:
@@ -526,12 +525,13 @@ The 8 sprints are too much to build before learning whether the game is fun. Do 
 | Milestone | Scope | Exit criteria |
 | :--- | :--- | :--- |
 | **A. Stabilize** | Bugs in 10.2, cleanup, MCP connected, legal fixes (10.4) | 0 errors, a rematch loop 5× without duplicate sounds |
-| **B. Vertical Slice** | New chef character (idle/run/carry/chop), **Level 1 Sunny Side Diner** redesign, dishwashing, Day Loop + Night Market with 3 upgrades, dash/throw, ping wheel | 4 players finish 3 in-game days and want to keep playing |
+| **B. Vertical Slice** | New chef character (idle/run/carry/chop), **Level 1 Sunny Side Diner** redesign, dishwashing, Day Loop + Night Market with 3 upgrades, ping wheel | 4 players finish 3 in-game days and want to keep playing |
 | **C. Playtest** | 3+ external sessions, economy tuning | Notes triaged |
 | **D. Expand** | NPC dine-in, more recipes, Scooter 2.0, Levels 2–3, cosmetics, save | Content complete |
 | **E. Ship** | Sessions migration, mobile performance, accessibility, localization, store builds | Section 9 checklist green |
 
 **Cut list if time runs short:** pizza/oven, coffee machine, delivery drone, Level 4, dual-chef swap (balance solo with fewer tables and lower rent instead).
+**Explicitly Excluded by Design:** Dash sprint & food/ingredient throwing (deliberate grounded movement and direct physical counter placement maintained).
 
 ---
 *Created for the Antigravity Pair-Programming Workspace. Section 10 reflects a code-verified review.*

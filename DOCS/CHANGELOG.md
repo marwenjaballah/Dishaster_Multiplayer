@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ---
 
 ## [Unreleased]
+### Changed
+- **Roadmap Scope Alignment (`PRODUCTION_ROADMAP_MASTERPLAN.md`):**
+  - Permanently removed Dash Sprint and Food/Ingredient Throwing from all future milestones and backlog per studio design direction.
+  - Retained grounded, tactile chef movement and physical counter placement mechanics.
 
 ## [0.20.0-input-lifecycle-approval-fixes] - 2026-10-22
 *Milestone A: PlayerInputActions Lifecycle Leak Fix, EventSystem InputSystemUI Upgrade, & Host Connection Approval.*
