@@ -145,11 +145,13 @@ public class GameInput : MonoBehaviour {
         }
 
         if (playerInputActions != null) {
+            playerInputActions.Player.Disable();
             playerInputActions.Player.Interact.performed -= Interact_performed;
             playerInputActions.Player.InteractAlternate.performed -= InteractAlternate_performed;
             playerInputActions.Player.Pause.performed -= Pause_performed;
 
             playerInputActions.Dispose();
+            playerInputActions = null;
         }
         if (instance == this) {
             instance = null;

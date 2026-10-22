@@ -139,13 +139,24 @@ public class KitchenGameMultiplayer : NetworkBehaviour {
     }
 
     private void NetworkManager_ConnectionApprovalCallback(NetworkManager.ConnectionApprovalRequest connectionApprovalRequest, NetworkManager.ConnectionApprovalResponse connectionApprovalResponse) {
-        if (SceneManager.GetActiveScene().name != Loader.Scene.CharacterSelectScene.ToString()) {
+        // The host/server is always approved
+        if (NetworkManager.Singleton != null && 
+            (connectionApprovalRequest.ClientNetworkId == NetworkManager.Singleton.LocalClientId || connectionApprovalRequest.ClientNetworkId == NetworkManager.ServerClientId)) {
+            connectionApprovalResponse.Approved = true;
+            return;
+        }
+
+        string currentScene = SceneManager.GetActiveScene().name;
+        bool isJoinableScene = currentScene == Loader.Scene.CharacterSelectScene.ToString() ||
+                               currentScene == Loader.Scene.LobbyScene.ToString();
+
+        if (!isJoinableScene) {
             connectionApprovalResponse.Approved = false;
             connectionApprovalResponse.Reason = "Game has already started";
             return;
         }
 
-        if (NetworkManager.Singleton.ConnectedClientsIds.Count >= MAX_PLAYER_AMOUNT) {
+        if (NetworkManager.Singleton != null && NetworkManager.Singleton.ConnectedClientsIds.Count >= MAX_PLAYER_AMOUNT) {
             connectionApprovalResponse.Approved = false;
             connectionApprovalResponse.Reason = "Game is full";
             return;

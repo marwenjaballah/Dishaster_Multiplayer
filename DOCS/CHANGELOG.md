@@ -8,6 +8,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.20.0-input-lifecycle-approval-fixes] - 2026-10-22
+*Milestone A: PlayerInputActions Lifecycle Leak Fix, EventSystem InputSystemUI Upgrade, & Host Connection Approval.*
+
+### Fixed
+- **PlayerInputActions Lifecycle Leak Assertion (`GameInput.cs`):**
+  - Added explicit `playerInputActions.Player.Disable()` call prior to `playerInputActions.Dispose()` in `GameInput.OnDestroy()`.
+  - Resolves destructor assertion: `"This will cause a leak and performance issues, PlayerInputActions.Player.Disable() has not been called."`
+- **Legacy StandaloneInputModule in LoadingScene (`Assets/Scenes/LoadingScene.unity`):**
+  - Upgraded EventSystem in `LoadingScene.unity` from legacy `StandaloneInputModule` to `InputSystemUIInputModule`.
+  - Eliminates `InvalidOperationException: You are trying to read Input using the UnityEngine.Input class, but you have switched active Input handling to Input System package in Player Settings` when transitioning between menus and lobbies.
+  - Audited all 6 project scenes; verified 100% of scenes now use `InputSystemUIInputModule`.
+- **Host Connection Approval & Netcode Rejection Warning (`KitchenGameMultiplayer.cs`):**
+  - Updated `NetworkManager_ConnectionApprovalCallback` to explicitly approve host/server client connections (`ClientNetworkId == LocalClientId || ClientNetworkId == ServerClientId`).
+  - Added `LobbyScene` as a recognized joinable scene alongside `CharacterSelectScene`.
+  - Resolves NGO warning: `[Netcode] [HostServerInitialize] You cannot decline the host connection. The connection was automatically approved.`
+
 ## [0.19.0-counter-visuals-input-fixes] - 2026-10-22
 *Milestone A: Input System Legacy Exceptions, Permanent Counter Highlighting, Distinct UIs, & Appliance 3D Models.*
 

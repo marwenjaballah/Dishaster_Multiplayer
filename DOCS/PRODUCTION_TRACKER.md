@@ -41,6 +41,7 @@ Milestone E: Hardening & Commercial QA   [░░░░░░░░░░░░�
 | `STAB-009` | Netcode | P1 | Server-authoritative plate delivery and bag insertion (`NetworkObjectReference` validation) | Agent | ✅ `COMPLETED` | Bag uses server validation + despawn, client manual Destroy calls removed |
 | `STAB-010` | Bugfix | P0 | Table Order UI gating, delivery failure timer close, distance culling, and chair stool seating kinematics | Agent | ✅ `COMPLETED` | Verified in Unity 6 Play Mode: customer seated on designated stool, order UI hidden until seated, timer closes on fail, 0 errors/0 warnings |
 | `STAB-011` | Bugfix | P0 | Fix Input System legacy exceptions, permanent counter highlighting, distinct thematic UIs, and 3D appliance models | Agent | ✅ `COMPLETED` | Verified in Unity 6 Play Mode: 0 Input exceptions on fire extinguisher, distinct Sink/Fryer/Dispenser UIs, highlights toggle only on focus, 0 errors/0 warnings |
+| `STAB-012` | Bugfix | P0 | Fix PlayerInputActions leak assertion, replace LoadingScene StandaloneInputModule, and fix Host connection approval | Agent | ✅ `COMPLETED` | Verified in Unity 6 Play Mode: zero finalizer assertions on GameInput destroy, 0 StandaloneInputModule exceptions, host approved without NGO warnings |
 
 ---
 
