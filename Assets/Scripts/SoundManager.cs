@@ -105,6 +105,14 @@ public class SoundManager : MonoBehaviour {
         PlaySound(audioClipRefsSO.warning, position);
     }
 
+    public void PlayCrashSound(Vector3 position) {
+        if (audioClipRefsSO != null && audioClipRefsSO.trash != null && audioClipRefsSO.trash.Length > 0) {
+            PlaySound(audioClipRefsSO.trash, position, 1.4f);
+        } else {
+            PlayWarningSound(position);
+        }
+    }
+
     public void ChangeVolume() {
         volume += .1f;
         if (volume > 1f) {

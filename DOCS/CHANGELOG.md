@@ -8,6 +8,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.0-vehicle-physics] - 2026-10-22
+*Milestone D: Scooter 2.0 Physics Polish & Crash Feedback.*
+
+### Added
+- **Dynamic Corner Banking & Lean Physics (`ElectricScooter.cs`):**
+  - Added visual roll kinematics calculating signed steering angles into turns.
+  - Smoothly leans scooter frame and rider up to 18 degrees into corners with realistic banking.
+  - Returns upright automatically when traveling straight or dismounting.
+- **Collision Feedback & Knockback Recoil (`ElectricScooter.cs`):**
+  - Detects high-speed impacts against obstacles or walls.
+  - Applies instant backward recoil bounce impulse with smooth exponential decay.
+  - Server-authoritative crash audio broadcasting (`SoundManager.PlayCrashSound`).
+- **Crash Penalty & Economy Impact (`RestaurantEconomyManager.cs`):**
+  - High-speed collisions jolt the courier and penalize the restaurant with a $10 food damage fee.
+  - Deducts penalty from daily earnings and logs the event in `DayLoopManager`.
+
 ## [0.6.0-balancing] - 2026-10-22
 *Milestone C: Pacing, Distance Balancing & Dynamic Shift Audio Transitions.*
 

@@ -69,12 +69,12 @@ Milestone E: Hardening & Commercial QA   [░░░░░░░░░░░░�
 
 ### Milestone D: Content Expansion & City 2.0
 
-| Task ID | Type | Priority | Description | Assignee | Status |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| `EXP-001` | NPC | P1 | 3D Animated Dine-In Customers (walk in sidewalk door, sit at booths, eat, leave) | AI/Art | 📋 `BACKLOG` |
-| `EXP-002` | Gameplay | P1 | Deep Fryer station (French Fries) and Beverage fountain machine | Gameplay | 📋 `BACKLOG` |
-| `EXP-003` | Vehicle | P1 | Scooter 2.0 physics polish (lean into corners, collision feedback, tip loss on crash) | Vehicle | 📋 `BACKLOG` |
-| `EXP-004` | Level Design | P2 | Level 2 (Downtown Burger Bar) and Level 3 (Boardwalk Grill) | Level | 📋 `BACKLOG` |
+| Task ID | Type | Priority | Description | Assignee | Status | Verification |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| `EXP-001` | NPC | P1 | 3D Animated Dine-In Customers (walk in sidewalk door, sit at booths, eat, leave) | AI/Art | 📋 `BACKLOG` | NavMesh pathing & state transitions |
+| `EXP-002` | Gameplay | P1 | Deep Fryer station (French Fries) and Beverage fountain machine | Gameplay | 📋 `BACKLOG` | Netcode state machine & recipes |
+| `EXP-003` | Vehicle | P1 | Scooter 2.0 physics polish (lean into corners, collision feedback, tip loss on crash) | Vehicle | ✅ `COMPLETED` | 18° visual lean kinematics, high-speed crash recoil bounce, $10 food damage penalty via `RestaurantEconomyManager`, Play Mode verified |
+| `EXP-004` | Level Design | P2 | Level 2 (Downtown Burger Bar) and Level 3 (Boardwalk Grill) | Level | 📋 `BACKLOG` | Multi-scene layout validation |
 
 ---
 
@@ -96,5 +96,6 @@ Milestone E: Hardening & Commercial QA   [░░░░░░░░░░░░�
 * **2026-10-22:** Milestone B (`VRT-002`) completed. Implemented Finite Plate Economy & Dishwashing Sink: `DirtyPlateKitchenObject`, `SinkCounter.cs` with server-authoritative scrubbing Netcode RPCs (`IHasProgress`), `SinkCounterVisual.cs`, finite `PlatesCounter` restock/return loop, dirty dishes left on `CustomerTable` blocking next seatings until cleared, and `DeliveryBagKitchenObject` dish pit recycling. Verified in Play Mode with 0 errors/0 warnings.
 * **2026-10-22:** Milestone B (`VRT-006`) completed. Implemented Tactical Co-op Ping & Emote Wheel: `CoopPingManager.cs`, `CoopPingWheelUI.cs`, `WorldPingIndicator.cs` (3D billboard beacons, audio cues, HUD toast alerts, mouse/gamepad/mobile input bindings). 0 errors, 0 warnings verified in Play Mode via MCP.
 * **2026-10-22:** Milestone C (`TEST-002` & `TEST-003`) completed. Balanced delivery distances and added distance-based tip bonuses ($1/5m) in `DeliveryCustomerManager.cs`. Implemented dynamic shift tempo/pitch modulation and crisis urgency spikes in `MusicManager.cs`. Tested and verified in Play Mode with 0 errors and 0 warnings.
+* **2026-10-22:** Milestone D (`EXP-003`) completed. Scooter 2.0 physics polish: 18° dynamic corner banking kinematics, high-speed obstacle crash recoil impulse, server-authoritative crash audio broadcasting, and $10 food jolt damage penalty in `RestaurantEconomyManager.cs`. Verified in Play Mode with 0 errors and 0 warnings.
 
 

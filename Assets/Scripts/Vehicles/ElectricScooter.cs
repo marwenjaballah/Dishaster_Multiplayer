@@ -21,8 +21,16 @@ namespace Vehicles
 
         [Header("References")]
         [SerializeField] private Transform playerMountPoint;
+        [SerializeField] private Transform visualsTransform;
         [SerializeField] private GameObject interactPromptUI;
         [SerializeField] private AudioSource motorAudioSource;
+
+        [Header("Physics Polish & Corner Banking")]
+        [SerializeField] private float maxLeanAngle = 18f;
+        [SerializeField] private float leanSpeed = 8f;
+        [SerializeField] private float crashRecoilForce = 1.6f;
+        [SerializeField] private float crashCooldown = 2.0f;
+        [SerializeField] private int crashPenalty = 10;
 
         // ── Network State ─────────────────────────────────────────────────────────
         // ulong.MaxValue means nobody is riding
@@ -36,6 +44,9 @@ namespace Vehicles
         private Player _localRider;
         private bool _isLocalMounted;
         private Vector3 _currentMoveDir;
+        private float _currentLeanAngle;
+        private float _nextCrashAllowedTime;
+        private Vector3 _recoilOffset;
 
         // ── Lifecycle ─────────────────────────────────────────────────────────────
 
@@ -54,6 +65,12 @@ namespace Vehicles
 
         private void Awake()
         {
+            if (visualsTransform == null)
+            {
+                var visualsChild = transform.Find("Visuals");
+                if (visualsChild != null) visualsTransform = visualsChild;
+            }
+
             if (interactPromptUI == null)
             {
                 var promptTransform = transform.Find("InteractPromptUI");
@@ -200,6 +217,8 @@ namespace Vehicles
                     _localRider = null;
                 }
                 _isLocalMounted = false;
+                _currentLeanAngle = 0f;
+                if (visualsTransform != null) visualsTransform.localRotation = Quaternion.identity;
                 if (motorAudioSource != null && motorAudioSource.isPlaying) motorAudioSource.Stop();
             }
             else
@@ -302,12 +321,51 @@ namespace Vehicles
 
             bool isMoving = moveDir != Vector3.zero;
 
+            // ── Dynamic Corner Banking (Lean) ──────────────────────────────────
+            float targetLean = 0f;
+            if (isMoving)
+            {
+                float steerAngle = Vector3.SignedAngle(transform.forward, moveDir, Vector3.up);
+                targetLean = Mathf.Clamp(-steerAngle * 0.45f, -maxLeanAngle, maxLeanAngle);
+            }
+            _currentLeanAngle = Mathf.Lerp(_currentLeanAngle, targetLean, Time.deltaTime * leanSpeed);
+            if (visualsTransform != null)
+            {
+                visualsTransform.localRotation = Quaternion.Euler(0f, 0f, _currentLeanAngle);
+            }
+
+            // ── Recoil Offset Decay ───────────────────────────────────────────
+            if (_recoilOffset.sqrMagnitude > 0.001f)
+            {
+                transform.position += _recoilOffset * Time.deltaTime;
+                _recoilOffset = Vector3.Lerp(_recoilOffset, Vector3.zero, Time.deltaTime * 6f);
+            }
+
             if (isMoving)
             {
                 bool canMove = !Physics.BoxCast(boxCenter, halfExtents, moveDir, Quaternion.identity, moveDistance, collisionsLayerMask, QueryTriggerInteraction.Ignore);
 
                 if (!canMove)
                 {
+                    // Crash Detection: driving forward into an obstacle at speed
+                    if (speed >= 8f && Vector3.Dot(transform.forward, moveDir) > 0.35f && Time.time >= _nextCrashAllowedTime)
+                    {
+                        _nextCrashAllowedTime = Time.time + crashCooldown;
+                        _recoilOffset = -transform.forward * crashRecoilForce;
+
+                        if (IsSpawned)
+                        {
+                            TriggerScooterCrashServerRpc(transform.position);
+                        }
+                        else
+                        {
+                            if (SoundManager.Instance != null)
+                            {
+                                SoundManager.Instance.PlayCrashSound(transform.position);
+                            }
+                        }
+                    }
+
                     // Attempt X only
                     Vector3 moveDirX = new Vector3(moveDir.x, 0, 0).normalized;
                     canMove = (moveDir.x < -.5f || moveDir.x > +.5f) && !Physics.BoxCast(boxCenter, halfExtents, moveDirX, Quaternion.identity, moveDistance, collisionsLayerMask, QueryTriggerInteraction.Ignore);
@@ -332,17 +390,37 @@ namespace Vehicles
                 UpdateServerTransformServerRpc(transform.position, transform.rotation);
             }
 
-            // Keep rider clamped to mount point
+            // Keep rider clamped to mount point with dynamic bank angle
             if (_localRider != null && playerMountPoint != null)
             {
                 _localRider.transform.position = playerMountPoint.position;
-                _localRider.transform.rotation = transform.rotation;
+                _localRider.transform.rotation = transform.rotation * Quaternion.Euler(0f, 0f, _currentLeanAngle * 0.7f);
             }
 
             // Audio pitch modulation
             if (motorAudioSource != null)
             {
                 motorAudioSource.pitch = Mathf.Lerp(motorAudioSource.pitch, isMoving ? 1.4f : 0.8f, Time.deltaTime * 5f);
+            }
+        }
+
+        [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
+        private void TriggerScooterCrashServerRpc(Vector3 crashPos, RpcParams rpcParams = default)
+        {
+            if (RestaurantEconomyManager.Instance != null)
+            {
+                RestaurantEconomyManager.Instance.ProcessCrashPenalty(crashPenalty, "Scooter Crash - Food Jolted");
+            }
+
+            TriggerScooterCrashClientRpc(crashPos);
+        }
+
+        [Rpc(SendTo.ClientsAndHost)]
+        private void TriggerScooterCrashClientRpc(Vector3 crashPos)
+        {
+            if (SoundManager.Instance != null)
+            {
+                SoundManager.Instance.PlayCrashSound(crashPos);
             }
         }
 

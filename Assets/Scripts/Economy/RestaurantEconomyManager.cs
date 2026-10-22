@@ -209,6 +209,17 @@ public class RestaurantEconomyManager : NetworkBehaviour {
         SubmitCustomerReview(1.0f, "Left Due To Expired Service!");
     }
 
+    public void ProcessCrashPenalty(int penalty = 10, string reason = "Scooter Crash - Food Jolted") {
+        if (!IsServer) return;
+
+        currentBalance.Value = Mathf.Max(0, currentBalance.Value - penalty);
+        if (DayLoopManager.Instance != null) {
+            DayLoopManager.Instance.RecordFine(penalty);
+        }
+
+        SubmitCustomerReview(2.0f, reason);
+    }
+
     // ===== BILL PROCESSING & BANKRUPTCY =====
 
     private void ProcessBillPayment() {
