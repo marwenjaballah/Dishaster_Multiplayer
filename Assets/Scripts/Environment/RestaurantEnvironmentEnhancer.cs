@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -6,19 +7,17 @@ using TMPro;
 namespace Environment
 {
     /// <summary>
-    /// Master Architectural & Visual Enhancer for the Restaurant interior & exterior.
-    /// Transforms the plain prototype kitchen and dining area into a commercial-grade,
-    /// vibrant diner experience without modifying or altering the surrounding city.
-    /// Provides:
-    /// 1. Zoned flooring: Warm hardwood diner parquet & heavy-duty non-slip kitchen tile.
-    /// 2. Architectural wainscoting & glossy kitchen subway tile splashbacks.
-    /// 3. Overhead stainless steel commercial kitchen exhaust hood with downlights.
-    /// 4. Cozy suspended diner pendant lamps over all 6 dining tables.
-    /// 5. Tabletop condiment sets (ketchup, mustard, salt/pepper) & diegetic table numbers ON the table surface.
-    /// 6. Pass-through order ticket rail & holding heat-lamp bar.
-    /// 7. Exterior takeout window canopy & neon courier signage.
-    /// 8. Dining room wall menu chalkboard, planter dividers, and neon diner sign with clean World-Space Canvas scaling.
-    /// 9. Kitchen magnetic knife racks, hanging pots, and analog wall clock.
+    /// Master Architectural & Environmental Redesign for the Restaurant interior & exterior.
+    /// Transforms the game space into "The Gilded Spoon Diner & Bistro" — a vibrant, 
+    /// high-end retro-modern commercial restaurant with:
+    /// 1. Zoned Flooring: Herringbone hardwood parquet, plush velvet dining rugs, and checkerboard kitchen tile.
+    /// 2. Architectural Envelope: Exposed red brick accent wall, mahogany wainscoting, and panoramic city-view windows.
+    /// 3. Luxury Dining Booths: Handcrafted crimson/emerald tufted leather banquettes, walnut tables, brass lamps & condiments.
+    /// 4. Host Station & Waiting Lounge: Maître d' podium, golden velvet bench, coat rack, and lush 3D ficus trees.
+    /// 5. Diner Service Bar & Coffee Station: Carrera marble bar counter, chrome swivel stools, espresso machine & pastry dome.
+    /// 6. Exhibition Kitchen & Pass-Through: Service window with heat lamps, ticket rail, saloon doors, and stainless canopy hood.
+    /// 7. Atmospheric Theming: 1950s illuminated jukebox, framed vintage art, chalkboard specials, and radiant neon diner signage.
+    /// 8. Exterior Takeout Bay: Striped canvas awning, courier staging counter, and neon pickup signage.
     /// </summary>
     [ExecuteAlways]
     public class RestaurantEnvironmentEnhancer : MonoBehaviour
@@ -32,16 +31,28 @@ namespace Environment
 
         private const string ROOT_CONTAINER_NAME = "Restaurant_EnhancedDesign";
 
-        [Header("Material References (Auto-loaded if null)")]
+        [Header("Material References")]
         [SerializeField] private Material hardwoodFloorMat;
         [SerializeField] private Material kitchenTileMat;
+        [SerializeField] private Material checkerboardDarkMat;
+        [SerializeField] private Material checkerboardLightMat;
         [SerializeField] private Material subwayTileMat;
+        [SerializeField] private Material exposedBrickMat;
         [SerializeField] private Material wainscotingMat;
+        [SerializeField] private Material marbleBarMat;
+        [SerializeField] private Material boothBurgundyMat;
+        [SerializeField] private Material boothEmeraldMat;
+        [SerializeField] private Material velvetPlushMat;
         [SerializeField] private Material wallAccentMat;
         [SerializeField] private Material stainlessSteelMat;
         [SerializeField] private Material brassGoldMat;
         [SerializeField] private Material neonCyanMat;
         [SerializeField] private Material neonAmberMat;
+        [SerializeField] private Material windowGlassMat;
+        [SerializeField] private Material windowFrameMat;
+        [SerializeField] private Material ceilingBeamMat;
+        [SerializeField] private Material chalkboardMat;
+        [SerializeField] private Material jukeboxNeonMat;
         [SerializeField] private Material awningRedMat;
         [SerializeField] private Material awningWhiteMat;
         [SerializeField] private Material ketchupRedMat;
@@ -81,13 +92,25 @@ namespace Environment
         {
             if (hardwoodFloorMat == null) hardwoodFloorMat = LoadAssetMat("Restaurant_HardwoodFloor");
             if (kitchenTileMat == null) kitchenTileMat = LoadAssetMat("Restaurant_KitchenTile");
+            if (checkerboardDarkMat == null) checkerboardDarkMat = LoadAssetMat("Restaurant_CheckerboardDark");
+            if (checkerboardLightMat == null) checkerboardLightMat = LoadAssetMat("Restaurant_CheckerboardLight");
             if (subwayTileMat == null) subwayTileMat = LoadAssetMat("Restaurant_SubwayTile");
+            if (exposedBrickMat == null) exposedBrickMat = LoadAssetMat("Restaurant_ExposedBrick");
             if (wainscotingMat == null) wainscotingMat = LoadAssetMat("Restaurant_Wainscoting");
+            if (marbleBarMat == null) marbleBarMat = LoadAssetMat("Restaurant_MarbleBarTop");
+            if (boothBurgundyMat == null) boothBurgundyMat = LoadAssetMat("Restaurant_BoothLeatherBurgundy");
+            if (boothEmeraldMat == null) boothEmeraldMat = LoadAssetMat("Restaurant_BoothLeatherEmerald");
+            if (velvetPlushMat == null) velvetPlushMat = LoadAssetMat("Restaurant_VelvetPlush");
             if (wallAccentMat == null) wallAccentMat = LoadAssetMat("Restaurant_WallAccent");
             if (stainlessSteelMat == null) stainlessSteelMat = LoadAssetMat("Restaurant_StainlessSteel");
             if (brassGoldMat == null) brassGoldMat = LoadAssetMat("Restaurant_BrassGold");
             if (neonCyanMat == null) neonCyanMat = LoadAssetMat("Restaurant_NeonCyan");
             if (neonAmberMat == null) neonAmberMat = LoadAssetMat("Restaurant_NeonAmber");
+            if (windowGlassMat == null) windowGlassMat = LoadAssetMat("Restaurant_WindowGlass");
+            if (windowFrameMat == null) windowFrameMat = LoadAssetMat("Restaurant_WindowFrame");
+            if (ceilingBeamMat == null) ceilingBeamMat = LoadAssetMat("Restaurant_CeilingBeam");
+            if (chalkboardMat == null) chalkboardMat = LoadAssetMat("Restaurant_ChalkboardSlate");
+            if (jukeboxNeonMat == null) jukeboxNeonMat = LoadAssetMat("Restaurant_JukeboxNeon");
             if (awningRedMat == null) awningRedMat = LoadAssetMat("Restaurant_AwningRed");
             if (awningWhiteMat == null) awningWhiteMat = LoadAssetMat("Restaurant_AwningWhite");
             if (ketchupRedMat == null) ketchupRedMat = LoadAssetMat("Restaurant_KetchupRed");
@@ -125,6 +148,29 @@ namespace Environment
                 if (mr != null) mr.enabled = false;
             }
 
+            // Hide old prototype egg table tops & legs (replaced by luxury booths/bistros)
+            foreach (var table in restObj.GetComponentsInChildren<CustomerTable>(true))
+            {
+                Transform tt = table.transform.Find("TableTop");
+                if (tt != null) { var mr = tt.GetComponent<MeshRenderer>(); if (mr != null) mr.enabled = false; }
+                Transform tl = table.transform.Find("TableLegs");
+                if (tl != null) { var mr = tl.GetComponent<MeshRenderer>(); if (mr != null) mr.enabled = false; }
+            }
+
+            // Hide old prototype egg stool meshes & colliders, reposition to new booth cushions
+            Transform diningArea = restObj.transform.Find("DiningArea");
+            if (diningArea != null)
+            {
+                foreach (var mr in diningArea.GetComponentsInChildren<MeshRenderer>(true))
+                {
+                    if (mr.name.Contains("EggStool")) mr.enabled = false;
+                }
+                foreach (var col in diningArea.GetComponentsInChildren<Collider>(true))
+                {
+                    if (col.name.Contains("EggStool")) DestroyImmediate(col);
+                }
+            }
+
             // Clean up existing enhancement container
             Transform oldContainer = restObj.transform.Find(ROOT_CONTAINER_NAME);
             if (oldContainer != null)
@@ -136,34 +182,31 @@ namespace Environment
             GameObject root = new GameObject(ROOT_CONTAINER_NAME);
             root.transform.SetParent(restObj.transform, false);
 
-            // 1. Zoned Flooring
+            // 1. Zoned Flooring with Rich Contrast & Carpet Insets
             BuildZonedFlooring(root.transform);
 
-            // 2. Wainscoting & Splashbacks
-            BuildWallsAndWainscoting(root.transform);
+            // 2. Architectural Walls, Brick Texturing & Panoramic City Windows
+            BuildArchitecturalWallsAndWindows(root.transform);
 
-            // 3. Commercial Exhaust Hood & Kitchen Track Lighting
-            BuildKitchenExhaustHood(root.transform);
+            // 3. Luxurious Diner Booths & Bistro Seating Sets
+            BuildDinerBoothsAndDiningSets(root.transform);
 
-            // 4. Cozy Suspended Dining Table Pendant Lights
-            BuildDiningPendantLights(root.transform);
+            // 4. Host Station, Waiting Lounge & Greenery Vestibule
+            BuildHostStandAndWaitingLounge(root.transform);
 
-            // 5. Tabletop Condiments & Table Number Signs ON Table Surfaces
-            BuildTabletopCondiments(root.transform);
+            // 5. Diner Service Bar, Swivel Stools, Espresso & Pastry Dome
+            BuildDinerServiceBarAndCoffeeStation(root.transform);
 
-            // 6. Pass-Through Window Overhead Valance & Heat Lamp
-            BuildPassThroughValance(root.transform);
+            // 6. Exhibition Kitchen, Pass-Through Window & Stainless Range Hood
+            BuildExhibitionKitchenAndPassThrough(root.transform);
 
-            // 7. Exterior Takeout Window Canopy & Neon Sign
-            BuildTakeoutExteriorCanopy(root.transform);
+            // 7. Atmosphere, Vintage Art, Chalkboard & Illuminated Retro Jukebox
+            BuildAtmosphereArtAndJukebox(root.transform);
 
-            // 8. Dining Room Decor, Planters & Neon Wall Sign (Clean World Canvas)
-            BuildDiningDecorAndPlanters(root.transform);
+            // 8. Exterior Takeout Canopy & Courier Drive-Up Window
+            BuildTakeoutAndCourierBay(root.transform);
 
-            // 9. Kitchen Organization (Magnetic Knife Strip, Pot Rack & Analog Clock)
-            BuildKitchenUtensilsAndClock(root.transform);
-
-            Debug.Log("[RestaurantEnvironmentEnhancer] ✨ Restaurant environment design successfully enhanced!");
+            Debug.Log("[RestaurantEnvironmentEnhancer] ✨ Complete restaurant redesign successfully baked!");
         }
 
         // ── 1. Zoned Flooring ─────────────────────────────────────────────────
@@ -173,524 +216,905 @@ namespace Environment
             GameObject floorGroup = new GameObject("01_ZonedFloors");
             floorGroup.transform.SetParent(parent, false);
 
-            // Dining Room Hardwood Parquet: X ~ 88.5 to 110.0, Z ~ -5.2 to -36.4
+            // Dining Hall Hardwood Parquet: X ~ 88.5 to 110.0, Z ~ -5.2 to -36.4
             CreatePrimitiveCube(floorGroup.transform, "Floor_DiningHardwood",
                 new Vector3(99.25f, 0.012f, -20.8f),
                 new Vector3(21.5f, 0.02f, 31.2f),
                 hardwoodFloorMat);
 
-            // Kitchen Heavy-Duty Non-Slip Tile: X ~ 110.0 to 122.5, Z ~ -14.0 to -27.5
+            // Plush Burgundy Carpet Insets Under Dining Rows
+            float[] rowZ = new float[] { -14.84f, -22.34f, -29.84f };
+            for (int r = 0; r < rowZ.Length; r++)
+            {
+                CreatePrimitiveCube(floorGroup.transform, $"Carpet_BoothRow_{r + 1}",
+                    new Vector3(96.74f, 0.016f, rowZ[r]),
+                    new Vector3(15.2f, 0.022f, 4.6f),
+                    boothBurgundyMat);
+
+                // Brass border edging around carpet
+                CreatePrimitiveCube(floorGroup.transform, $"Carpet_Border_{r + 1}",
+                    new Vector3(96.74f, 0.020f, rowZ[r]),
+                    new Vector3(15.4f, 0.025f, 4.8f),
+                    brassGoldMat);
+            }
+
+            // Exhibition Kitchen Commercial Tile: X ~ 110.0 to 122.5, Z ~ -14.0 to -27.5
             CreatePrimitiveCube(floorGroup.transform, "Floor_KitchenTile",
                 new Vector3(116.25f, 0.015f, -20.89f),
                 new Vector3(12.5f, 0.02f, 13.5f),
                 kitchenTileMat);
 
+            // Kitchen Checkerboard Tile Accent Run (Along Central Working Aisle)
+            CreatePrimitiveCube(floorGroup.transform, "Floor_KitchenCheckerRunner",
+                new Vector3(116.25f, 0.018f, -20.89f),
+                new Vector3(10.5f, 0.022f, 2.6f),
+                checkerboardDarkMat);
+
+            // Entrance Vestibule Hexagonal Stone Entry Mat: Southwest entrance area
+            CreatePrimitiveCube(floorGroup.transform, "Floor_EntranceVestibule",
+                new Vector3(92.0f, 0.018f, -34.5f),
+                new Vector3(6.5f, 0.025f, 3.6f),
+                checkerboardLightMat);
+
             // Brass Threshold Transition Strip between Dining and Kitchen
             CreatePrimitiveCube(floorGroup.transform, "Floor_BrassThreshold",
-                new Vector3(110.0f, 0.022f, -20.89f),
-                new Vector3(0.18f, 0.03f, 13.5f),
+                new Vector3(110.0f, 0.024f, -20.89f),
+                new Vector3(0.22f, 0.035f, 13.5f),
                 brassGoldMat);
-
-            // Courier Parking Bay Threshold Accent
-            CreatePrimitiveCube(floorGroup.transform, "Floor_CourierBayBorder",
-                new Vector3(110.64f, 0.018f, -23.0f),
-                new Vector3(1.4f, 0.025f, 2.6f),
-                neonAmberMat);
         }
 
-        // ── 2. Walls & Wainscoting ─────────────────────────────────────────────
+        // ── 2. Architectural Walls, Brick & Windows ───────────────────────────
 
-        private void BuildWallsAndWainscoting(Transform parent)
+        private void BuildArchitecturalWallsAndWindows(Transform parent)
         {
             GameObject wallGroup = new GameObject("02_ArchitecturalWalls");
             wallGroup.transform.SetParent(parent, false);
 
-            // Dining Room West Wall Wainscoting (Lower 1.1m dark wood)
+            // West Wall Wainscoting (Lower 1.1m dark mahogany wood)
             CreatePrimitiveCube(wallGroup.transform, "Wainscot_WestWall",
                 new Vector3(88.55f, 0.55f, -20.8f),
                 new Vector3(0.12f, 1.1f, 31.2f),
                 wainscotingMat);
 
-            // Chair Rail Molding Strip
+            // West Wall Chair Rail Molding Strip
             CreatePrimitiveCube(wallGroup.transform, "Molding_WestWall",
                 new Vector3(88.58f, 1.12f, -20.8f),
                 new Vector3(0.16f, 0.08f, 31.2f),
                 brassGoldMat);
 
-            // Dining Room South Wall Wainscoting
+            // West Wall Upper Exposed Red Brick Accent Wall (Upper 1.9m)
+            CreatePrimitiveCube(wallGroup.transform, "Brick_WestWall",
+                new Vector3(88.54f, 2.15f, -20.8f),
+                new Vector3(0.10f, 1.95f, 31.2f),
+                exposedBrickMat);
+
+            // 3 Large Panoramic Arched City-View Windows along West Wall
+            float[] windowZ = new float[] { -14.84f, -22.34f, -29.84f };
+            for (int w = 0; w < windowZ.Length; w++)
+            {
+                float z = windowZ[w];
+                GameObject winObj = new GameObject($"Window_Panoramic_{w + 1}");
+                winObj.transform.SetParent(wallGroup.transform, false);
+
+                // Window Frame Outer
+                CreatePrimitiveCube(winObj.transform, "Frame_Outer",
+                    new Vector3(88.56f, 2.15f, z),
+                    new Vector3(0.14f, 1.60f, 2.40f),
+                    windowFrameMat);
+
+                // Window Glass Pane (Translucent with sky reflections)
+                CreatePrimitiveCube(winObj.transform, "Glass_Pane",
+                    new Vector3(88.54f, 2.15f, z),
+                    new Vector3(0.04f, 1.48f, 2.26f),
+                    windowGlassMat);
+
+                // Horizontal & Vertical Muntin Dividers (Classic French 4-lite grid)
+                CreatePrimitiveCube(winObj.transform, "Muntin_H",
+                    new Vector3(88.58f, 2.15f, z),
+                    new Vector3(0.08f, 0.04f, 2.26f),
+                    brassGoldMat);
+                CreatePrimitiveCube(winObj.transform, "Muntin_V",
+                    new Vector3(88.58f, 2.15f, z),
+                    new Vector3(0.08f, 1.48f, 0.04f),
+                    brassGoldMat);
+
+                // Polished Walnut Interior Window Sill
+                CreatePrimitiveCube(winObj.transform, "Window_Sill",
+                    new Vector3(88.66f, 1.34f, z),
+                    new Vector3(0.26f, 0.05f, 2.50f),
+                    wainscotingMat);
+
+                // Warm Exterior Sunlight Spill Light
+                CreatePointLight(winObj.transform, "Sunlight_Spill",
+                    new Vector3(89.20f, 2.20f, z),
+                    new Color(1.0f, 0.95f, 0.85f),
+                    2.0f, 4.5f);
+            }
+
+            // North Wall Wainscoting & Plaster
+            CreatePrimitiveCube(wallGroup.transform, "Wainscot_NorthWall",
+                new Vector3(99.25f, 0.55f, -5.25f),
+                new Vector3(21.5f, 1.1f, 0.12f),
+                wainscotingMat);
+            CreatePrimitiveCube(wallGroup.transform, "Plaster_NorthWall",
+                new Vector3(99.25f, 2.15f, -5.25f),
+                new Vector3(21.5f, 1.95f, 0.10f),
+                wallAccentMat);
+
+            // Grand Arched Brass Wall Mirror on North Wall (Creates deep visual reflection)
+            CreatePrimitiveCube(wallGroup.transform, "Mirror_Frame",
+                new Vector3(96.74f, 2.10f, -5.22f),
+                new Vector3(4.20f, 1.60f, 0.06f),
+                brassGoldMat);
+            CreatePrimitiveCube(wallGroup.transform, "Mirror_Glass",
+                new Vector3(96.74f, 2.10f, -5.20f),
+                new Vector3(4.00f, 1.44f, 0.03f),
+                windowGlassMat);
+
+            // South Wall Wainscoting
             CreatePrimitiveCube(wallGroup.transform, "Wainscot_SouthWall",
                 new Vector3(99.25f, 0.55f, -36.35f),
                 new Vector3(21.5f, 1.1f, 0.12f),
                 wainscotingMat);
 
-            // Dining Room North Wall Wainscoting
-            CreatePrimitiveCube(wallGroup.transform, "Wainscot_NorthWall",
-                new Vector3(99.25f, 0.55f, -5.25f),
-                new Vector3(21.5f, 1.1f, 0.12f),
+            // Double Mahogany Entrance Doors with Brass Push Bars
+            CreatePrimitiveCube(wallGroup.transform, "Door_Frame",
+                new Vector3(92.0f, 1.45f, -36.32f),
+                new Vector3(2.6f, 2.7f, 0.14f),
                 wainscotingMat);
+            CreatePrimitiveCube(wallGroup.transform, "Door_Leaf_L",
+                new Vector3(91.35f, 1.35f, -36.30f),
+                new Vector3(1.15f, 2.45f, 0.08f),
+                wainscotingMat);
+            CreatePrimitiveCube(wallGroup.transform, "Door_Leaf_R",
+                new Vector3(92.65f, 1.35f, -36.30f),
+                new Vector3(1.15f, 2.45f, 0.08f),
+                wainscotingMat);
+            CreatePrimitiveCube(wallGroup.transform, "Door_Glass_L",
+                new Vector3(91.35f, 1.65f, -36.28f),
+                new Vector3(0.75f, 1.10f, 0.03f),
+                windowGlassMat);
+            CreatePrimitiveCube(wallGroup.transform, "Door_Glass_R",
+                new Vector3(92.65f, 1.65f, -36.28f),
+                new Vector3(0.75f, 1.10f, 0.03f),
+                windowGlassMat);
+            CreatePrimitiveCube(wallGroup.transform, "Door_PushBar",
+                new Vector3(92.0f, 1.05f, -36.26f),
+                new Vector3(2.3f, 0.06f, 0.06f),
+                brassGoldMat);
 
-            // Kitchen Subway Tile Splashback (East Wall behind Stoves, Deep Fryer, Sink)
+            // Kitchen Subway Tile Splashback (East Wall flush behind Cook Line counters)
             CreatePrimitiveCube(wallGroup.transform, "Splashback_KitchenSubwayTile",
                 new Vector3(121.90f, 1.4f, -20.89f),
                 new Vector3(0.04f, 2.8f, 13.5f),
                 subwayTileMat);
         }
 
-        // ── 3. Commercial Exhaust Hood ─────────────────────────────────────────
+        // ── 3. Luxurious Diner Booths & Bistro Seating ─────────────────────────
 
-        private void BuildKitchenExhaustHood(Transform parent)
+        private void BuildDinerBoothsAndDiningSets(Transform parent)
         {
-            GameObject hoodGroup = new GameObject("03_KitchenExhaustHood");
-            hoodGroup.transform.SetParent(parent, false);
+            GameObject diningGroup = new GameObject("03_LuxuryDinerBooths");
+            diningGroup.transform.SetParent(parent, false);
 
-            Vector3 hoodCenter = new Vector3(121.0f, 2.45f, -18.75f);
-            CreatePrimitiveCube(hoodGroup.transform, "Canopy_Body",
-                hoodCenter,
-                new Vector3(1.3f, 0.55f, 4.6f),
-                stainlessSteelMat);
+            // Table Coordinates:
+            // West Column (Booths): Tables 2, 4, 6 at X = 92.74
+            // Center Column (Bistros): Tables 1, 3, 5 at X = 100.74
+            int[] westTableNums = new int[] { 2, 4, 6 };
+            float[] westTableZ = new float[] { -14.84f, -22.34f, -29.84f };
 
-            CreatePrimitiveCube(hoodGroup.transform, "Canopy_Lip",
-                hoodCenter + new Vector3(-0.65f, -0.25f, 0f),
-                new Vector3(0.08f, 0.08f, 4.6f),
-                stainlessSteelMat);
-
-            // Dual Vertical Exhaust Ducts rising to ceiling
-            CreatePrimitiveCube(hoodGroup.transform, "VentDuct_1",
-                new Vector3(121.0f, 3.1f, -17.5f),
-                new Vector3(0.45f, 0.8f, 0.45f),
-                stainlessSteelMat);
-
-            CreatePrimitiveCube(hoodGroup.transform, "VentDuct_2",
-                new Vector3(121.0f, 3.1f, -20.0f),
-                new Vector3(0.45f, 0.8f, 0.45f),
-                stainlessSteelMat);
-
-            // Halogen Downlights pointing at stoves
-            CreatePointLight(hoodGroup.transform, "HoodLight_Stoves",
-                new Vector3(120.9f, 2.15f, -17.8f),
-                new Color(1.0f, 0.92f, 0.75f),
-                2.5f, 3.5f);
-
-            CreatePointLight(hoodGroup.transform, "HoodLight_Fryer",
-                new Vector3(120.9f, 2.15f, -19.8f),
-                new Color(1.0f, 0.92f, 0.75f),
-                2.5f, 3.5f);
-        }
-
-        // ── 4. Suspended Dining Pendant Lights ─────────────────────────────────
-
-        private void BuildDiningPendantLights(Transform parent)
-        {
-            GameObject lightsGroup = new GameObject("04_DiningPendantLights");
-            lightsGroup.transform.SetParent(parent, false);
-
-            Vector3[] tablePositions = new Vector3[]
+            for (int i = 0; i < westTableNums.Length; i++)
             {
-                new Vector3(100.74f, 0.0f, -14.84f),
-                new Vector3(92.74f, 0.0f, -14.84f),
-                new Vector3(100.74f, 0.0f, -22.34f),
-                new Vector3(92.74f, 0.0f, -22.34f),
-                new Vector3(100.74f, 0.0f, -29.84f),
-                new Vector3(92.74f, 0.0f, -29.84f)
-            };
+                int num = westTableNums[i];
+                float z = westTableZ[i];
+                Vector3 tablePos = new Vector3(92.74f, 0.0f, z);
 
-            for (int i = 0; i < tablePositions.Length; i++)
-            {
-                Vector3 tablePos = tablePositions[i];
-                GameObject pendant = new GameObject($"Pendant_Table_{i + 1}");
-                pendant.transform.SetParent(lightsGroup.transform, false);
+                GameObject boothRoot = new GameObject($"DinerBooth_Table_{num}");
+                boothRoot.transform.SetParent(diningGroup.transform, false);
 
-                // Suspension Wire
-                CreatePrimitiveCube(pendant.transform, "Cord",
-                    new Vector3(tablePos.x, 2.85f, tablePos.z),
-                    new Vector3(0.03f, 1.2f, 0.03f),
+                // Polished Walnut Dining Tabletop with Brass Edge Trim
+                CreatePrimitiveCube(boothRoot.transform, "TableTop_Walnut",
+                    tablePos + new Vector3(0f, 0.76f, 0f),
+                    new Vector3(2.40f, 0.06f, 1.30f),
                     wainscotingMat);
-
-                // Brass Bell Shade
-                CreatePrimitiveCube(pendant.transform, "BrassShade",
-                    new Vector3(tablePos.x, 2.22f, tablePos.z),
-                    new Vector3(0.55f, 0.22f, 0.55f),
+                CreatePrimitiveCube(boothRoot.transform, "TableTop_BrassRim",
+                    tablePos + new Vector3(0f, 0.758f, 0f),
+                    new Vector3(2.44f, 0.05f, 1.34f),
                     brassGoldMat);
+                // Center Cast-Iron Pedestal
+                CreatePrimitiveCylinder(boothRoot.transform, "Table_Pedestal",
+                    tablePos + new Vector3(0f, 0.38f, 0f),
+                    new Vector3(0.24f, 0.38f, 0.24f),
+                    windowFrameMat);
 
-                // Warm Amber Table Glow
-                CreatePointLight(pendant.transform, $"Light_Table_{i + 1}",
-                    new Vector3(tablePos.x, 2.05f, tablePos.z),
-                    new Color(1.0f, 0.82f, 0.55f),
-                    3.0f, 4.2f);
-            }
-        }
+                // North & South Double-Sided High-Back Fluted Banquette Benches
+                float[] benchOffsets = new float[] { 0.95f, -0.95f };
+                string[] benchLabels = new string[] { "North", "South" };
 
-        // ── 5. Tabletop Condiments & Table Numbers (ON Tabletop Surface) ────────
-
-        private void BuildTabletopCondiments(Transform parent)
-        {
-            GameObject condimentGroup = new GameObject("05_TabletopCondiments");
-            condimentGroup.transform.SetParent(parent, false);
-
-            for (int i = 1; i <= 6; i++)
-            {
-                GameObject tableObj = GameObject.Find($"EggTable_{i}");
-                if (tableObj == null) continue;
-
-                // Determine exact top surface height of this table
-                float tableTopY = 1.00f;
-                Transform tableTopTrans = tableObj.transform.Find("TableTop");
-                if (tableTopTrans != null)
+                for (int b = 0; b < 2; b++)
                 {
-                    Renderer r = tableTopTrans.GetComponent<Renderer>();
-                    if (r != null) tableTopY = r.bounds.max.y;
+                    float bZ = z + benchOffsets[b];
+                    Vector3 benchPos = new Vector3(92.74f, 0f, bZ);
+
+                    // Wooden Banquette Plinth Base
+                    CreatePrimitiveCube(boothRoot.transform, $"BenchBase_{benchLabels[b]}",
+                        benchPos + new Vector3(0f, 0.22f, 0f),
+                        new Vector3(2.35f, 0.44f, 0.55f),
+                        wainscotingMat);
+
+                    // Plush Tufted Burgundy Leather Seat Cushion
+                    CreatePrimitiveCube(boothRoot.transform, $"SeatCushion_{benchLabels[b]}",
+                        benchPos + new Vector3(0f, 0.47f, 0f),
+                        new Vector3(2.30f, 0.12f, 0.50f),
+                        boothBurgundyMat);
+
+                    // High Fluted Leather Backrest
+                    float backOffset = (b == 0) ? 0.22f : -0.22f;
+                    CreatePrimitiveCube(boothRoot.transform, $"Backrest_{benchLabels[b]}",
+                        benchPos + new Vector3(0f, 0.88f, backOffset),
+                        new Vector3(2.30f, 0.70f, 0.12f),
+                        boothBurgundyMat);
+
+                    // Mahogany End Cap Panels
+                    CreatePrimitiveCube(boothRoot.transform, $"EndCap_L_{benchLabels[b]}",
+                        benchPos + new Vector3(-1.18f, 0.60f, backOffset * 0.5f),
+                        new Vector3(0.06f, 0.95f, 0.60f),
+                        wainscotingMat);
+                    CreatePrimitiveCube(boothRoot.transform, $"EndCap_R_{benchLabels[b]}",
+                        benchPos + new Vector3(1.18f, 0.60f, backOffset * 0.5f),
+                        new Vector3(0.06f, 0.95f, 0.60f),
+                        wainscotingMat);
                 }
 
-                // Offset towards the north/back edge of the table (Z + 0.40m) so serving area is unobstructed
-                Vector3 basePos = new Vector3(tableObj.transform.position.x, tableTopY, tableObj.transform.position.z + 0.40f);
+                // Align existing AI Customer Seating Anchors for DineInCustomerController
+                GameObject seatL = GameObject.Find($"EggStool_{num}_Left");
+                if (seatL != null) seatL.transform.position = tablePos + new Vector3(-0.45f, 0.48f, 0.85f);
 
-                GameObject set = new GameObject($"CondimentSet_Table_{i}");
-                set.transform.SetParent(condimentGroup.transform, false);
-                set.transform.position = basePos;
+                GameObject seatR = GameObject.Find($"EggStool_{num}_Right");
+                if (seatR != null) seatR.transform.position = tablePos + new Vector3(0.45f, 0.48f, -0.85f);
 
-                // Condiment Caddy Tray resting flush on the table surface (Y = tableTopY to tableTopY + 0.02m)
-                CreatePrimitiveCube(set.transform, "CaddyTray",
-                    basePos + new Vector3(0f, 0.01f, 0f),
-                    new Vector3(0.24f, 0.02f, 0.18f),
-                    stainlessSteelMat);
+                // Tabletop Dressings & Ambience
+                BuildTabletopSetDressings(boothRoot.transform, tablePos, num);
+            }
 
-                // Ketchup Squeeze Bottle (resting on tray at Y = tableTopY + 0.02m)
-                CreatePrimitiveCylinder(set.transform, "Bottle_Ketchup",
-                    basePos + new Vector3(-0.06f, 0.09f, 0f),
-                    new Vector3(0.05f, 0.07f, 0.05f),
-                    ketchupRedMat);
+            // Center Column Bistro Tables: Tables 1, 3, 5 at X = 100.74
+            int[] eastTableNums = new int[] { 1, 3, 5 };
+            float[] eastTableZ = new float[] { -14.84f, -22.34f, -29.84f };
 
-                // Mustard Squeeze Bottle (resting on tray at Y = tableTopY + 0.02m)
-                CreatePrimitiveCylinder(set.transform, "Bottle_Mustard",
-                    basePos + new Vector3(0.06f, 0.09f, 0f),
-                    new Vector3(0.05f, 0.07f, 0.05f),
-                    mustardYellowMat);
+            for (int i = 0; i < eastTableNums.Length; i++)
+            {
+                int num = eastTableNums[i];
+                float z = eastTableZ[i];
+                Vector3 tablePos = new Vector3(100.74f, 0.0f, z);
 
-                // Salt Shaker (resting on tray at Y = tableTopY + 0.02m)
-                CreatePrimitiveCylinder(set.transform, "Shaker_Salt",
-                    basePos + new Vector3(-0.06f, 0.055f, -0.05f),
-                    new Vector3(0.035f, 0.035f, 0.035f),
-                    wallAccentMat);
+                GameObject bistroRoot = new GameObject($"BistroSet_Table_{num}");
+                bistroRoot.transform.SetParent(diningGroup.transform, false);
 
-                // Pepper Shaker (resting on tray at Y = tableTopY + 0.02m)
-                CreatePrimitiveCylinder(set.transform, "Shaker_Pepper",
-                    basePos + new Vector3(0.06f, 0.055f, -0.05f),
-                    new Vector3(0.035f, 0.035f, 0.035f),
+                // Round Walnut Bistro Tabletop
+                CreatePrimitiveCylinder(bistroRoot.transform, "TableTop_Round",
+                    tablePos + new Vector3(0f, 0.76f, 0f),
+                    new Vector3(1.60f, 0.04f, 1.60f),
                     wainscotingMat);
-
-                // Brass Table Number Tent Block (resting on tray at Y = tableTopY + 0.02m)
-                GameObject tentStand = CreatePrimitiveCube(set.transform, "TableNumberTent",
-                    basePos + new Vector3(0f, 0.035f, 0.045f),
-                    new Vector3(0.11f, 0.05f, 0.06f),
+                CreatePrimitiveCylinder(bistroRoot.transform, "TableRim_Brass",
+                    tablePos + new Vector3(0f, 0.758f, 0f),
+                    new Vector3(1.64f, 0.035f, 1.64f),
                     brassGoldMat);
+                CreatePrimitiveCylinder(bistroRoot.transform, "Pedestal_Base",
+                    tablePos + new Vector3(0f, 0.38f, 0f),
+                    new Vector3(0.20f, 0.38f, 0.20f),
+                    windowFrameMat);
 
-                // South Face (#i facing South towards dining room approach, reading left-to-right)
-                CreateWallSignUI(tentStand.transform,
-                    new Vector3(0f, 0.005f, -0.032f),
-                    Quaternion.Euler(-15f, 0f, 0f),
-                    new Vector2(60f, 35f),
-                    0.0022f,
-                    $"#{i}",
-                    22,
-                    new Color(0.12f, 0.08f, 0.02f),
-                    isLocal: true);
+                // Pair of Bentwood Bistro Chairs with Emerald Leather Seats
+                float[] chairZOffsets = new float[] { 0.85f, -0.85f };
+                string[] chairSides = new string[] { "Left", "Right" };
 
-                // North Face (#i facing North towards kitchen aisle, reading left-to-right)
-                CreateWallSignUI(tentStand.transform,
-                    new Vector3(0f, 0.005f, 0.032f),
-                    Quaternion.Euler(-15f, 180f, 0f),
-                    new Vector2(60f, 35f),
-                    0.0022f,
-                    $"#{i}",
-                    22,
-                    new Color(0.12f, 0.08f, 0.02f),
-                    isLocal: true);
+                for (int c = 0; c < 2; c++)
+                {
+                    Vector3 chairPos = tablePos + new Vector3(0f, 0f, chairZOffsets[c]);
+                    GameObject chair = GameObject.Find($"EggStool_{num}_{chairSides[c]}");
+                    if (chair != null) chair.transform.position = chairPos + new Vector3(0f, 0.46f, 0f);
+
+                    // Chair Seat Cushion
+                    CreatePrimitiveCylinder(bistroRoot.transform, $"ChairSeat_{c + 1}",
+                        chairPos + new Vector3(0f, 0.46f, 0f),
+                        new Vector3(0.48f, 0.05f, 0.48f),
+                        boothEmeraldMat);
+
+                    // Chair Wooden Legs & Frame
+                    CreatePrimitiveCylinder(bistroRoot.transform, $"ChairLegs_{c + 1}",
+                        chairPos + new Vector3(0f, 0.23f, 0f),
+                        new Vector3(0.38f, 0.23f, 0.38f),
+                        wainscotingMat);
+
+                    // Curved Wooden Spindle Backrest
+                    float backZ = chairZOffsets[c] > 0 ? 0.22f : -0.22f;
+                    CreatePrimitiveCube(bistroRoot.transform, $"ChairBack_{c + 1}",
+                        chairPos + new Vector3(0f, 0.72f, backZ),
+                        new Vector3(0.46f, 0.36f, 0.04f),
+                        wainscotingMat);
+                }
+
+                // Tabletop Dressings
+                BuildTabletopSetDressings(bistroRoot.transform, tablePos, num);
             }
         }
 
-        // ── 6. Pass-Through Window Overhead Valance ───────────────────────────
-
-        private void BuildPassThroughValance(Transform parent)
+        private void BuildTabletopSetDressings(Transform parent, Vector3 tablePos, int tableNum)
         {
-            GameObject passGroup = new GameObject("06_PassThroughValance");
-            passGroup.transform.SetParent(parent, false);
+            Vector3 center = tablePos + new Vector3(0f, 0.79f, 0f);
 
-            Vector3 passCenter = new Vector3(110.64f, 1.85f, -20.69f);
+            // Table Linen Runner
+            CreatePrimitiveCube(parent, "LinenRunner",
+                center + new Vector3(0f, 0.005f, 0f),
+                new Vector3(0.45f, 0.005f, 0.85f),
+                awningWhiteMat);
 
-            // Overhead Pass Valance Canopy
-            CreatePrimitiveCube(passGroup.transform, "Valance_Header",
-                passCenter,
-                new Vector3(0.45f, 0.15f, 3.5f),
+            // Classic Glass Ketchup Bottle (Red cap)
+            CreatePrimitiveCylinder(parent, "KetchupBottle",
+                center + new Vector3(-0.16f, 0.08f, -0.12f),
+                new Vector3(0.065f, 0.16f, 0.065f),
+                ketchupRedMat);
+
+            // Classic Mustard Squeeze Bottle (Yellow cap)
+            CreatePrimitiveCylinder(parent, "MustardBottle",
+                center + new Vector3(-0.07f, 0.08f, -0.12f),
+                new Vector3(0.065f, 0.15f, 0.065f),
+                mustardYellowMat);
+
+            // Glass Salt & Pepper Shakers with Chrome Tops
+            CreatePrimitiveCylinder(parent, "SaltShaker",
+                center + new Vector3(-0.15f, 0.05f, 0.08f),
+                new Vector3(0.045f, 0.10f, 0.045f),
+                awningWhiteMat);
+            CreatePrimitiveCylinder(parent, "PepperShaker",
+                center + new Vector3(-0.07f, 0.05f, 0.08f),
+                new Vector3(0.045f, 0.10f, 0.045f),
+                checkerboardDarkMat);
+
+            // Brass Mini Tabletop Candle Jar / Mood Lamp with Golden Flame Glow
+            CreatePrimitiveCylinder(parent, "CandleJar",
+                center + new Vector3(0.12f, 0.06f, 0.00f),
+                new Vector3(0.07f, 0.12f, 0.07f),
+                brassGoldMat);
+            CreatePointLight(parent, "CandleLight",
+                center + new Vector3(0.12f, 0.16f, 0.00f),
+                new Color(1.0f, 0.88f, 0.65f),
+                1.4f, 2.2f);
+
+            // Diegetic Wooden Table Number Tent Sign (Two-sided, clean TextMeshPro)
+            Vector3 signPos = center + new Vector3(0.18f, 0.08f, -0.16f);
+            CreatePrimitiveCube(parent, "TableTent_Wood",
+                signPos,
+                new Vector3(0.18f, 0.14f, 0.10f),
                 wainscotingMat);
 
-            // Stainless Steel Order Ticket Rail
-            CreatePrimitiveCube(passGroup.transform, "TicketRail",
-                passCenter + new Vector3(-0.18f, -0.08f, 0f),
-                new Vector3(0.06f, 0.05f, 3.2f),
-                stainlessSteelMat);
-
-            // Simulated hanging paper tickets
-            for (int t = -2; t <= 2; t++)
-            {
-                CreatePrimitiveCube(passGroup.transform, $"OrderTicket_{t + 3}",
-                    passCenter + new Vector3(-0.21f, -0.16f, t * 0.55f),
-                    new Vector3(0.01f, 0.16f, 0.18f),
-                    wallAccentMat);
-            }
-
-            // Emissive Heat-Lamp Bar
-            CreatePrimitiveCube(passGroup.transform, "HeatLamp_Housing",
-                passCenter + new Vector3(0f, -0.06f, 0f),
-                new Vector3(0.18f, 0.06f, 2.8f),
-                stainlessSteelMat);
-
-            CreatePrimitiveCube(passGroup.transform, "HeatLamp_Tube",
-                passCenter + new Vector3(0f, -0.10f, 0f),
-                new Vector3(0.08f, 0.04f, 2.6f),
-                neonAmberMat);
-
-            // Amber Heat Lamp Glow
-            CreatePointLight(passGroup.transform, "HeatLamp_Glow",
-                passCenter + new Vector3(0f, -0.25f, 0f),
-                new Color(1.0f, 0.65f, 0.20f),
-                2.8f, 3.2f);
-        }
-
-        // ── 7. Exterior Takeout Canopy & Signage ───────────────────────────────
-
-        private void BuildTakeoutExteriorCanopy(Transform parent)
-        {
-            GameObject extGroup = new GameObject("07_TakeoutExteriorCanopy");
-            extGroup.transform.SetParent(parent, false);
-
-            Vector3 takeoutCenter = new Vector3(110.64f, 2.55f, -23.0f);
-
-            // Striped Canvas Awning Structure
-            GameObject awning = new GameObject("Awning_Canopy");
-            awning.transform.SetParent(extGroup.transform, false);
-            awning.transform.position = takeoutCenter;
-            awning.transform.rotation = Quaternion.Euler(20f, 90f, 0f);
-
-            for (int s = -4; s <= 4; s++)
-            {
-                Material m = (s % 2 == 0) ? awningRedMat : awningWhiteMat;
-                CreatePrimitiveCube(awning.transform, $"AwningSlat_{s + 5}",
-                    new Vector3(s * 0.28f, 0f, 0.65f),
-                    new Vector3(0.28f, 0.05f, 1.4f),
-                    m);
-            }
-
-            // Signboard frame above Takeout Counter
-            CreatePrimitiveCube(extGroup.transform, "Sign_TakeoutHeader",
-                new Vector3(110.64f, 2.95f, -23.0f),
-                new Vector3(0.12f, 0.45f, 2.8f),
-                wainscotingMat);
-
-            // Cyan neon border
-            CreatePrimitiveCube(extGroup.transform, "Sign_NeonBorder",
-                new Vector3(110.57f, 2.95f, -23.0f),
-                new Vector3(0.04f, 0.40f, 2.6f),
-                neonCyanMat);
-
-            // Takeout & Delivery Header Sign written flat on awning header facing West towards courier parking lot (reading left-to-right)
-            CreateWallSignUI(extGroup.transform,
-                new Vector3(110.54f, 2.95f, -23.0f),
-                Quaternion.Euler(0f, 90f, 0f),
-                new Vector2(340f, 50f),
-                0.007f,
-                "<b>TAKE OUT & DELIVERY</b>",
-                20,
-                new Color(0.0f, 0.95f, 1.0f));
-        }
-
-        // ── 8. Dining Room Decor, Planters & Neon Wall Sign ────────────────────
-
-        private void BuildDiningDecorAndPlanters(Transform parent)
-        {
-            GameObject decorGroup = new GameObject("08_DiningDecorAndPlanters");
-            decorGroup.transform.SetParent(parent, false);
-
-            // Low Planter Divider Boxes between table rows
-            BuildPlanterDivider(decorGroup.transform, "PlanterDivider_1", new Vector3(96.74f, 0.45f, -18.5f));
-            BuildPlanterDivider(decorGroup.transform, "PlanterDivider_2", new Vector3(96.74f, 0.45f, -26.0f));
-
-            // Corner Indoor Palm Planters
-            BuildCornerPlanter(decorGroup.transform, "CornerPlant_NW", new Vector3(89.5f, 0f, -6.5f));
-            BuildCornerPlanter(decorGroup.transform, "CornerPlant_SW", new Vector3(89.5f, 0f, -34.8f));
-
-            // Framed Chalkboard Menu on West Wall (pos = 88.62, Z = -20.8)
-            CreatePrimitiveCube(decorGroup.transform, "ChalkboardMenu_Frame",
-                new Vector3(88.62f, 2.1f, -20.8f),
-                new Vector3(0.08f, 1.4f, 2.6f),
-                wainscotingMat);
-
-            CreatePrimitiveCube(decorGroup.transform, "ChalkboardMenu_Blackboard",
-                new Vector3(88.66f, 2.1f, -20.8f),
-                new Vector3(0.04f, 1.25f, 2.4f),
-                kitchenTileMat);
-
-            // Framed Chalkboard Menu written flat on blackboard on West Wall facing East (+X into dining room, reading left-to-right)
-            CreateWallSignUI(decorGroup.transform,
-                new Vector3(88.69f, 2.1f, -20.8f),
-                Quaternion.Euler(0f, 270f, 0f),
-                new Vector2(280f, 170f),
-                0.007f,
-                "<b>TODAY'S SPECIALS</b>\n\n• Deluxe Combo Meal  +$30\n• Crispy French Fries\n• Fountain Drinks\n\n<i>Fast Delivery • Hot & Fresh!</i>",
-                14,
-                new Color(0.95f, 0.95f, 0.88f));
-
-            // Neon Sign: "DISH-ASTER DINER" on South Wall facing North (+Z into dining room)
-            CreatePrimitiveCube(decorGroup.transform, "NeonSign_Backdrop",
-                new Vector3(99.25f, 2.45f, -36.25f),
-                new Vector3(4.5f, 0.85f, 0.08f),
-                wainscotingMat);
-
-            CreatePrimitiveCube(decorGroup.transform, "NeonSign_GlowBorder",
-                new Vector3(99.25f, 2.45f, -36.18f),
-                new Vector3(4.3f, 0.72f, 0.04f),
-                neonAmberMat);
-
-            // Glowing Neon Diner Header written flat on South Wall facing North (reading left-to-right)
-            CreateWallSignUI(decorGroup.transform,
-                new Vector3(99.25f, 2.45f, -36.15f),
+            // Front & Back clean labels
+            CreateWallSignUI(parent, signPos + new Vector3(0f, 0.01f, 0.055f),
+                Quaternion.Euler(0f, 0f, 0f),
+                new Vector2(100f, 80f), 0.0016f, $"#{tableNum}", 40f, new Color(0.95f, 0.85f, 0.55f));
+            CreateWallSignUI(parent, signPos + new Vector3(0f, 0.01f, -0.055f),
                 Quaternion.Euler(0f, 180f, 0f),
-                new Vector2(380f, 65f),
-                0.010f,
-                "<b>DISH-ASTER DINER</b>",
-                28,
-                new Color(1f, 0.85f, 0.25f));
-
-            CreatePointLight(decorGroup.transform, "NeonSign_AmbientGlow",
-                new Vector3(99.25f, 2.3f, -35.8f),
-                new Color(1f, 0.65f, 0.15f),
-                2.2f, 4.5f);
+                new Vector2(100f, 80f), 0.0016f, $"#{tableNum}", 40f, new Color(0.95f, 0.85f, 0.55f));
         }
 
-        private void BuildPlanterDivider(Transform parent, string name, Vector3 pos)
-        {
-            GameObject planter = new GameObject(name);
-            planter.transform.SetParent(parent, false);
+        // ── 4. Host Stand, Waiting Lounge & Greenery ──────────────────────────
 
-            CreatePrimitiveCube(planter.transform, "Box",
-                pos,
-                new Vector3(4.2f, 0.85f, 0.55f),
+        private void BuildHostStandAndWaitingLounge(Transform parent)
+        {
+            GameObject loungeGroup = new GameObject("04_HostStandAndLounge");
+            loungeGroup.transform.SetParent(parent, false);
+
+            Vector3 hostPos = new Vector3(92.0f, 0f, -33.2f);
+
+            // Maître D' / Host Podium
+            CreatePrimitiveCube(loungeGroup.transform, "Host_PodiumBody",
+                hostPos + new Vector3(0f, 0.60f, 0f),
+                new Vector3(0.70f, 1.20f, 0.55f),
                 wainscotingMat);
+            CreatePrimitiveCube(loungeGroup.transform, "Host_SlantedTop",
+                hostPos + new Vector3(0f, 1.22f, 0f),
+                new Vector3(0.75f, 0.06f, 0.60f),
+                marbleBarMat);
 
-            CreatePrimitiveCube(planter.transform, "Soil",
-                pos + new Vector3(0f, 0.42f, 0f),
-                new Vector3(4.0f, 0.05f, 0.45f),
+            // Reservation Ledger Book & Brass Desk Lamp
+            CreatePrimitiveCube(loungeGroup.transform, "GuestBook",
+                hostPos + new Vector3(-0.12f, 1.26f, 0f),
+                new Vector3(0.28f, 0.03f, 0.36f),
+                boothBurgundyMat);
+            CreatePrimitiveCylinder(loungeGroup.transform, "DeskLamp_Base",
+                hostPos + new Vector3(0.22f, 1.28f, 0.12f),
+                new Vector3(0.12f, 0.14f, 0.12f),
+                brassGoldMat);
+            CreatePointLight(loungeGroup.transform, "HostLampLight",
+                hostPos + new Vector3(0.22f, 1.45f, 0.12f),
+                new Color(1.0f, 0.90f, 0.70f),
+                2.0f, 3.2f);
+
+            // 2.6m Golden Velvet Guest Waiting Bench
+            Vector3 benchPos = new Vector3(95.6f, 0f, -34.8f);
+            CreatePrimitiveCube(loungeGroup.transform, "WaitingBench_WoodFrame",
+                benchPos + new Vector3(0f, 0.22f, 0f),
+                new Vector3(2.60f, 0.44f, 0.65f),
                 wainscotingMat);
+            CreatePrimitiveCube(loungeGroup.transform, "WaitingBench_VelvetCushion",
+                benchPos + new Vector3(0f, 0.48f, 0f),
+                new Vector3(2.55f, 0.14f, 0.60f),
+                velvetPlushMat);
 
-            CreatePrimitiveCube(planter.transform, "Foliage",
-                pos + new Vector3(0f, 0.62f, 0f),
-                new Vector3(3.8f, 0.40f, 0.38f),
-                plantGreenMat);
+            // Vintage Brass Standing Coat & Umbrella Rack
+            Vector3 coatPos = new Vector3(89.8f, 0f, -34.8f);
+            CreatePrimitiveCylinder(loungeGroup.transform, "CoatRack_Pole",
+                coatPos + new Vector3(0f, 1.05f, 0f),
+                new Vector3(0.08f, 2.10f, 0.08f),
+                brassGoldMat);
+            CreatePrimitiveCylinder(loungeGroup.transform, "CoatRack_Base",
+                coatPos + new Vector3(0f, 0.05f, 0f),
+                new Vector3(0.48f, 0.10f, 0.48f),
+                brassGoldMat);
+            CreatePrimitiveCylinder(loungeGroup.transform, "Umbrella_Ring",
+                coatPos + new Vector3(0f, 0.65f, 0f),
+                new Vector3(0.36f, 0.04f, 0.36f),
+                brassGoldMat);
+
+            // Real 3D Indoor Potted Ficus Trees (from CityLife library)
+            InstantiatePlant(loungeGroup.transform, "Plant_Entrance_L", new Vector3(89.6f, 0f, -33.2f), "Prop_Plant_01");
+            InstantiatePlant(loungeGroup.transform, "Plant_Entrance_R", new Vector3(94.8f, 0f, -33.2f), "Prop_Plant_02");
         }
 
-        private void BuildCornerPlanter(Transform parent, string name, Vector3 pos)
+        // ── 5. Diner Service Bar & Coffee Station ─────────────────────────────
+
+        private void BuildDinerServiceBarAndCoffeeStation(Transform parent)
         {
-            GameObject plant = new GameObject(name);
-            plant.transform.SetParent(parent, false);
+            GameObject barGroup = new GameObject("05_ServiceBarAndCoffee");
+            barGroup.transform.SetParent(parent, false);
 
-            CreatePrimitiveCylinder(plant.transform, "Pot",
-                pos + new Vector3(0f, 0.45f, 0f),
-                new Vector3(0.65f, 0.9f, 0.65f),
-                wallAccentMat);
+            Vector3 barPos = new Vector3(104.5f, 0f, -11.0f);
 
-            CreatePrimitiveCube(plant.transform, "Leaves_1",
-                pos + new Vector3(0f, 1.15f, 0f),
-                new Vector3(0.9f, 0.7f, 0.9f),
-                plantGreenMat);
+            // Polished White Carrera Marble Bar Counter (5.5m long)
+            CreatePrimitiveCube(barGroup.transform, "Bar_BaseCabinet",
+                barPos + new Vector3(0f, 0.52f, 0f),
+                new Vector3(5.50f, 1.04f, 0.85f),
+                wainscotingMat);
+            CreatePrimitiveCube(barGroup.transform, "Bar_MarbleTop",
+                barPos + new Vector3(0f, 1.06f, 0f),
+                new Vector3(5.70f, 0.08f, 1.00f),
+                marbleBarMat);
 
-            CreatePrimitiveCube(plant.transform, "Leaves_2",
-                pos + new Vector3(0f, 1.55f, 0f),
-                new Vector3(0.6f, 0.5f, 0.6f),
-                plantGreenMat);
+            // Continuous Brass Footrail
+            CreatePrimitiveCube(barGroup.transform, "Bar_BrassFootrail",
+                barPos + new Vector3(0f, 0.16f, -0.48f),
+                new Vector3(5.60f, 0.05f, 0.05f),
+                brassGoldMat);
+
+            // 4 Classic Chrome Swivel Diner Barstools with Red Padded Seats
+            float[] stoolOffsetsX = new float[] { -1.9f, -0.6f, 0.6f, 1.9f };
+            for (int s = 0; s < stoolOffsetsX.Length; s++)
+            {
+                Vector3 sPos = barPos + new Vector3(stoolOffsetsX[s], 0f, -0.85f);
+                CreatePrimitiveCylinder(barGroup.transform, $"StoolPedestal_{s + 1}",
+                    sPos + new Vector3(0f, 0.34f, 0f),
+                    new Vector3(0.08f, 0.68f, 0.08f),
+                    stainlessSteelMat);
+                CreatePrimitiveCylinder(barGroup.transform, $"StoolBase_{s + 1}",
+                    sPos + new Vector3(0f, 0.03f, 0f),
+                    new Vector3(0.42f, 0.06f, 0.42f),
+                    stainlessSteelMat);
+                CreatePrimitiveCylinder(barGroup.transform, $"StoolSeat_{s + 1}",
+                    sPos + new Vector3(0f, 0.69f, 0f),
+                    new Vector3(0.40f, 0.08f, 0.40f),
+                    awningRedMat);
+            }
+
+            // Commercial Stainless Steel Dual-Group Espresso Machine
+            Vector3 espressoPos = barPos + new Vector3(-1.8f, 1.10f, 0.10f);
+            CreatePrimitiveCube(barGroup.transform, "Espresso_Body",
+                espressoPos + new Vector3(0f, 0.28f, 0f),
+                new Vector3(0.85f, 0.56f, 0.55f),
+                stainlessSteelMat);
+            CreatePrimitiveCylinder(barGroup.transform, "Portafilter_1",
+                espressoPos + new Vector3(-0.20f, 0.22f, -0.28f),
+                new Vector3(0.06f, 0.04f, 0.18f),
+                brassGoldMat);
+            CreatePrimitiveCylinder(barGroup.transform, "Portafilter_2",
+                espressoPos + new Vector3(0.20f, 0.22f, -0.28f),
+                new Vector3(0.06f, 0.04f, 0.18f),
+                brassGoldMat);
+
+            // Glass Drip Coffee Carafes (Regular & Decaf) on heating pad
+            Vector3 carafePos = barPos + new Vector3(-0.75f, 1.10f, 0.05f);
+            CreatePrimitiveCube(barGroup.transform, "CoffeeHeatingPad",
+                carafePos + new Vector3(0f, 0.02f, 0f),
+                new Vector3(0.65f, 0.04f, 0.35f),
+                checkerboardDarkMat);
+            CreatePrimitiveCylinder(barGroup.transform, "Carafe_Regular",
+                carafePos + new Vector3(-0.16f, 0.16f, 0f),
+                new Vector3(0.18f, 0.26f, 0.18f),
+                windowGlassMat);
+            CreatePrimitiveCylinder(barGroup.transform, "Carafe_Decaf",
+                carafePos + new Vector3(0.16f, 0.16f, 0f),
+                new Vector3(0.18f, 0.26f, 0.18f),
+                windowGlassMat);
+
+            // Tiered Glass Pastry Cake Dome with Chocolate Cherry Layer Cake
+            Vector3 cakePos = barPos + new Vector3(0.85f, 1.10f, 0.05f);
+            CreatePrimitiveCylinder(barGroup.transform, "CakePedestal",
+                cakePos + new Vector3(0f, 0.06f, 0f),
+                new Vector3(0.42f, 0.12f, 0.42f),
+                marbleBarMat);
+            CreatePrimitiveCylinder(barGroup.transform, "LayerCake",
+                cakePos + new Vector3(0f, 0.16f, 0f),
+                new Vector3(0.32f, 0.14f, 0.32f),
+                wainscotingMat);
+            CreatePrimitiveCylinder(barGroup.transform, "GlassDome",
+                cakePos + new Vector3(0f, 0.26f, 0f),
+                new Vector3(0.38f, 0.28f, 0.38f),
+                windowGlassMat);
+
+            // Chrome Napkin Dispenser & Straw Holder
+            CreatePrimitiveCube(barGroup.transform, "NapkinDispenser",
+                barPos + new Vector3(2.1f, 1.18f, 0f),
+                new Vector3(0.18f, 0.20f, 0.14f),
+                stainlessSteelMat);
+            CreatePrimitiveCylinder(barGroup.transform, "StrawHolder",
+                barPos + new Vector3(2.4f, 1.20f, 0f),
+                new Vector3(0.10f, 0.24f, 0.10f),
+                stainlessSteelMat);
         }
 
-        // ── 9. Kitchen Organization & Utensils ─────────────────────────────────
+        // ── 6. Exhibition Kitchen & Pass-Through ───────────────────────────────
 
-        private void BuildKitchenUtensilsAndClock(Transform parent)
+        private void BuildExhibitionKitchenAndPassThrough(Transform parent)
         {
-            GameObject kitchenDetails = new GameObject("09_KitchenOrganization");
-            kitchenDetails.transform.SetParent(parent, false);
+            GameObject kitchenGroup = new GameObject("06_ExhibitionKitchen");
+            kitchenGroup.transform.SetParent(parent, false);
 
-            // Magnetic Knife Strip on North Wall (X: 118.0, Z: -14.85, Y: 1.55)
-            CreatePrimitiveCube(kitchenDetails.transform, "MagneticKnifeStrip",
-                new Vector3(118.0f, 1.55f, -14.85f),
-                new Vector3(1.6f, 0.12f, 0.05f),
+            // 1. Pass-Through Partition Counter Wall at X = 110.64
+            Vector3 passCenter = new Vector3(110.64f, 0f, -20.69f);
+
+            // Polished Carrera Marble Serving Pass Shelf
+            CreatePrimitiveCube(kitchenGroup.transform, "PassThrough_MarbleShelf",
+                passCenter + new Vector3(0f, 1.28f, 0f),
+                new Vector3(0.65f, 0.08f, 3.80f),
+                marbleBarMat);
+
+            // Overhead Valance & Warming Heat Lamps
+            CreatePrimitiveCube(kitchenGroup.transform, "PassThrough_ValanceHeader",
+                passCenter + new Vector3(0f, 2.10f, 0f),
+                new Vector3(0.40f, 0.16f, 3.80f),
+                wainscotingMat);
+            CreatePrimitiveCube(kitchenGroup.transform, "HeatLamp_Housing",
+                passCenter + new Vector3(0f, 1.98f, 0f),
+                new Vector3(0.18f, 0.08f, 3.20f),
                 stainlessSteelMat);
 
+            // Food Holding Amber Light Glow
+            CreatePointLight(kitchenGroup.transform, "PassThrough_HeatLight",
+                passCenter + new Vector3(0f, 1.75f, 0f),
+                new Color(1.0f, 0.75f, 0.25f),
+                2.8f, 3.8f);
+
+            // Stainless Steel Order Ticket Clip Rail with Printed Tickets
+            CreatePrimitiveCube(kitchenGroup.transform, "TicketRail",
+                passCenter + new Vector3(-0.18f, 1.92f, 0f),
+                new Vector3(0.04f, 0.04f, 3.40f),
+                stainlessSteelMat);
+
+            float[] ticketZ = new float[] { -21.8f, -21.2f, -20.7f, -20.2f, -19.6f };
+            for (int t = 0; t < ticketZ.Length; t++)
+            {
+                CreatePrimitiveCube(kitchenGroup.transform, $"Ticket_{t + 1}",
+                    new Vector3(110.45f, 1.84f, ticketZ[t]),
+                    new Vector3(0.01f, 0.16f, 0.18f),
+                    awningWhiteMat);
+            }
+
+            // Brass Service Call Bell ("Ding! Order up!")
+            CreatePrimitiveCylinder(kitchenGroup.transform, "ServiceBell",
+                passCenter + new Vector3(0.18f, 1.34f, 0.50f),
+                new Vector3(0.12f, 0.08f, 0.12f),
+                brassGoldMat);
+
+            // Double Swinging Saloon Doors leading to dining room walkway (Z = -17.5)
+            Vector3 doorWalkway = new Vector3(110.64f, 0f, -17.50f);
+            CreatePrimitiveCube(kitchenGroup.transform, "SaloonDoor_North",
+                doorWalkway + new Vector3(0f, 0.95f, 0.45f),
+                new Vector3(0.05f, 1.10f, 0.75f),
+                wainscotingMat);
+            CreatePrimitiveCube(kitchenGroup.transform, "SaloonDoor_South",
+                doorWalkway + new Vector3(0f, 0.95f, -0.45f),
+                new Vector3(0.05f, 1.10f, 0.75f),
+                wainscotingMat);
+            CreatePrimitiveCylinder(kitchenGroup.transform, "SaloonPorthole_N",
+                doorWalkway + new Vector3(0f, 1.15f, 0.45f),
+                new Vector3(0.24f, 0.06f, 0.24f),
+                brassGoldMat, Quaternion.Euler(0f, 0f, 90f));
+            CreatePrimitiveCylinder(kitchenGroup.transform, "SaloonPorthole_S",
+                doorWalkway + new Vector3(0f, 1.15f, -0.45f),
+                new Vector3(0.24f, 0.06f, 0.24f),
+                brassGoldMat, Quaternion.Euler(0f, 0f, 90f));
+
+            // 2. Commercial Stainless Range Hood Canopy over Cook Line (X = 121.0, Z = -18.75)
+            Vector3 hoodCenter = new Vector3(121.0f, 2.50f, -18.75f);
+            CreatePrimitiveCube(kitchenGroup.transform, "ExhaustCanopy_Body",
+                hoodCenter,
+                new Vector3(1.35f, 0.60f, 4.80f),
+                stainlessSteelMat);
+            CreatePrimitiveCube(kitchenGroup.transform, "ExhaustCanopy_BaffleLip",
+                hoodCenter + new Vector3(-0.68f, -0.28f, 0f),
+                new Vector3(0.10f, 0.08f, 4.80f),
+                stainlessSteelMat);
+
+            // Twin Vertical Rooftop Exhaust Ducts
+            CreatePrimitiveCube(kitchenGroup.transform, "RoofDuct_1",
+                new Vector3(121.0f, 3.20f, -17.50f),
+                new Vector3(0.48f, 0.85f, 0.48f),
+                stainlessSteelMat);
+            CreatePrimitiveCube(kitchenGroup.transform, "RoofDuct_2",
+                new Vector3(121.0f, 3.20f, -20.00f),
+                new Vector3(0.48f, 0.85f, 0.48f),
+                stainlessSteelMat);
+
+            // Recessed Cook Line Halogen Downlights
+            CreatePointLight(kitchenGroup.transform, "HoodLight_Stoves",
+                new Vector3(120.9f, 2.20f, -17.80f),
+                new Color(1.0f, 0.94f, 0.80f),
+                3.0f, 4.0f);
+            CreatePointLight(kitchenGroup.transform, "HoodLight_Fryer",
+                new Vector3(120.9f, 2.20f, -19.80f),
+                new Color(1.0f, 0.94f, 0.80f),
+                3.0f, 4.0f);
+
+            // 3. Chef Organization, Spice Shelf & Utensil Racks
+            // Multi-Tier Spice & Oil Shelf on Subway Tile
+            CreatePrimitiveCube(kitchenGroup.transform, "ChefSpiceShelf",
+                new Vector3(121.84f, 1.65f, -17.80f),
+                new Vector3(0.12f, 0.04f, 1.90f),
+                stainlessSteelMat);
+
+            Vector3[] jarPositions = new Vector3[] {
+                new Vector3(121.84f, 1.74f, -18.55f),
+                new Vector3(121.84f, 1.74f, -18.25f),
+                new Vector3(121.84f, 1.74f, -17.95f),
+                new Vector3(121.84f, 1.74f, -17.65f),
+                new Vector3(121.84f, 1.74f, -17.35f),
+                new Vector3(121.84f, 1.74f, -17.05f),
+            };
+            for (int j = 0; j < jarPositions.Length; j++)
+            {
+                CreatePrimitiveCylinder(kitchenGroup.transform, $"SpiceJar_{j + 1}",
+                    jarPositions[j],
+                    new Vector3(0.08f, 0.08f, 0.08f),
+                    (j % 2 == 0) ? brassGoldMat : awningWhiteMat);
+            }
+
+            // Magnetic Knife Strip on North Wall (X = 118.0, Z = -14.85)
+            CreatePrimitiveCube(kitchenGroup.transform, "MagneticKnifeStrip",
+                new Vector3(118.0f, 1.55f, -14.85f),
+                new Vector3(1.60f, 0.12f, 0.05f),
+                stainlessSteelMat);
             for (int k = -1; k <= 2; k++)
             {
-                CreatePrimitiveCube(kitchenDetails.transform, $"Knife_{k + 2}",
+                CreatePrimitiveCube(kitchenGroup.transform, $"ChefKnife_{k + 2}",
                     new Vector3(118.0f + (k * 0.32f), 1.50f, -14.82f),
                     new Vector3(0.04f, 0.32f, 0.02f),
                     stainlessSteelMat);
             }
 
-            // Hanging Pot Rack above Sink (X: 121.0, Z: -20.14, Y: 2.2)
-            CreatePrimitiveCube(kitchenDetails.transform, "HangingPotRack_Bar",
-                new Vector3(121.0f, 2.2f, -20.14f),
-                new Vector3(0.06f, 0.06f, 1.6f),
+            // Hanging Copper & Stainless Pot Rack above Sink (Z = -20.14)
+            CreatePrimitiveCube(kitchenGroup.transform, "HangingPotRack_Bar",
+                new Vector3(121.0f, 2.25f, -20.14f),
+                new Vector3(0.06f, 0.06f, 1.80f),
                 brassGoldMat);
-
-            // Chef Spice & Oil Rack on Subway Tile (East Wall behind Cook Line)
-            CreatePrimitiveCube(kitchenDetails.transform, "ChefSpiceShelf",
-                new Vector3(121.84f, 1.65f, -17.80f),
-                new Vector3(0.12f, 0.04f, 1.80f),
+            CreatePrimitiveCylinder(kitchenGroup.transform, "HangingPan_1",
+                new Vector3(121.0f, 1.95f, -19.60f),
+                new Vector3(0.26f, 0.04f, 0.26f),
+                brassGoldMat);
+            CreatePrimitiveCylinder(kitchenGroup.transform, "HangingPan_2",
+                new Vector3(121.0f, 1.95f, -20.60f),
+                new Vector3(0.28f, 0.05f, 0.28f),
                 stainlessSteelMat);
 
-            // Spice jars and oil cruets on shelf
-            Vector3[] jarPositions = new Vector3[] {
-                new Vector3(121.84f, 1.74f, -18.50f),
-                new Vector3(121.84f, 1.74f, -18.25f),
-                new Vector3(121.84f, 1.74f, -18.00f),
-                new Vector3(121.84f, 1.74f, -17.75f),
-                new Vector3(121.84f, 1.74f, -17.50f),
-                new Vector3(121.84f, 1.74f, -17.25f),
-            };
-            for (int j = 0; j < jarPositions.Length; j++)
-            {
-                CreatePrimitiveCylinder(kitchenDetails.transform, $"SpiceJar_{j+1}",
-                    jarPositions[j],
-                    new Vector3(0.08f, 0.07f, 0.08f),
-                    (j % 2 == 0) ? brassGoldMat : awningWhiteMat);
-            }
-
-            // Island Food Prep Task Spotlight (Warm downlight over Center Island)
-            CreatePointLight(kitchenDetails.transform, "Island_PrepSpotlight",
-                new Vector3(115.89f, 2.35f, -20.89f),
-                new Color(1.0f, 0.94f, 0.82f),
-                2.8f, 4.0f);
-
-            // Analog Wall Clock above Pass-Through Window (facing West 270°)
-            Vector3 clockPos = new Vector3(110.64f, 2.35f, -19.0f);
-            CreatePrimitiveCylinder(kitchenDetails.transform, "ClockBody",
-                clockPos,
-                new Vector3(0.55f, 0.05f, 0.55f),
-                wallAccentMat,
-                Quaternion.Euler(0f, 0f, 90f));
-
-            CreatePrimitiveCylinder(kitchenDetails.transform, "ClockRim",
-                clockPos + new Vector3(-0.02f, 0f, 0f),
-                new Vector3(0.58f, 0.02f, 0.58f),
-                brassGoldMat,
-                Quaternion.Euler(0f, 0f, 90f));
-
-            // Clock hands
-            CreatePrimitiveCube(kitchenDetails.transform, "ClockHandHour",
-                clockPos + new Vector3(-0.035f, 0.06f, 0f),
-                new Vector3(0.01f, 0.14f, 0.02f),
-                wainscotingMat);
-
-            CreatePrimitiveCube(kitchenDetails.transform, "ClockHandMinute",
-                clockPos + new Vector3(-0.035f, 0f, 0.09f),
-                new Vector3(0.01f, 0.02f, 0.20f),
-                wainscotingMat);
+            // Center Island Food Prep Task Spotlight
+            CreatePointLight(kitchenGroup.transform, "Island_PrepSpotlight",
+                new Vector3(115.89f, 2.45f, -20.89f),
+                new Color(1.0f, 0.95f, 0.84f),
+                3.2f, 4.5f);
         }
 
-        // ── Clean Geometric & UI Helpers ──────────────────────────────────────
+        // ── 7. Atmosphere, Art, Jukebox & Neon Sign ───────────────────────────
+
+        private void BuildAtmosphereArtAndJukebox(Transform parent)
+        {
+            GameObject decorGroup = new GameObject("07_AtmosphereAndArt");
+            decorGroup.transform.SetParent(parent, false);
+
+            // 1. Classic 1950s Illuminated Retro Jukebox in Dining Corner (X = 89.6, Z = -11.5)
+            Vector3 jukePos = new Vector3(89.6f, 0f, -11.5f);
+            GameObject jukeObj = new GameObject("RetroJukebox_1950s");
+            jukeObj.transform.SetParent(decorGroup.transform, false);
+
+            CreatePrimitiveCube(jukeObj.transform, "Jukebox_Cabinet",
+                jukePos + new Vector3(0f, 0.90f, 0f),
+                new Vector3(0.95f, 1.80f, 0.75f),
+                wainscotingMat);
+            CreatePrimitiveCylinder(jukeObj.transform, "Jukebox_ArchedTop",
+                jukePos + new Vector3(0f, 1.80f, 0f),
+                new Vector3(0.95f, 0.75f, 0.45f),
+                boothBurgundyMat, Quaternion.Euler(0f, 0f, 90f));
+
+            // Glowing Rainbow Neon Arches
+            CreatePrimitiveCylinder(jukeObj.transform, "Neon_Arch_Outer",
+                jukePos + new Vector3(0.02f, 1.80f, -0.32f),
+                new Vector3(0.85f, 0.06f, 0.40f),
+                jukeboxNeonMat, Quaternion.Euler(0f, 0f, 90f));
+            CreatePrimitiveCylinder(jukeObj.transform, "Neon_Arch_Inner",
+                jukePos + new Vector3(0.02f, 1.80f, -0.32f),
+                new Vector3(0.65f, 0.06f, 0.30f),
+                neonCyanMat, Quaternion.Euler(0f, 0f, 90f));
+
+            // Speaker Grille & Amber Accent
+            CreatePrimitiveCube(jukeObj.transform, "SpeakerGrille",
+                jukePos + new Vector3(0f, 0.55f, -0.38f),
+                new Vector3(0.75f, 0.70f, 0.04f),
+                brassGoldMat);
+            CreatePointLight(jukeObj.transform, "Jukebox_Glow",
+                jukePos + new Vector3(0.35f, 1.10f, -0.50f),
+                new Color(1.0f, 0.2f, 0.8f),
+                2.5f, 3.5f);
+
+            // 2. Large Daily Specials Chalkboard Menu (North-West Wall, X = 88.58, Z = -18.5)
+            Vector3 chalkPos = new Vector3(88.58f, 2.30f, -18.50f);
+            CreatePrimitiveCube(decorGroup.transform, "Chalkboard_Frame",
+                chalkPos,
+                new Vector3(0.06f, 1.50f, 2.60f),
+                wainscotingMat);
+            CreatePrimitiveCube(decorGroup.transform, "Chalkboard_Slate",
+                chalkPos + new Vector3(0.02f, 0f, 0f),
+                new Vector3(0.03f, 1.38f, 2.48f),
+                chalkboardMat);
+
+            // Clean World-Space TextMeshPro for Chalkboard
+            CreateWallSignUI(decorGroup.transform,
+                chalkPos + new Vector3(0.04f, 0.48f, 0f),
+                Quaternion.Euler(0f, 90f, 0f),
+                new Vector2(400f, 60f), 0.0055f, "DAILY SPECIALS", 30f, new Color(0.95f, 0.90f, 0.70f));
+            CreateWallSignUI(decorGroup.transform,
+                chalkPos + new Vector3(0.04f, 0.18f, 0f),
+                Quaternion.Euler(0f, 90f, 0f),
+                new Vector2(450f, 50f), 0.0045f, "Cheeseburger Deluxe Combo ... $30", 20f, Color.white);
+            CreateWallSignUI(decorGroup.transform,
+                chalkPos + new Vector3(0.04f, -0.12f, 0f),
+                Quaternion.Euler(0f, 90f, 0f),
+                new Vector2(450f, 50f), 0.0045f, "Crispy Golden French Fries ... $10", 20f, Color.white);
+            CreateWallSignUI(decorGroup.transform,
+                chalkPos + new Vector3(0.04f, -0.42f, 0f),
+                Quaternion.Euler(0f, 90f, 0f),
+                new Vector2(450f, 50f), 0.0045f, "Fountain Soda & Craft Shakes ... $5", 20f, new Color(0.7f, 0.9f, 1.0f));
+
+            // 3. Radiant Glowing Neon Wall Sign ("DISH-ASTER DINER") on Brick Wall
+            Vector3 neonPos = new Vector3(88.58f, 2.65f, -26.00f);
+            CreatePrimitiveCube(decorGroup.transform, "NeonSign_Backplate",
+                neonPos,
+                new Vector3(0.05f, 0.85f, 3.40f),
+                checkerboardDarkMat);
+            CreatePrimitiveCube(decorGroup.transform, "NeonSign_Border",
+                neonPos + new Vector3(0.02f, 0f, 0f),
+                new Vector3(0.04f, 0.78f, 3.32f),
+                neonCyanMat);
+
+            CreateWallSignUI(decorGroup.transform,
+                neonPos + new Vector3(0.04f, 0.12f, 0f),
+                Quaternion.Euler(0f, 90f, 0f),
+                new Vector2(500f, 70f), 0.0055f, "DISH-ASTER DINER", 34f, new Color(0.10f, 0.88f, 1.0f));
+            CreateWallSignUI(decorGroup.transform,
+                neonPos + new Vector3(0.04f, -0.18f, 0f),
+                Quaternion.Euler(0f, 90f, 0f),
+                new Vector2(500f, 50f), 0.0040f, "-- BEST BURGERS & SHAKES IN TOWN --", 18f, new Color(1.0f, 0.75f, 0.2f));
+
+            CreatePointLight(decorGroup.transform, "NeonSign_Glow",
+                neonPos + new Vector3(0.35f, 0f, 0f),
+                new Color(0.10f, 0.85f, 1.0f),
+                2.8f, 4.5f);
+
+            // 4. Overhead Industrial Ceiling Beams & AC Ductwork
+            float[] beamZ = new float[] { -11.0f, -18.5f, -26.0f, -33.5f };
+            for (int b = 0; b < beamZ.Length; b++)
+            {
+                CreatePrimitiveCube(decorGroup.transform, $"CeilingBeam_{b + 1}",
+                    new Vector3(105.5f, 3.55f, beamZ[b]),
+                    new Vector3(34.0f, 0.35f, 0.35f),
+                    ceilingBeamMat);
+            }
+
+            // Suspended Spiral Ventilation Ducting (from CityLife library)
+            InstantiateACVent(decorGroup.transform, "ACVent_Dining_1", new Vector3(96.74f, 3.30f, -18.5f));
+            InstantiateACVent(decorGroup.transform, "ACVent_Dining_2", new Vector3(96.74f, 3.30f, -26.0f));
+
+            // Suspended Cozy Brass Bell Pendant Lamps over Dining Tables
+            Vector3[] pendantTargets = new Vector3[] {
+                new Vector3(100.74f, 0f, -14.84f),
+                new Vector3(92.74f, 0f, -14.84f),
+                new Vector3(100.74f, 0f, -22.34f),
+                new Vector3(92.74f, 0f, -22.34f),
+                new Vector3(100.74f, 0f, -29.84f),
+                new Vector3(92.74f, 0f, -29.84f)
+            };
+            for (int p = 0; p < pendantTargets.Length; p++)
+            {
+                Vector3 tPos = pendantTargets[p];
+                GameObject pendant = new GameObject($"Pendant_Table_{p + 1}");
+                pendant.transform.SetParent(decorGroup.transform, false);
+
+                // Brass suspension cord
+                CreatePrimitiveCylinder(pendant.transform, "Cord",
+                    new Vector3(tPos.x, 2.90f, tPos.z),
+                    new Vector3(0.02f, 0.65f, 0.02f),
+                    windowFrameMat);
+
+                // Brass bell lamp shade
+                CreatePrimitiveCylinder(pendant.transform, "BellShade",
+                    new Vector3(tPos.x, 2.25f, tPos.z),
+                    new Vector3(0.48f, 0.18f, 0.48f),
+                    brassGoldMat);
+
+                // Warm ambient downlight illumination
+                CreatePointLight(pendant.transform, "AmberLight",
+                    new Vector3(tPos.x, 2.05f, tPos.z),
+                    new Color(1.0f, 0.88f, 0.65f),
+                    2.2f, 3.8f);
+            }
+        }
+
+        // ── 8. Exterior Takeout Bay & Delivery Window ─────────────────────────
+
+        private void BuildTakeoutAndCourierBay(Transform parent)
+        {
+            GameObject takeoutGroup = new GameObject("08_TakeoutCourierBay");
+            takeoutGroup.transform.SetParent(parent, false);
+
+            Vector3 canopyPos = new Vector3(110.64f, 2.70f, -23.00f);
+
+            // Striped Canvas Awning Structure (Alternating Red and White Slats)
+            for (int s = 0; s < 7; s++)
+            {
+                float zOffset = -0.90f + (s * 0.30f);
+                Material sMat = (s % 2 == 0) ? awningRedMat : awningWhiteMat;
+                CreatePrimitiveCube(takeoutGroup.transform, $"AwningSlat_{s + 1}",
+                    canopyPos + new Vector3(-0.45f, 0f, zOffset),
+                    new Vector3(0.90f, 0.08f, 0.28f),
+                    sMat);
+            }
+
+            // Awning Front Scalloped Trim
+            CreatePrimitiveCube(takeoutGroup.transform, "AwningValance",
+                canopyPos + new Vector3(-0.90f, -0.15f, 0f),
+                new Vector3(0.06f, 0.30f, 2.20f),
+                awningRedMat);
+
+            // Neon Sign: "TAKE OUT & DELIVERY"
+            Vector3 signPos = canopyPos + new Vector3(0f, 0.28f, 0f);
+            CreatePrimitiveCube(takeoutGroup.transform, "TakeoutSign_Plate",
+                signPos,
+                new Vector3(0.12f, 0.45f, 2.80f),
+                checkerboardDarkMat);
+            CreatePrimitiveCube(takeoutGroup.transform, "TakeoutSign_NeonRim",
+                signPos + new Vector3(-0.07f, 0f, 0f),
+                new Vector3(0.04f, 0.40f, 2.70f),
+                neonAmberMat);
+
+            CreateWallSignUI(takeoutGroup.transform,
+                signPos + new Vector3(-0.10f, 0f, 0f),
+                Quaternion.Euler(0f, 270f, 0f),
+                new Vector2(400f, 70f), 0.0055f, "TAKE OUT & COURIER", 26f, new Color(1.0f, 0.65f, 0.15f));
+
+            // Exterior Delivery Scooter Parking Bay Safety Striping
+            CreatePrimitiveCube(takeoutGroup.transform, "ScooterBay_HatchedBorder",
+                new Vector3(110.64f, 0.018f, -23.0f),
+                new Vector3(1.60f, 0.025f, 2.80f),
+                neonAmberMat);
+        }
+
+        // ── Clean Geometric, Plant & UI Helpers ───────────────────────────────
 
         private GameObject CreatePrimitiveCube(Transform parent, string name, Vector3 pos, Vector3 size, Material mat)
         {
@@ -740,6 +1164,56 @@ namespace Environment
             l.range = range;
         }
 
+        private void InstantiatePlant(Transform parent, string name, Vector3 pos, string plantFbxName)
+        {
+            #if UNITY_EDITOR
+            string path = $"Assets/CityLife/CityElements/Models/{plantFbxName}.fbx";
+            GameObject plantAsset = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(path);
+            if (plantAsset != null)
+            {
+                GameObject plantInstance = (GameObject)UnityEditor.PrefabUtility.InstantiatePrefab(plantAsset);
+                plantInstance.name = name;
+                plantInstance.transform.SetParent(parent, false);
+                plantInstance.transform.position = pos;
+                plantInstance.transform.localScale = Vector3.one * 1.15f;
+
+                foreach (var col in plantInstance.GetComponentsInChildren<Collider>(true))
+                {
+                    DestroyImmediate(col);
+                }
+                return;
+            }
+            #endif
+
+            // Fallback decorative planter if FBX cannot be loaded in standalone build
+            GameObject fallback = CreatePrimitiveCylinder(parent, name, pos + new Vector3(0f, 0.45f, 0f), new Vector3(0.55f, 0.45f, 0.55f), wainscotingMat);
+            CreatePrimitiveCube(fallback.transform, "Leaves", pos + new Vector3(0f, 1.10f, 0f), new Vector3(0.85f, 0.70f, 0.85f), plantGreenMat);
+        }
+
+        private void InstantiateACVent(Transform parent, string name, Vector3 pos)
+        {
+            #if UNITY_EDITOR
+            string path = "Assets/CityLife/CityElements/Models/Prop_ACVent_Stright.fbx";
+            GameObject ventAsset = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(path);
+            if (ventAsset != null)
+            {
+                GameObject ventInstance = (GameObject)UnityEditor.PrefabUtility.InstantiatePrefab(ventAsset);
+                ventInstance.name = name;
+                ventInstance.transform.SetParent(parent, false);
+                ventInstance.transform.position = pos;
+                ventInstance.transform.localScale = new Vector3(1.4f, 1.2f, 1.4f);
+                ventInstance.transform.rotation = Quaternion.Euler(0f, 90f, 0f);
+
+                foreach (var col in ventInstance.GetComponentsInChildren<Collider>(true))
+                {
+                    DestroyImmediate(col);
+                }
+                return;
+            }
+            #endif
+            CreatePrimitiveCylinder(parent, name, pos, new Vector3(0.40f, 2.50f, 0.40f), stainlessSteelMat, Quaternion.Euler(90f, 0f, 0f));
+        }
+
         private GameObject CreateWallSignUI(
             Transform parent,
             Vector3 pos,
@@ -748,21 +1222,12 @@ namespace Environment
             float scaleFactor,
             string text,
             float fontSize,
-            Color textColor,
-            bool isLocal = false)
+            Color textColor)
         {
             GameObject canvasGo = new GameObject("WallSignUI");
             canvasGo.transform.SetParent(parent, false);
-            if (isLocal)
-            {
-                canvasGo.transform.localPosition = pos;
-                canvasGo.transform.localRotation = rot;
-            }
-            else
-            {
-                canvasGo.transform.position = pos;
-                canvasGo.transform.rotation = rot;
-            }
+            canvasGo.transform.position = pos;
+            canvasGo.transform.rotation = rot;
             canvasGo.transform.localScale = Vector3.one * scaleFactor;
 
             Canvas canvas = canvasGo.AddComponent<Canvas>();

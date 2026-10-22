@@ -8,6 +8,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.30.0-the-gilded-spoon-diner-master-redesign] - 2026-10-22
+*Milestone D: Complete Restaurant Interior & Architectural Master Redesign (EXP-014).*
+
+### Added
+- **"The Gilded Spoon Diner & Bistro" Environmental Masterwork (`RestaurantEnvironmentEnhancer.cs`):**
+  - **Zoned Floor Architecture:**
+    - Dining room: Warm polished dark herringbone parquet (`Floor_DiningHardwood`) with satin sheen.
+    - Plush vintage burgundy velvet carpet insets (`Carpet_BoothRow_1-3`) framed with brass trim beneath all dining booths.
+    - Kitchen: Classic commercial slate tile with high-traffic checkerboard quarry tile runner.
+    - Entrance vestibule: Stone hexagonal entryway mat with brass threshold transition.
+  - **Architectural Envelope & Windows:**
+    - West accent wall: Upper exposed red brick texture (`Restaurant_ExposedBrick`) with lower dark mahogany wainscoting and brass chair rail.
+    - 3 panoramic multi-pane French arched city-view windows with dark bronze frames, translucent glass panes (`Restaurant_WindowGlass`), interior walnut sills, and warm exterior sunlight spill lights.
+    - North wall: Grand arched brass wall mirror (`Mirror_Frame` & `Mirror_Glass`) creating deep visual room reflection.
+    - South wall: Double mahogany entrance doors with frosted glass, brass kickplates, and push bars.
+  - **Luxury Dining Booths & Bistro Seating Sets:**
+    - Replaced generic egg tables with handcrafted diner furniture:
+      - West column (Tables 2, 4, 6): Double-sided high-back fluted banquettes in rich burgundy tufted leather (`Restaurant_BoothLeatherBurgundy`), walnut tabletops with brass rim edging, and cast-iron pedestals.
+      - Center column (Tables 1, 3, 5): Round walnut bistro tables with brass rims and pair of bentwood bistro chairs with emerald green leather cushions (`Restaurant_BoothLeatherEmerald`).
+      - Each table dressed with linen runner, glass ketchup/mustard bottles, salt/pepper shakers, mini brass mood candle lamp with golden glow, and clean diegetic table tent signs (`#1` to `#6`).
+      - Realigned AI seating anchors (`EggStool_X_Left/Right`) directly onto booth and chair cushions for natural `DineInCustomerController` sitting kinematics.
+  - **Maître D' Host Station & Waiting Lounge:**
+    - Carved mahogany host podium with reservation ledger book, seating clipboard, and brass desk lamp.
+    - 2.6m golden velvet tufted guest waiting bench (`Restaurant_VelvetPlush`).
+    - Standing vintage brass coat and umbrella rack.
+    - Real 3D potted ficus trees (`Prop_Plant_01`, `Prop_Plant_02`) flanking the vestibule.
+  - **Diner Service Bar & Coffee Station:**
+    - 5.7m polished white Carrera marble bar counter (`Restaurant_MarbleBarTop`) with mahogany front and brass footrail.
+    - 4 chrome swivel diner barstools with red padded leather seats.
+    - Commercial stainless espresso machine with portafilters, glass drip coffee carafes, tiered glass pastry dome with chocolate cherry layer cake, and chrome napkin/straw dispensers.
+  - **Exhibition Kitchen & Pass-Through:**
+    - Pass-through window partition with Carrera marble pass shelf, heat lamps with warm holding glow, ticket rail, brass service call bell, and double-swinging chef saloon doors with brass portholes.
+    - Full stainless range hood with grease filters, rooftop exhaust ducts, and halogen cook line downlights.
+    - Chef spice rack with olive oil cruets and spice jars on subway tile.
+  - **Atmosphere, Vintage Art & Retro Jukebox:**
+    - 1950s illuminated arched retro jukebox with rainbow neon tubes (`Restaurant_JukeboxNeon`) and glowing interior.
+    - Large framed daily specials chalkboard menu with clean World-Space TextMeshPro typography.
+    - Radiant glowing neon wall script sign ("DISH-ASTER DINER -- BEST BURGERS & SHAKES IN TOWN --").
+    - Overhead dark timber ceiling rafters (`Restaurant_CeilingBeam`) with suspended spiral ventilation ductwork (`Prop_ACVent_Stright`).
+    - Suspended brass bell pendant lamps over all dining tables.
+  - Verified in Unity 6 Editor and Play Mode with **0 compilation errors, 0 warnings, and 0 volumetric collider overlaps across all 44 colliders**.
+
 ## [0.29.0-kitchen-collision-potato-pipeline] - 2026-10-22
 *Milestone D: Kitchen Enhancement, Zero-Collision Layout & Complete Potato Culinary Pipeline (EXP-013).*
 
