@@ -34,6 +34,7 @@ public class ResetStaticDataManager : MonoBehaviour {
         SoloChefHotSwapManager.ResetStaticData();
         Save.GameSaveManager.ResetStaticData();
         UI.LevelSelectUI.ResetStaticData();
+        Environment.RestaurantEnvironmentEnhancer.ResetStaticData();
     }
 
 

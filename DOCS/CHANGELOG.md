@@ -8,7 +8,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.27.0-multi-level-environments-progression] - 2026-10-22
+## [0.28.0-restaurant-interior-design-overhaul] - 2026-10-22
+*Milestone D: Restaurant Interior Environment & Architectural Overhaul (EXP-012).*
+
+### Added
+- **Zoned Floor Architecture (`RestaurantEnvironmentEnhancer.cs`):**
+  - Replaced prototype single-plane floor with dual-zone architecture:
+    - **Dining Room:** Warm polished hardwood diner parquet flooring with subtle satin sheen.
+    - **Kitchen:** Heavy-duty commercial slate/terracotta non-slip tile with neat joint grid.
+    - **Service Boundary:** Satin brass transition strip running between kitchen and dining hall.
+    - **Courier Bay:** Exterior threshold border framing the scooter takeout parking bay.
+- **Architectural Wainscoting & Subway Splashbacks:**
+  - Added lower 1.1m dark mahogany wood wainscoting paneling with brass chair-rail molding along all dining room walls.
+  - Added glossy white commercial subway tile splashback running along the full cook line behind the stoves, deep fryer, and sink counters.
+- **Commercial Kitchen Stainless Exhaust Hood & Downlights:**
+  - Installed a stainless steel range hood canopy over the stoves and deep fryer with twin vertical exhaust ventilation ducts rising to the ceiling.
+  - Added dual warm halogen recessed downlights illuminating the cook line workstations.
+- **Cozy Suspended Dining Pendant Lighting:**
+  - Suspended 6 brass bell pendant lamps directly centered over all dining tables (`EggTable_1` through `EggTable_6`) with warm amber point light illumination.
+- **Table Service Condiments & Diegetic Table Numbers:**
+  - Equipped each dining table with tabletop condiment caddies: classic red ketchup & yellow mustard squeeze bottles, salt and pepper shakers, and 3D table number tent stands (`#1` through `#6`). Colliders disabled to guarantee zero interference with plate serving triggers.
+- **Pass-Through Window Header & Exterior Takeout Canopy:**
+  - Added overhead wooden pass valance with stainless order ticket rail and amber heat-lamp holding glow.
+  - Installed retro red-and-white striped exterior canvas awning over the takeout pickup window with neon signage board ("TAKE OUT & DELIVERY").
+- **Dining Decor, Planters & Neon Sign:**
+  - Low planter divider boxes with rich green foliage separating dining rows and guiding customer flow.
+  - Large framed daily specials chalkboard menu and radiant glowing neon wall sign ("DISH-ASTER DINER").
+  - Kitchen magnetic chef knife rack, hanging pot rack, and shift wall clock.
+  - Added `RestaurantEnvironmentEnhancer.ResetStaticData()` wired to `ResetStaticDataManager`.
+  - Verified in Unity 6 Editor and live Play Mode with 0 errors and 0 warnings.
+
 *Milestone D: Level 2 & Level 3 Environments, Courier Scaling & Venue Selection (EXP-011).*
 
 ### Added
