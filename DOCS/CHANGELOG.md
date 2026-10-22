@@ -12,6 +12,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Permanently removed Dash Sprint and Food/Ingredient Throwing from all future milestones and backlog per studio design direction.
   - Retained grounded, tactile chef movement and physical counter placement mechanics.
 
+## [0.21.0-french-fries-combos] - 2026-10-22
+*Milestone D: French Fries, Fountain Drinks & Deluxe Combo Meals.*
+
+### Added
+- **Culinary Expansion & Recipe Combos:**
+  - Integrated `Potato` and `PotatoSlices` cutting workflow on `CuttingCounter` (4 cuts).
+  - Wired `DeepFryerCounter` to fry `PotatoSlices` into crispy golden `FrenchFries`.
+  - Wired `BeverageDispenserCounter` to dispense chilled `SodaCup` fountain drinks.
+  - Added procedural 3D plate side visuals in `PlateCompleteVisual.cs` rendering stylized red French Fry cartons with golden potato sticks and blue soda fountain cups with straws.
+  - Configured `DeluxeComboMeal` recipe (Burger + French Fries + Soda) awarding **+$30 bonus tip** and **+25s shift timer extension** across both `CustomerTable` and `DeliveryCustomerManager`.
+  - Added `AddShiftBonusTimeServerRpc` in `DayLoopManager.cs`.
+  - Placed `ContainerCounter_Potato` in `GameSceneTableService.unity`.
+  - Registered all new items in `_KitchenObjectListSO`, `_RecipeListSO`, and `DefaultNetworkPrefabs`.
+  - Verified in Unity 6 Play Mode with 0 errors and 0 warnings.
+
 ## [0.20.0-input-lifecycle-approval-fixes] - 2026-10-22
 *Milestone A: PlayerInputActions Lifecycle Leak Fix, EventSystem InputSystemUI Upgrade, & Host Connection Approval.*
 

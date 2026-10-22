@@ -80,8 +80,14 @@ public class BeverageDispenserCounter : BaseCounter, IHasProgress {
                 dispenseTimer.Value = 0f;
 
                 // Spawn the dispensed drink onto the counter if not already occupied
-                if (!HasKitchenObject() && beverageKitchenObjectSO != null) {
-                    KitchenObject.SpawnKitchenObject(beverageKitchenObjectSO, this);
+                if (!HasKitchenObject()) {
+                    KitchenObjectSO drinkSO = beverageKitchenObjectSO;
+                    if (drinkSO == null && KitchenGameMultiplayer.Instance != null) {
+                        drinkSO = KitchenGameMultiplayer.Instance.GetKitchenObjectSOByName("SodaCup");
+                    }
+                    if (drinkSO != null) {
+                        KitchenObject.SpawnKitchenObject(drinkSO, this);
+                    }
                 }
 
                 NotifyDrinkCompleteClientRpc();

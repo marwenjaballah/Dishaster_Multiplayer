@@ -2760,10 +2760,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 812125347}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 388.17, y: -27}
+  m_SizeDelta: {x: 413.28668, y: 44}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &21875933
 CanvasRenderer:
@@ -106131,7 +106131,7 @@ MonoBehaviour:
   counterTopPoint: {fileID: 1410382699}
   fryTimerMax: 4
   burnTimerMax: 6
-  friedOutputSO: {fileID: 0}
+  friedOutputSO: {fileID: 11400000, guid: 2b692dbb187f7e84ba49486a0d23051f, type: 2}
   burnedOutputSO: {fileID: 0}
   sizzleAudioSource: {fileID: 0}
 --- !u!114 &773814783
@@ -122930,10 +122930,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 812125347}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 764.9067, y: -27}
+  m_SizeDelta: {x: 310.18665, y: 44}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &913545946
 GameObject:
@@ -158748,7 +158748,7 @@ PrefabInstance:
     - target: {fileID: 2654306017924495882, guid: b9a204b921b53ac47bd6a50ce639c502,
         type: 3}
       propertyPath: m_Name
-      value: ClearCounter_Bottom_5
+      value: ContainerCounter_Potato
       objectReference: {fileID: 0}
     - target: {fileID: 3316124534364590616, guid: b9a204b921b53ac47bd6a50ce639c502,
         type: 3}
@@ -158770,10 +158770,15 @@ PrefabInstance:
       propertyPath: InScenePlacedSourceGlobalObjectIdHash
       value: 3137426068
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 4674234905332827381, guid: b9a204b921b53ac47bd6a50ce639c502, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2654306017924495882, guid: b9a204b921b53ac47bd6a50ce639c502,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1162349043}
   m_SourcePrefab: {fileID: 100100000, guid: b9a204b921b53ac47bd6a50ce639c502, type: 3}
 --- !u!4 &1162349041 stripped
 Transform:
@@ -158781,6 +158786,27 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1162349040}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1162349042 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2654306017924495882, guid: b9a204b921b53ac47bd6a50ce639c502,
+    type: 3}
+  m_PrefabInstance: {fileID: 1162349040}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1162349043
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1162349042}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0db6202b23fd35c48a842e95c205e439, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ContainerCounter
+  ShowTopMostFoldoutHeaderGroup: 1
+  counterTopPoint: {fileID: 0}
+  kitchenObjectSO: {fileID: 11400000, guid: c8755aa144bf10e40a096e61a315ec51, type: 2}
 --- !u!1 &1163318597
 GameObject:
   m_ObjectHideFlags: 0
@@ -229610,10 +229636,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 812125347}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 93.263336, y: -27}
+  m_SizeDelta: {x: 146.52667, y: 44}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1724092534
 CanvasRenderer:
@@ -263023,7 +263049,8 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   counterTopPoint: {fileID: 857982600}
   dispenseDuration: 2
-  beverageKitchenObjectSO: {fileID: 0}
+  beverageKitchenObjectSO: {fileID: 11400000, guid: 97b80c16db26403419cd43ef70d1b39a,
+    type: 2}
   pourAudioSource: {fileID: 0}
 --- !u!114 &1977709118
 MonoBehaviour:

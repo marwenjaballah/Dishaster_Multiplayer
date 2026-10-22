@@ -137,12 +137,32 @@ public class CuttingCounter : BaseCounter, IHasProgress {
         }
     }
 
+    private CuttingRecipeSO _dynamicPotatoCuttingRecipe;
+
     private CuttingRecipeSO GetCuttingRecipeSOWithInput(KitchenObjectSO inputKitchenObjectSO) {
+        if (inputKitchenObjectSO == null) return null;
+
         foreach (CuttingRecipeSO cuttingRecipeSO in cuttingRecipeSOArray) {
-            if (cuttingRecipeSO.input == inputKitchenObjectSO) {
+            if (cuttingRecipeSO != null && cuttingRecipeSO.input == inputKitchenObjectSO) {
                 return cuttingRecipeSO;
             }
         }
+
+        // Dynamic fallback for Potato slicing
+        if (inputKitchenObjectSO.name.Contains("Potato") && !inputKitchenObjectSO.name.Contains("Slices")) {
+            if (_dynamicPotatoCuttingRecipe == null) {
+                _dynamicPotatoCuttingRecipe = ScriptableObject.CreateInstance<CuttingRecipeSO>();
+                _dynamicPotatoCuttingRecipe.input = inputKitchenObjectSO;
+                _dynamicPotatoCuttingRecipe.cuttingProgressMax = 4;
+            }
+            if (_dynamicPotatoCuttingRecipe.output == null && KitchenGameMultiplayer.Instance != null) {
+                _dynamicPotatoCuttingRecipe.output = KitchenGameMultiplayer.Instance.GetKitchenObjectSOByName("PotatoSlices");
+            }
+            if (_dynamicPotatoCuttingRecipe.output != null) {
+                return _dynamicPotatoCuttingRecipe;
+            }
+        }
+
         return null;
     }
 }

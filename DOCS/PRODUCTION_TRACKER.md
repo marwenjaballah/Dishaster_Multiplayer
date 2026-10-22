@@ -78,6 +78,7 @@ Milestone E: Hardening & Commercial QA   [░░░░░░░░░░░░�
 | `EXP-002` | Gameplay | P1 | Deep Fryer station (French Fries) and Beverage fountain machine | Gameplay | ✅ `COMPLETED` | `DeepFryerCounter.cs` & `BeverageDispenserCounter.cs` with server RPCs, progress feedback, static cleanup, Play Mode verified |
 | `EXP-003` | Vehicle | P1 | Scooter 2.0 physics polish (lean into corners, collision feedback, tip loss on crash) | Vehicle | ✅ `COMPLETED` | 18° visual lean kinematics, high-speed crash recoil bounce, $10 food damage penalty via `RestaurantEconomyManager`, Play Mode verified |
 | `EXP-004` | Level Design | P2 | Level 2 (Downtown Burger Bar) and Level 3 (Boardwalk Grill) | Level | ✅ `COMPLETED` | `LevelProfileSO.cs` & `LevelSelectionManager.cs` server-authoritative level selection, 3 level profiles (Diner, Burger Bar, Boardwalk Grill) |
+| `EXP-005` | Gameplay | P1 | French Fries, Fountain Drinks & Deluxe Combo Meals | Gameplay | ✅ `COMPLETED` | Potato slicing, DeepFryer French Fries, BeverageDispenser SodaCup, Deluxe Combo ($30 bonus, +25s shift time), Play Mode verified |
 
 ---
 

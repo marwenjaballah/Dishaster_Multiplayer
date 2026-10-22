@@ -25,7 +25,7 @@ public class PlateKitchenObject : KitchenObject {
     }
 
     public bool TryAddIngredient(KitchenObjectSO kitchenObjectSO) {
-        if (!validKitchenObjectSOList.Contains(kitchenObjectSO)) {
+        if (!IsValidIngredient(kitchenObjectSO)) {
             // Not a valid ingredient
             return false;
         }
@@ -39,6 +39,13 @@ public class PlateKitchenObject : KitchenObject {
 
             return true;
         }
+    }
+
+    public bool IsValidIngredient(KitchenObjectSO kitchenObjectSO) {
+        if (kitchenObjectSO == null) return false;
+        if (validKitchenObjectSOList != null && validKitchenObjectSOList.Contains(kitchenObjectSO)) return true;
+        if (kitchenObjectSO.name.Contains("Fries") || kitchenObjectSO.name.Contains("Soda") || kitchenObjectSO.name.Contains("Drink") || kitchenObjectSO.name.Contains("Potato")) return true;
+        return false;
     }
 
     [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]

@@ -462,6 +462,16 @@ public class DeliveryCustomerManager : NetworkBehaviour
             Difficulty.DifficultyManager.Instance.CalculateDeliveryPayout(ingredientCount, patience, out basePayout, out tip, out stars);
         }
 
+        // Apply Combo Bonus if current recipe is a Combo Meal
+        if (required != null && required.isComboMeal)
+        {
+            tip += required.comboBonusPayout;
+            if (DayLoopManager.Instance != null)
+            {
+                DayLoopManager.Instance.AddShiftBonusTimeServerRpc(required.comboTimeBonus);
+            }
+        }
+
         // 1. Direct Plate
         if (!requireDeliveryBag && held is PlateKitchenObject plate && PlateMatchesRecipe(plate, required))
         {

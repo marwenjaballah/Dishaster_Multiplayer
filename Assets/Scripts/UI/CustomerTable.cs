@@ -241,6 +241,14 @@ public class CustomerTable : BaseCounter {
                 stars = patience >= 0.75f ? 5f : (patience >= 0.25f ? 4f : 3f);
             }
 
+            // Apply Combo Bonus if current recipe is a Combo Meal
+            if (currentRecipe != null && currentRecipe.isComboMeal) {
+                tip += currentRecipe.comboBonusPayout;
+                if (DayLoopManager.Instance != null) {
+                    DayLoopManager.Instance.AddShiftBonusTimeServerRpc(currentRecipe.comboTimeBonus);
+                }
+            }
+
             if (RestaurantEconomyManager.Instance != null) {
                 RestaurantEconomyManager.Instance.ProcessDeliveryReward(basePayout, tip, stars);
             }

@@ -9,5 +9,8 @@ public class RecipeSO : ScriptableObject {
     public List<KitchenObjectSO> kitchenObjectSOList;
     public string recipeName;
 
-
+    [Header("Combo Settings")]
+    public bool isComboMeal;
+    public int comboBonusPayout = 20;
+    public float comboTimeBonus = 20f;
 }

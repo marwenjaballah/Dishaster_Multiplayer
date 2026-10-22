@@ -111,6 +111,9 @@ public class DeepFryerCounter : BaseCounter, IHasProgress {
                     if (fryingTimer.Value >= fryTimerMax) {
                         KitchenObject currentObj = GetKitchenObject();
                         KitchenObjectSO outputSO = friedOutputSO;
+                        if (outputSO == null && KitchenGameMultiplayer.Instance != null) {
+                            outputSO = KitchenGameMultiplayer.Instance.GetKitchenObjectSOByName("FrenchFries");
+                        }
                         if (outputSO == null && currentObj != null) {
                             outputSO = currentObj.GetKitchenObjectSO();
                         }
@@ -134,8 +137,13 @@ public class DeepFryerCounter : BaseCounter, IHasProgress {
                         KitchenObject currentObj = GetKitchenObject();
                         KitchenObject.DestroyKitchenObject(currentObj);
 
-                        if (burnedOutputSO != null) {
-                            KitchenObject.SpawnKitchenObject(burnedOutputSO, this);
+                        KitchenObjectSO burnedSO = burnedOutputSO;
+                        if (burnedSO == null && KitchenGameMultiplayer.Instance != null) {
+                            burnedSO = KitchenGameMultiplayer.Instance.GetKitchenObjectSOByName("MeatPattyBurned");
+                        }
+
+                        if (burnedSO != null) {
+                            KitchenObject.SpawnKitchenObject(burnedSO, this);
                         }
 
                         state.Value = State.Burned;

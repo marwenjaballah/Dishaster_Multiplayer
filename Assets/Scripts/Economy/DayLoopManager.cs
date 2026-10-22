@@ -390,6 +390,19 @@ public class DayLoopManager : NetworkBehaviour {
         return CanAcceptNewOrders() || currentPhase.Value == DayPhase.ClosingTime;
     }
 
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
+    public void AddShiftBonusTimeServerRpc(float seconds) {
+        if (CanAcceptNewOrders()) {
+            phaseTimer.Value += seconds;
+            NotifyShiftTimeBonusClientRpc(seconds);
+        }
+    }
+
+    [Rpc(SendTo.ClientsAndHost)]
+    private void NotifyShiftTimeBonusClientRpc(float seconds) {
+        Debug.Log($"[DayLoopManager] Combo Reward! +{seconds:F0}s added to current shift.");
+    }
+
     public string GetPhaseTitle() {
         return currentPhase.Value switch {
             DayPhase.DayStartAnnouncement => $"Day {currentDay.Value} Starting!",
