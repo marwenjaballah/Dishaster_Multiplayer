@@ -238,10 +238,17 @@ public class TableManager : NetworkBehaviour {
             yield return new WaitForSeconds(0.5f);
         }
 
+        // Wait if the table currently has dirty dishes that haven't been cleared by a busser yet!
+        CustomerTable table = GetTableById(tableId);
+        while (table != null && table.HasKitchenObject()) {
+            yield return new WaitForSeconds(1.0f);
+        }
+
         // Do not spawn new table orders during closing or after-hours
         if (DayLoopManager.Instance != null && !DayLoopManager.Instance.CanAcceptNewOrders()) {
             yield break;
         }
+
 
         int effectiveMaxOrders = maxConcurrentOrders;
         if (Difficulty.DifficultyManager.Instance != null) {
@@ -265,7 +272,7 @@ public class TableManager : NetworkBehaviour {
 
         tableRespawnCoroutines.Remove(tableId);
 
-        CustomerTable table = GetTableById(tableId);
+        table = GetTableById(tableId);
         if (table == null || table.HasActiveOrder()) yield break;
         if (recipeListSO == null || recipeListSO.recipeSOList.Count == 0) yield break;
 

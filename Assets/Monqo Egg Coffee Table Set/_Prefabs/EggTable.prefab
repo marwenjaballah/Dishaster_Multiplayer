@@ -314,6 +314,7 @@ MonoBehaviour:
   orderUIAnchor: {fileID: 5123670115562961555}
   orderActiveIndicator: {fileID: 0}
   orderTimeoutDuration: 60
+  dirtyPlateKitchenObjectSO: {fileID: 0}
 --- !u!65 &7110160723941641167
 BoxCollider:
   m_ObjectHideFlags: 0

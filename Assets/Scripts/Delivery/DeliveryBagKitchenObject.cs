@@ -47,15 +47,26 @@ public class DeliveryBagKitchenObject : KitchenObject
     {
         if (!CanAddPlate) return;
 
-        // The server validates and despawns the plate safely
+        // The server validates and despawns the plate safely, leaving a dirty plate for the wash pit
         if (plateNetworkObjectReference.TryGet(out NetworkObject plateNetworkObject))
         {
             KitchenObject plateKitchenObject = plateNetworkObject.GetComponent<KitchenObject>();
             if (plateKitchenObject != null)
             {
+                IKitchenObjectParent parent = plateKitchenObject.GetKitchenObjectParent();
                 KitchenObject.DestroyKitchenObject(plateKitchenObject);
+
+                if (parent != null && !parent.HasKitchenObject() && KitchenGameMultiplayer.Instance != null)
+                {
+                    KitchenObjectSO dirtyPlateSO = KitchenGameMultiplayer.Instance.GetKitchenObjectSOByName("DirtyPlate");
+                    if (dirtyPlateSO != null)
+                    {
+                        KitchenObject.SpawnKitchenObject(dirtyPlateSO, parent);
+                    }
+                }
             }
         }
+
 
         AddDishClientRpc(ingredientIndices);
     }

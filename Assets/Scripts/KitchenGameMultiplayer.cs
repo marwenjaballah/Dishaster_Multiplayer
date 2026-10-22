@@ -241,6 +241,15 @@ public class KitchenGameMultiplayer : NetworkBehaviour {
         return kitchenObjectListSO.kitchenObjectSOList[kitchenObjectSOIndex];
     }
 
+    public KitchenObjectSO GetKitchenObjectSOByName(string objectName) {
+        if (kitchenObjectListSO == null || kitchenObjectListSO.kitchenObjectSOList == null) return null;
+        foreach (var so in kitchenObjectListSO.kitchenObjectSOList) {
+            if (so != null && (so.objectName == objectName || so.name == objectName)) return so;
+        }
+        return null;
+    }
+
+
 
 
     public void DestroyKitchenObject(KitchenObject kitchenObject) {

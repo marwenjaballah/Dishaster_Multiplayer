@@ -18,6 +18,8 @@ public class ResetStaticDataManager : MonoBehaviour {
         PortableFireExtinguisher.ResetStaticData();
         DayLoopManager.ResetStaticData();
         NightMarketManager.ResetStaticData();
+        SinkCounter.ResetStaticData();
     }
+
 
 }

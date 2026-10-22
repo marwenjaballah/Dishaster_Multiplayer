@@ -32,6 +32,10 @@ public class CustomerTable : BaseCounter {
     [Header("Table Service Timer")]
     [SerializeField] private float orderTimeoutDuration = 60f; // Seconds before order expires
 
+    [Header("Dishes & Busser Loop")]
+    [SerializeField] private KitchenObjectSO dirtyPlateKitchenObjectSO;
+
+
     // ---- Network state ----
     private NetworkVariable<int>   assignedRecipeIndex = new NetworkVariable<int>(-1);
     private NetworkVariable<float> orderAssignedTime   = new NetworkVariable<float>(-1f);
@@ -53,7 +57,19 @@ public class CustomerTable : BaseCounter {
         if (tableOrderUI == null) {
             Debug.LogWarning($"[CustomerTable] Table {displayNumber} (ID: {tableId}) does not have a TableOrderUI script in its children!");
         }
+
+        if (dirtyPlateKitchenObjectSO == null && KitchenGameMultiplayer.Instance != null) {
+            dirtyPlateKitchenObjectSO = KitchenGameMultiplayer.Instance.GetKitchenObjectSOByName("DirtyPlate");
+        }
     }
+
+    public KitchenObjectSO GetDirtyPlateKitchenObjectSO() {
+        if (dirtyPlateKitchenObjectSO == null && KitchenGameMultiplayer.Instance != null) {
+            dirtyPlateKitchenObjectSO = KitchenGameMultiplayer.Instance.GetKitchenObjectSOByName("DirtyPlate");
+        }
+        return dirtyPlateKitchenObjectSO;
+    }
+
 
     private void Start() {
         // Register with TableManager when it's ready
@@ -169,6 +185,12 @@ public class CustomerTable : BaseCounter {
                     }
                 }
             }
+        } else {
+            // Table currently holds an object (e.g. DirtyPlate left by diners)
+            if (!player.HasKitchenObject()) {
+                // Busser clears the table by collecting the dirty dish!
+                GetKitchenObject().SetKitchenObjectParent(player);
+            }
         }
     }
 
@@ -212,7 +234,16 @@ public class CustomerTable : BaseCounter {
             ClearOrder();
             ShowCorrectDeliveryFeedbackClientRpc();
             KitchenObject.DestroyKitchenObject(plate);
+
+            // Spawn dirty plate on table for bussers to collect and wash
+            if (dirtyPlateKitchenObjectSO == null && KitchenGameMultiplayer.Instance != null) {
+                dirtyPlateKitchenObjectSO = KitchenGameMultiplayer.Instance.GetKitchenObjectSOByName("DirtyPlate");
+            }
+            if (dirtyPlateKitchenObjectSO != null) {
+                KitchenObject.SpawnKitchenObject(dirtyPlateKitchenObjectSO, this);
+            }
         } else {
+
             // Wrong dish delivered -> Flash ❌ feedback, but player keeps plate and order stays active until timer expires
             ShowWrongDeliveryFeedbackClientRpc();
             DeliveryManager.Instance?.TriggerDeliveryFailed();

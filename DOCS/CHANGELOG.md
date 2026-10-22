@@ -8,7 +8,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0-vertical-slice] - 2026-10-22
+*Milestone B: Finite Plate Economy & Dishwashing Station.*
+
+### Added
+- **Dirty Plate Lifecycle (`DirtyPlateKitchenObject.cs`):**
+  - Created `DirtyPlateKitchenObject` component, prefab (`DirtyPlate.prefab`), and ScriptableObject (`DirtyPlate.asset`), registered in `DefaultNetworkPrefabs` and `_KitchenObjectListSO`.
+  - Customers finish their meals and leave dirty dishes on `CustomerTable` for bussers to collect.
+  - Packing food into `DeliveryBagKitchenObject` transfers the meal and leaves behind dirty plates in the kitchen for recycling.
+- **Dishwashing Sink Counter (`SinkCounter.cs` & `SinkCounterVisual.cs`):**
+  - Server-authoritative scrubbing station implementing `IHasProgress` with floating `ProgressBarUI`.
+  - Players scrub dirty plates clean via Alternate Interact (`F`), transforming soiled dishes into sparkling clean `PlateKitchenObject`s.
+  - Water splash particle feedback and clean completion sound events wired.
+  - `SinkCounter.ResetStaticData()` registered in `ResetStaticDataManager` for clean scene reload safety.
+- **Finite Plate Economy & Rack Restock (`PlatesCounter.cs`):**
+  - Plates no longer spawn infinitely out of thin air. The rack begins with 5 plates.
+  - Players can return empty clean plates to the `PlatesCounter` stack to replenish available dishes for the chefs.
+  - At the start of each morning shift (`Shift1_MorningPrep`), the plate rack is automatically restocked to full capacity.
+- **Living Dining Room Flow (`TableManager.cs`):**
+  - New guests will not seat or order at a table that has dirty dishes on it, requiring bussers to clear tables to maintain fast table turnover.
+
 ## [0.4.0-vertical-slice] - 2026-10-21
+
 *Milestone B: Day Loop Architecture & Night Market Upgrade Shop.*
 
 ### Added

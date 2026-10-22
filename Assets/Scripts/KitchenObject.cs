@@ -83,6 +83,17 @@ public class KitchenObject : NetworkBehaviour {
         }
     }
 
+    public bool TryGetDirtyPlate(out DirtyPlateKitchenObject dirtyPlateKitchenObject) {
+        if (this is DirtyPlateKitchenObject) {
+            dirtyPlateKitchenObject = this as DirtyPlateKitchenObject;
+            return true;
+        } else {
+            dirtyPlateKitchenObject = null;
+            return false;
+        }
+    }
+
+
 
 
     public static void SpawnKitchenObject(KitchenObjectSO kitchenObjectSO, IKitchenObjectParent kitchenObjectParent) {
