@@ -8,6 +8,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.31.0-commercial-kitchen-scullery-overhaul] - 2026-10-22
+*Milestone D: Commercial Kitchen Infrastructure, Scullery & Ergonomics Overhaul (EXP-015).*
+
+### Added
+- **Commercial Kitchen Master Systems (`RestaurantEnvironmentEnhancer.cs`):**
+  - **Ergonomics & Flooring:**
+    - Heavy-duty slotted anti-fatigue rubber drainage mats (`Restaurant_RubberFloorMat`) along the hot cook line, north cold prep line, south fryer line, and around the center island pad.
+  - **Sanitary Wall Cladding & Hygiene Regulations:**
+    - Full 3-wall white ceramic subway tile wrap with dark grout (`Restaurant_SubwayTile`) across East cook line, North prep line, and South fryer/beverage line.
+    - Commercial stainless steel sanitary cove baseboards (0.12m high) running along all kitchen wall intersections.
+    - Heavy-duty stainless steel corner impact guards on all exposed corners.
+    - Official Department of Public Health Certificate of Inspection ("GRADE A - SCORE 100") framed beside the entrance.
+    - OSHA/Health Code "EMPLOYEES MUST WASH HANDS" regulation sign mounted by the handwash station.
+  - **Scullery & Commercial Dishwashing Pit:**
+    - Heavy-duty commercial pre-rinse high-pressure coiled spring faucet with chrome spray valve and squeeze trigger.
+    - Dual stainless steel side splash shields flanking `SinkCounter` to isolate dish washing from cook stoves and clean plates.
+    - Automated wall-mounted dual-chemical dosing dispenser with blue detergent and green sanitizer feed lines.
+    - Commercial blue polypropylene peg dish drying racks with upright ceramic plates.
+    - Color-coded sanitation buckets (Red for sanitizer, Green for detergent).
+    - Wall-mounted lever paper towel dispenser with pull-down towel.
+  - **Hot Cook Line & ANSUL Fire Suppression System:**
+    - Full-length stainless range hood canopy with angled removable grease baffle filters and twin rooftop exhaust ducts.
+    - Dedicated fryer exhaust canopy over `DeepFryerCounter`.
+    - Industrial ANSUL R-102 fire suppression system with red agent cylinder, pressure gauge, emergency manual pull station, stainless distribution manifold, and 4 down-firing brass/yellow discharge nozzles over burners and fryers.
+  - **Center Prep Island Double-Deck Gantry:**
+    - 4 stainless tubular support stanchions rising to Y = 2.25m over the prep island.
+    - Lower gantry shelf holding 2 stainless 1/3 hotel pans (shredded lettuce, sliced onions) and 4 amber polycarbonate Cambro pans (`Restaurant_PlasticHotelPan`) with cheese slices, burger patties, tomato slices, and pickles.
+    - Chef squeeze bottle wire organizer caddy with 4 bottles (ketchup, mustard, aioli, olive oil).
+    - Commercial digital kitchen LED clock / shift timer ("12:45 PM -- SHIFT 2").
+    - Upper gantry shelf with 3 nested stainless mixing bowls and commercial aluminum half-sheet pans.
+    - Hanging stainless chef utensils (tongs, grill spatulas, skimmers, whisks).
+  - **South Line & Utility Storage:**
+    - Stainless steel splash barrier separating `DeepFryerCounter` from `BeverageDispenserCounter`.
+    - Stack of clean French fry cartons beside the fryer.
+    - Commercial 4-tier chrome Metro wire dry storage rack holding 50 lb flour sacks, 5-liter Italian olive oil tins, and crates of canned San Marzano plum tomatoes.
+  - **Expediting & High-Bay Lighting:**
+    - Double-sided quartz warming heat lamps, rotating ticket order carousel tree, and expeditor dry-erase board ("RUSH TABLE 2 -- 86 TOMATOES").
+    - 4 ceiling-recessed 4500K commercial LED troffer task fixtures providing crisp, shadow-free illumination.
+- **New URP Lit Materials in `Assets/_Assets/Materials/Restaurant/`:**
+  - `Restaurant_RubberFloorMat.mat`, `Restaurant_AnsulFirePiping.mat`, `Restaurant_ChromePolished.mat`, `Restaurant_PlasticHotelPan.mat`, `Restaurant_SanitizerBlue.mat`.
+- Verified in Unity 6 Editor and Play Mode with **0 compilation errors, 0 warnings, and 0 collider overlaps across all 35 interactive furniture colliders**.
+
 ## [0.30.0-the-gilded-spoon-diner-master-redesign] - 2026-10-22
 *Milestone D: Complete Restaurant Interior & Architectural Master Redesign (EXP-014).*
 

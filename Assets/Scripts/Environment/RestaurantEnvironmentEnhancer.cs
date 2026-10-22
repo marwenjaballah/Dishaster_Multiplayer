@@ -58,6 +58,11 @@ namespace Environment
         [SerializeField] private Material ketchupRedMat;
         [SerializeField] private Material mustardYellowMat;
         [SerializeField] private Material plantGreenMat;
+        [SerializeField] private Material rubberFloorMat;
+        [SerializeField] private Material ansulPipingMat;
+        [SerializeField] private Material chromePolishedMat;
+        [SerializeField] private Material plasticHotelPanMat;
+        [SerializeField] private Material sanitizerBlueMat;
 
         private void Awake()
         {
@@ -116,6 +121,11 @@ namespace Environment
             if (ketchupRedMat == null) ketchupRedMat = LoadAssetMat("Restaurant_KetchupRed");
             if (mustardYellowMat == null) mustardYellowMat = LoadAssetMat("Restaurant_MustardYellow");
             if (plantGreenMat == null) plantGreenMat = LoadAssetMat("Restaurant_PlantGreen");
+            if (rubberFloorMat == null) rubberFloorMat = LoadAssetMat("Restaurant_RubberFloorMat");
+            if (ansulPipingMat == null) ansulPipingMat = LoadAssetMat("Restaurant_AnsulFirePiping");
+            if (chromePolishedMat == null) chromePolishedMat = LoadAssetMat("Restaurant_ChromePolished");
+            if (plasticHotelPanMat == null) plasticHotelPanMat = LoadAssetMat("Restaurant_PlasticHotelPan");
+            if (sanitizerBlueMat == null) sanitizerBlueMat = LoadAssetMat("Restaurant_SanitizerBlue");
         }
 
         private Material LoadAssetMat(string matName)
@@ -250,6 +260,28 @@ namespace Environment
                 new Vector3(10.5f, 0.022f, 2.6f),
                 checkerboardDarkMat);
 
+            // Heavy-Duty Slotted Anti-Fatigue Rubber Drainage Mats (Commercial Ergonomic Standards)
+            // Mat 1: Hot Cook Line (in front of Stoves, Sink, Plates)
+            CreatePrimitiveCube(floorGroup.transform, "KitchenMat_CookLine",
+                new Vector3(119.85f, 0.026f, -21.14f),
+                new Vector3(1.10f, 0.012f, 8.80f),
+                rubberFloorMat);
+            // Mat 2: North Cold Prep Line (in front of Bread, Cabbage, Cheese, Meat, Tomato)
+            CreatePrimitiveCube(floorGroup.transform, "KitchenMat_NorthPrep",
+                new Vector3(115.89f, 0.026f, -17.20f),
+                new Vector3(8.50f, 0.012f, 1.10f),
+                rubberFloorMat);
+            // Mat 3: South Fryer & Beverage Station
+            CreatePrimitiveCube(floorGroup.transform, "KitchenMat_SouthLine",
+                new Vector3(115.89f, 0.026f, -24.55f),
+                new Vector3(8.50f, 0.012f, 1.10f),
+                rubberFloorMat);
+            // Mat 4: Center Island Work Pad
+            CreatePrimitiveCube(floorGroup.transform, "KitchenMat_IslandPad",
+                new Vector3(115.89f, 0.027f, -20.89f),
+                new Vector3(3.80f, 0.012f, 1.15f),
+                rubberFloorMat);
+
             // Entrance Vestibule Hexagonal Stone Entry Mat: Southwest entrance area
             CreatePrimitiveCube(floorGroup.transform, "Floor_EntranceVestibule",
                 new Vector3(92.0f, 0.018f, -34.5f),
@@ -383,11 +415,78 @@ namespace Environment
                 new Vector3(2.3f, 0.06f, 0.06f),
                 brassGoldMat);
 
-            // Kitchen Subway Tile Splashback (East Wall flush behind Cook Line counters)
-            CreatePrimitiveCube(wallGroup.transform, "Splashback_KitchenSubwayTile",
-                new Vector3(121.90f, 1.4f, -20.89f),
-                new Vector3(0.04f, 2.8f, 13.5f),
+            // Kitchen Subway Tile Splashback (Full 3-Wall Wrap: East, North, South)
+            // East Wall flush behind Cook Line counters
+            CreatePrimitiveCube(wallGroup.transform, "Splashback_KitchenSubwayTile_East",
+                new Vector3(121.90f, 1.45f, -20.89f),
+                new Vector3(0.04f, 2.90f, 13.5f),
                 subwayTileMat);
+
+            // North Wall flush behind Ingredient Container counters (Z = -14.85)
+            CreatePrimitiveCube(wallGroup.transform, "Splashback_KitchenSubwayTile_North",
+                new Vector3(116.25f, 1.45f, -14.85f),
+                new Vector3(11.8f, 2.90f, 0.04f),
+                subwayTileMat);
+
+            // South Wall flush behind Deep Fryer & Beverage counters (Z = -27.05)
+            CreatePrimitiveCube(wallGroup.transform, "Splashback_KitchenSubwayTile_South",
+                new Vector3(116.25f, 1.45f, -27.05f),
+                new Vector3(11.8f, 2.90f, 0.04f),
+                subwayTileMat);
+
+            // Sanitary Stainless Steel Cove Baseboards (0.12m high hygiene code trim)
+            CreatePrimitiveCube(wallGroup.transform, "KitchenCoving_East",
+                new Vector3(121.88f, 0.06f, -20.89f),
+                new Vector3(0.06f, 0.12f, 13.5f),
+                stainlessSteelMat);
+            CreatePrimitiveCube(wallGroup.transform, "KitchenCoving_North",
+                new Vector3(116.25f, 0.06f, -14.83f),
+                new Vector3(11.8f, 0.12f, 0.06f),
+                stainlessSteelMat);
+            CreatePrimitiveCube(wallGroup.transform, "KitchenCoving_South",
+                new Vector3(116.25f, 0.06f, -27.03f),
+                new Vector3(11.8f, 0.12f, 0.06f),
+                stainlessSteelMat);
+
+            // Heavy-Duty Stainless Steel Corner Guards (External Wall Corners)
+            CreatePrimitiveCube(wallGroup.transform, "CornerGuard_NE",
+                new Vector3(121.88f, 1.45f, -14.83f),
+                new Vector3(0.08f, 2.90f, 0.08f),
+                stainlessSteelMat);
+            CreatePrimitiveCube(wallGroup.transform, "CornerGuard_SE",
+                new Vector3(121.88f, 1.45f, -27.03f),
+                new Vector3(0.08f, 2.90f, 0.08f),
+                stainlessSteelMat);
+
+            // Official Framed Department of Public Health Certificate of Inspection ("GRADE A")
+            Vector3 certPos = new Vector3(110.60f, 1.85f, -16.20f);
+            CreatePrimitiveCube(wallGroup.transform, "HealthCert_Frame",
+                certPos,
+                new Vector3(0.04f, 0.48f, 0.38f),
+                brassGoldMat);
+            CreatePrimitiveCube(wallGroup.transform, "HealthCert_Paper",
+                certPos + new Vector3(0.02f, 0f, 0f),
+                new Vector3(0.02f, 0.42f, 0.32f),
+                awningWhiteMat);
+            CreateWallSignUI(wallGroup.transform,
+                certPos + new Vector3(0.035f, 0.08f, 0f),
+                Quaternion.Euler(0f, 90f, 0f),
+                new Vector2(200f, 60f), 0.0050f, "GRADE A", 28f, new Color(0.1f, 0.5f, 0.15f));
+            CreateWallSignUI(wallGroup.transform,
+                certPos + new Vector3(0.035f, -0.08f, 0f),
+                Quaternion.Euler(0f, 90f, 0f),
+                new Vector2(240f, 50f), 0.0035f, "SANITARY INSPECTION\nSCORE 100", 18f, new Color(0.2f, 0.2f, 0.2f));
+
+            // OSHA / Health Code Sign: "EMPLOYEES MUST WASH HANDS"
+            Vector3 washSignPos = new Vector3(121.86f, 1.95f, -21.40f);
+            CreatePrimitiveCube(wallGroup.transform, "WashHands_SignBack",
+                washSignPos,
+                new Vector3(0.03f, 0.22f, 0.48f),
+                neonCyanMat);
+            CreateWallSignUI(wallGroup.transform,
+                washSignPos + new Vector3(-0.02f, 0f, 0f),
+                Quaternion.Euler(0f, 270f, 0f),
+                new Vector2(280f, 60f), 0.0038f, "EMPLOYEES MUST\nWASH HANDS", 18f, Color.white);
         }
 
         // ── 3. Luxurious Diner Booths & Bistro Seating ─────────────────────────
@@ -777,7 +876,7 @@ namespace Environment
                 new Vector3(0.65f, 0.08f, 3.80f),
                 marbleBarMat);
 
-            // Overhead Valance & Warming Heat Lamps
+            // Overhead Valance & Dual Quartz Warming Heat Lamps
             CreatePrimitiveCube(kitchenGroup.transform, "PassThrough_ValanceHeader",
                 passCenter + new Vector3(0f, 2.10f, 0f),
                 new Vector3(0.40f, 0.16f, 3.80f),
@@ -787,11 +886,11 @@ namespace Environment
                 new Vector3(0.18f, 0.08f, 3.20f),
                 stainlessSteelMat);
 
-            // Food Holding Amber Light Glow
+            // Food Holding Amber Light Glow (Keeps plated food warm at 145°F)
             CreatePointLight(kitchenGroup.transform, "PassThrough_HeatLight",
                 passCenter + new Vector3(0f, 1.75f, 0f),
-                new Color(1.0f, 0.75f, 0.25f),
-                2.8f, 3.8f);
+                new Color(1.0f, 0.72f, 0.22f),
+                3.0f, 4.0f);
 
             // Stainless Steel Order Ticket Clip Rail with Printed Tickets
             CreatePrimitiveCube(kitchenGroup.transform, "TicketRail",
@@ -808,11 +907,45 @@ namespace Environment
                     awningWhiteMat);
             }
 
+            // Rotating Ticket Order Carousel Tree on pass shelf
+            Vector3 carouselPos = passCenter + new Vector3(0.15f, 1.34f, -1.20f);
+            CreatePrimitiveCylinder(kitchenGroup.transform, "TicketCarousel_Base",
+                carouselPos,
+                new Vector3(0.14f, 0.04f, 0.14f),
+                stainlessSteelMat);
+            CreatePrimitiveCylinder(kitchenGroup.transform, "TicketCarousel_Spindle",
+                carouselPos + new Vector3(0f, 0.18f, 0f),
+                new Vector3(0.03f, 0.32f, 0.03f),
+                chromePolishedMat);
+            CreatePrimitiveCylinder(kitchenGroup.transform, "TicketCarousel_Wheel",
+                carouselPos + new Vector3(0f, 0.32f, 0f),
+                new Vector3(0.26f, 0.03f, 0.26f),
+                stainlessSteelMat);
+
             // Brass Service Call Bell ("Ding! Order up!")
             CreatePrimitiveCylinder(kitchenGroup.transform, "ServiceBell",
                 passCenter + new Vector3(0.18f, 1.34f, 0.50f),
                 new Vector3(0.12f, 0.08f, 0.12f),
                 brassGoldMat);
+
+            // Expeditor Dry-Erase Order Board mounted on partition wall
+            Vector3 memoPos = new Vector3(110.60f, 1.80f, -18.70f);
+            CreatePrimitiveCube(kitchenGroup.transform, "ExpeditorBoard_Frame",
+                memoPos,
+                new Vector3(0.04f, 0.45f, 0.65f),
+                stainlessSteelMat);
+            CreatePrimitiveCube(kitchenGroup.transform, "ExpeditorBoard_Surface",
+                memoPos + new Vector3(0.02f, 0f, 0f),
+                new Vector3(0.02f, 0.39f, 0.59f),
+                awningWhiteMat);
+            CreateWallSignUI(kitchenGroup.transform,
+                memoPos + new Vector3(0.035f, 0.08f, 0f),
+                Quaternion.Euler(0f, 90f, 0f),
+                new Vector2(250f, 40f), 0.0035f, "ORDER EXPEDITOR", 18f, new Color(0.1f, 0.1f, 0.1f));
+            CreateWallSignUI(kitchenGroup.transform,
+                memoPos + new Vector3(0.035f, -0.06f, 0f),
+                Quaternion.Euler(0f, 90f, 0f),
+                new Vector2(250f, 40f), 0.0030f, "RUSH TABLE 2 -- 86 TOMATOES", 15f, new Color(0.7f, 0.1f, 0.1f));
 
             // Double Swinging Saloon Doors leading to dining room walkway (Z = -17.5)
             Vector3 doorWalkway = new Vector3(110.64f, 0f, -17.50f);
@@ -833,7 +966,8 @@ namespace Environment
                 new Vector3(0.24f, 0.06f, 0.24f),
                 brassGoldMat, Quaternion.Euler(0f, 0f, 90f));
 
-            // 2. Commercial Stainless Range Hood Canopy over Cook Line (X = 121.0, Z = -18.75)
+            // 2. Commercial Stainless Range Hood Canopy & ANSUL Fire Suppression System
+            // Hood Canopy over Cook Line (X = 121.0, Z = -18.75)
             Vector3 hoodCenter = new Vector3(121.0f, 2.50f, -18.75f);
             CreatePrimitiveCube(kitchenGroup.transform, "ExhaustCanopy_Body",
                 hoodCenter,
@@ -843,6 +977,16 @@ namespace Environment
                 hoodCenter + new Vector3(-0.68f, -0.28f, 0f),
                 new Vector3(0.10f, 0.08f, 4.80f),
                 stainlessSteelMat);
+
+            // Stainless Steel Angled Grease Baffle Filters (Removable Commercial Filters)
+            for (int f = 0; f < 5; f++)
+            {
+                float fz = -20.60f + (f * 0.92f);
+                CreatePrimitiveCube(kitchenGroup.transform, $"BaffleFilter_{f + 1}",
+                    new Vector3(121.10f, 2.32f, fz),
+                    new Vector3(0.75f, 0.04f, 0.75f),
+                    stainlessSteelMat, Quaternion.Euler(30f, 0f, 0f));
+            }
 
             // Twin Vertical Rooftop Exhaust Ducts
             CreatePrimitiveCube(kitchenGroup.transform, "RoofDuct_1",
@@ -854,17 +998,376 @@ namespace Environment
                 new Vector3(0.48f, 0.85f, 0.48f),
                 stainlessSteelMat);
 
+            // Extended Fryer Exhaust Canopy over Deep Fryer (Z = -26.14)
+            Vector3 fryerHoodCenter = new Vector3(118.14f, 2.50f, -26.14f);
+            CreatePrimitiveCube(kitchenGroup.transform, "FryerExhaust_Body",
+                fryerHoodCenter,
+                new Vector3(2.40f, 0.55f, 1.30f),
+                stainlessSteelMat);
+            CreatePrimitiveCube(kitchenGroup.transform, "FryerExhaust_Duct",
+                fryerHoodCenter + new Vector3(0f, 0.65f, 0f),
+                new Vector3(0.45f, 0.85f, 0.45f),
+                stainlessSteelMat);
+
             // Recessed Cook Line Halogen Downlights
             CreatePointLight(kitchenGroup.transform, "HoodLight_Stoves",
                 new Vector3(120.9f, 2.20f, -17.80f),
                 new Color(1.0f, 0.94f, 0.80f),
-                3.0f, 4.0f);
+                3.2f, 4.0f);
             CreatePointLight(kitchenGroup.transform, "HoodLight_Fryer",
-                new Vector3(120.9f, 2.20f, -19.80f),
+                new Vector3(118.14f, 2.20f, -25.90f),
                 new Color(1.0f, 0.94f, 0.80f),
                 3.0f, 4.0f);
 
-            // 3. Chef Organization, Spice Shelf & Utensil Racks
+            // ANSUL R-102 Industrial Fire Suppression System
+            // Red fire suppression agent storage tank mounted to cook line wall
+            Vector3 ansulTankPos = new Vector3(121.84f, 2.20f, -15.90f);
+            CreatePrimitiveCylinder(kitchenGroup.transform, "Ansul_Tank",
+                ansulTankPos,
+                new Vector3(0.24f, 0.65f, 0.24f),
+                ansulPipingMat);
+            CreatePrimitiveCylinder(kitchenGroup.transform, "Ansul_TankCap",
+                ansulTankPos + new Vector3(0f, 0.35f, 0f),
+                new Vector3(0.18f, 0.08f, 0.18f),
+                brassGoldMat);
+            CreatePrimitiveCylinder(kitchenGroup.transform, "Ansul_PressureGauge",
+                ansulTankPos + new Vector3(-0.14f, 0.20f, 0f),
+                new Vector3(0.08f, 0.04f, 0.08f),
+                awningWhiteMat, Quaternion.Euler(0f, 0f, 90f));
+
+            // Emergency Manual Pull Station Box
+            Vector3 pullBoxPos = new Vector3(121.85f, 1.45f, -15.90f);
+            CreatePrimitiveCube(kitchenGroup.transform, "Ansul_PullStation",
+                pullBoxPos,
+                new Vector3(0.06f, 0.22f, 0.18f),
+                ansulPipingMat);
+            CreatePrimitiveCylinder(kitchenGroup.transform, "Ansul_PullRing",
+                pullBoxPos + new Vector3(-0.04f, -0.04f, 0f),
+                new Vector3(0.06f, 0.02f, 0.06f),
+                brassGoldMat, Quaternion.Euler(0f, 0f, 90f));
+
+            // Stainless Steel Ansul Piping running under hood canopy
+            CreatePrimitiveCube(kitchenGroup.transform, "Ansul_DistributionPipe",
+                new Vector3(120.65f, 2.22f, -18.75f),
+                new Vector3(0.04f, 0.04f, 4.40f),
+                chromePolishedMat);
+
+            // 4 Down-Firing Yellow/Brass Fire Suppression Nozzles aimed over Stoves & Sinks
+            float[] nozzleZ = new float[] { -17.14f, -18.64f, -20.14f };
+            for (int n = 0; n < nozzleZ.Length; n++)
+            {
+                CreatePrimitiveCylinder(kitchenGroup.transform, $"Ansul_Nozzle_{n + 1}",
+                    new Vector3(120.65f, 2.16f, nozzleZ[n]),
+                    new Vector3(0.06f, 0.08f, 0.06f),
+                    brassGoldMat);
+            }
+
+            // 3. The Scullery / Commercial Dishwashing Pit (Sink & Plates Area)
+            // Commercial Pre-Rinse High-Pressure Spring Faucet Assembly above Sink (Z = -20.14)
+            Vector3 sinkFaucetPos = new Vector3(120.92f, 0.90f, -20.14f);
+            // Vertical Chrome Riser Column
+            CreatePrimitiveCylinder(kitchenGroup.transform, "PreRinse_RiserColumn",
+                sinkFaucetPos + new Vector3(0f, 0.45f, 0f),
+                new Vector3(0.04f, 0.90f, 0.04f),
+                chromePolishedMat);
+            // Coiled Spring Arc Housing
+            CreatePrimitiveCylinder(kitchenGroup.transform, "PreRinse_SpringHousing",
+                sinkFaucetPos + new Vector3(-0.10f, 0.95f, 0f),
+                new Vector3(0.12f, 0.25f, 0.12f),
+                chromePolishedMat);
+            // Flexible Downward Spray Valve with Squeeze Grip Handle
+            CreatePrimitiveCylinder(kitchenGroup.transform, "PreRinse_SprayHose",
+                sinkFaucetPos + new Vector3(-0.16f, 0.65f, 0f),
+                new Vector3(0.03f, 0.45f, 0.03f),
+                checkerboardDarkMat);
+            CreatePrimitiveCylinder(kitchenGroup.transform, "PreRinse_SprayNozzle",
+                sinkFaucetPos + new Vector3(-0.16f, 0.40f, 0f),
+                new Vector3(0.08f, 0.10f, 0.08f),
+                chromePolishedMat);
+
+            // Dual Stainless Splash Shield Barriers (flanking SinkCounter to protect Stoves and Plates)
+            CreatePrimitiveCube(kitchenGroup.transform, "Sink_SplashShield_North",
+                new Vector3(121.14f, 1.15f, -19.39f),
+                new Vector3(1.20f, 0.45f, 0.03f),
+                stainlessSteelMat);
+            CreatePrimitiveCube(kitchenGroup.transform, "Sink_SplashShield_South",
+                new Vector3(121.14f, 1.15f, -20.89f),
+                new Vector3(1.20f, 0.45f, 0.03f),
+                stainlessSteelMat);
+
+            // Chemical Dosing Station (Wall-mounted automatic detergent & sanitizer dispenser)
+            Vector3 chemPos = new Vector3(121.84f, 1.60f, -20.85f);
+            CreatePrimitiveCube(kitchenGroup.transform, "ChemicalDosing_Housing",
+                chemPos,
+                new Vector3(0.08f, 0.38f, 0.32f),
+                stainlessSteelMat);
+            CreatePrimitiveCube(kitchenGroup.transform, "Chemical_DetergentTubes",
+                chemPos + new Vector3(-0.05f, 0f, -0.06f),
+                new Vector3(0.04f, 0.24f, 0.08f),
+                sanitizerBlueMat);
+            CreatePrimitiveCube(kitchenGroup.transform, "Chemical_SanitizerTubes",
+                chemPos + new Vector3(-0.05f, 0f, 0.06f),
+                new Vector3(0.04f, 0.24f, 0.08f),
+                plantGreenMat);
+
+            // Color-Coded Sanitation Buckets (Red = Sanitizer, Green = Detergent)
+            CreatePrimitiveCylinder(kitchenGroup.transform, "SanitizerBucket_Red",
+                new Vector3(120.35f, 0.15f, -20.80f),
+                new Vector3(0.26f, 0.28f, 0.26f),
+                ketchupRedMat);
+            CreatePrimitiveCylinder(kitchenGroup.transform, "SanitizerBucket_Green",
+                new Vector3(120.35f, 0.15f, -21.15f),
+                new Vector3(0.26f, 0.28f, 0.26f),
+                plantGreenMat);
+
+            // Commercial Polypropylene Peg Dish Racks (Standard 500x500mm Commercial Wash Racks)
+            Vector3 rackPos = new Vector3(120.85f, 1.05f, -22.39f);
+            CreatePrimitiveCube(kitchenGroup.transform, "DishRack_BluePeg",
+                rackPos,
+                new Vector3(0.50f, 0.12f, 0.50f),
+                sanitizerBlueMat);
+            // Washed ceramic plates resting in peg slots
+            for (int p = 0; p < 4; p++)
+            {
+                CreatePrimitiveCylinder(kitchenGroup.transform, $"DryingPlate_{p + 1}",
+                    rackPos + new Vector3(-0.15f + (p * 0.10f), 0.12f, 0f),
+                    new Vector3(0.28f, 0.02f, 0.28f),
+                    awningWhiteMat, Quaternion.Euler(0f, 0f, 90f));
+            }
+
+            // Wall-Mounted Commercial Lever Paper Towel Dispenser
+            Vector3 towelPos = new Vector3(121.84f, 1.65f, -21.80f);
+            CreatePrimitiveCube(kitchenGroup.transform, "PaperTowelDispenser",
+                towelPos,
+                new Vector3(0.12f, 0.36f, 0.28f),
+                stainlessSteelMat);
+            CreatePrimitiveCube(kitchenGroup.transform, "PaperTowel_Sheet",
+                towelPos + new Vector3(-0.07f, -0.22f, 0f),
+                new Vector3(0.02f, 0.12f, 0.22f),
+                awningWhiteMat);
+
+            // 4. Center Island Overhead Double-Deck Gantry & Cambro Food Prep Station
+            // Spanning Island_Clear_1 (115.14) and Island_Cutting (116.64) at Z = -20.89
+            Vector3 islandCenter = new Vector3(115.89f, 0f, -20.89f);
+
+            // 4 Stainless Steel Tubular Support Stanchions
+            Vector3[] stanchionOffsets = new Vector3[] {
+                new Vector3(-1.35f, 1.10f, -0.65f),
+                new Vector3(1.35f, 1.10f, -0.65f),
+                new Vector3(-1.35f, 1.10f, 0.65f),
+                new Vector3(1.35f, 1.10f, 0.65f),
+            };
+            for (int s = 0; s < stanchionOffsets.Length; s++)
+            {
+                CreatePrimitiveCylinder(kitchenGroup.transform, $"Gantry_Stanchion_{s + 1}",
+                    islandCenter + stanchionOffsets[s],
+                    new Vector3(0.04f, 2.20f, 0.04f),
+                    chromePolishedMat);
+            }
+
+            // Lower Gantry Prep Shelf at Y = 1.85m
+            CreatePrimitiveCube(kitchenGroup.transform, "GantryShelf_Lower",
+                islandCenter + new Vector3(0f, 1.85f, 0f),
+                new Vector3(2.90f, 0.04f, 1.45f),
+                stainlessSteelMat);
+
+            // Upper Gantry Storage Shelf at Y = 2.18m
+            CreatePrimitiveCube(kitchenGroup.transform, "GantryShelf_Upper",
+                islandCenter + new Vector3(0f, 2.18f, 0f),
+                new Vector3(2.90f, 0.04f, 1.45f),
+                stainlessSteelMat);
+
+            // 6 Gastro-Norm Hotel Pans / Cambro Prep Inserts on Lower Shelf
+            // 2 Large Stainless 1/3 Hotel Pans (Lettuce & Shredded Onions)
+            CreatePrimitiveCube(kitchenGroup.transform, "HotelPan_Lettuce",
+                islandCenter + new Vector3(-0.95f, 1.93f, -0.32f),
+                new Vector3(0.55f, 0.12f, 0.35f),
+                stainlessSteelMat);
+            CreatePrimitiveCube(kitchenGroup.transform, "Lettuce_Contents",
+                islandCenter + new Vector3(-0.95f, 1.98f, -0.32f),
+                new Vector3(0.48f, 0.05f, 0.28f),
+                plantGreenMat);
+
+            CreatePrimitiveCube(kitchenGroup.transform, "HotelPan_Onions",
+                islandCenter + new Vector3(-0.95f, 1.93f, 0.32f),
+                new Vector3(0.55f, 0.12f, 0.35f),
+                stainlessSteelMat);
+            CreatePrimitiveCube(kitchenGroup.transform, "Onions_Contents",
+                islandCenter + new Vector3(-0.95f, 1.98f, 0.32f),
+                new Vector3(0.48f, 0.05f, 0.28f),
+                awningWhiteMat);
+
+            // 4 Polycarbonate Cambro Pans (Cheese, Patties, Tomato Slices, Pickles)
+            float[] cambroZ = new float[] { -0.45f, -0.15f, 0.15f, 0.45f };
+            Material[] cambroFillMats = new Material[] { mustardYellowMat, boothBurgundyMat, ketchupRedMat, plantGreenMat };
+            string[] cambroNames = new string[] { "CheeseSlices", "BurgerPatties", "TomatoSlices", "Pickles" };
+
+            for (int cp = 0; cp < 4; cp++)
+            {
+                CreatePrimitiveCube(kitchenGroup.transform, $"Cambro_{cambroNames[cp]}",
+                    islandCenter + new Vector3(0.15f, 1.93f, cambroZ[cp]),
+                    new Vector3(0.42f, 0.12f, 0.25f),
+                    plasticHotelPanMat);
+                CreatePrimitiveCube(kitchenGroup.transform, $"Fill_{cambroNames[cp]}",
+                    islandCenter + new Vector3(0.15f, 1.97f, cambroZ[cp]),
+                    new Vector3(0.36f, 0.05f, 0.20f),
+                    cambroFillMats[cp]);
+            }
+
+            // Chef Squeeze Bottle Wire Caddy (Ketchup, Mustard, Aioli, Olive Oil)
+            Vector3 caddyPos = islandCenter + new Vector3(0.95f, 1.90f, 0f);
+            CreatePrimitiveCube(kitchenGroup.transform, "SqueezeBottle_Caddy",
+                caddyPos,
+                new Vector3(0.24f, 0.05f, 0.70f),
+                chromePolishedMat);
+
+            Material[] bottleMats = new Material[] { ketchupRedMat, mustardYellowMat, awningWhiteMat, brassGoldMat };
+            string[] bottleNames = new string[] { "Ketchup", "Mustard", "Aioli", "OliveOil" };
+            for (int b = 0; b < 4; b++)
+            {
+                float bz = -0.24f + (b * 0.16f);
+                Vector3 bPos = caddyPos + new Vector3(0f, 0.14f, bz);
+                CreatePrimitiveCylinder(kitchenGroup.transform, $"Bottle_{bottleNames[b]}",
+                    bPos,
+                    new Vector3(0.10f, 0.22f, 0.10f),
+                    bottleMats[b]);
+                CreatePrimitiveCylinder(kitchenGroup.transform, $"Nozzle_{bottleNames[b]}",
+                    bPos + new Vector3(0f, 0.14f, 0f),
+                    new Vector3(0.03f, 0.08f, 0.03f),
+                    awningWhiteMat);
+            }
+
+            // High-Visibility Commercial Kitchen LED Digital Clock / Shift Timer
+            Vector3 timerPos = islandCenter + new Vector3(0f, 2.05f, 0.74f);
+            CreatePrimitiveCube(kitchenGroup.transform, "KitchenTimer_Housing",
+                timerPos,
+                new Vector3(0.65f, 0.22f, 0.06f),
+                checkerboardDarkMat);
+            CreateWallSignUI(kitchenGroup.transform,
+                timerPos + new Vector3(0f, 0f, 0.04f),
+                Quaternion.Euler(0f, 0f, 0f),
+                new Vector2(300f, 80f), 0.0035f, "12:45 PM  --  SHIFT 2", 22f, new Color(0.2f, 1.0f, 0.3f));
+
+            // Upper Gantry Equipment: 3 Nesting Stainless Mixing Bowls & Sheet Pans
+            Vector3 bowlPos = islandCenter + new Vector3(-0.85f, 2.24f, 0f);
+            CreatePrimitiveCylinder(kitchenGroup.transform, "MixingBowl_Large",
+                bowlPos,
+                new Vector3(0.38f, 0.12f, 0.38f),
+                stainlessSteelMat);
+            CreatePrimitiveCylinder(kitchenGroup.transform, "MixingBowl_Medium",
+                bowlPos + new Vector3(0f, 0.05f, 0f),
+                new Vector3(0.30f, 0.10f, 0.30f),
+                chromePolishedMat);
+            CreatePrimitiveCylinder(kitchenGroup.transform, "MixingBowl_Small",
+                bowlPos + new Vector3(0f, 0.09f, 0f),
+                new Vector3(0.22f, 0.08f, 0.22f),
+                stainlessSteelMat);
+
+            // Stack of Commercial Aluminum Baking Half-Sheet Pans
+            Vector3 sheetPos = islandCenter + new Vector3(0.65f, 2.22f, 0f);
+            for (int sp = 0; sp < 4; sp++)
+            {
+                CreatePrimitiveCube(kitchenGroup.transform, $"SheetPan_{sp + 1}",
+                    sheetPos + new Vector3(0f, sp * 0.025f, 0f),
+                    new Vector3(0.60f, 0.02f, 0.42f),
+                    stainlessSteelMat);
+            }
+
+            // Suspended Hanging Chef Utensils from Gantry Lip
+            string[] hangingTools = new string[] { "Tongs", "Spatula", "Skimmer", "Whisk" };
+            for (int ht = 0; ht < 4; ht++)
+            {
+                float hz = -0.45f + (ht * 0.30f);
+                CreatePrimitiveCube(kitchenGroup.transform, $"Tool_{hangingTools[ht]}",
+                    islandCenter + new Vector3(-1.38f, 1.70f, hz),
+                    new Vector3(0.02f, 0.26f, 0.05f),
+                    chromePolishedMat);
+            }
+
+            // 5. South Line Commercial Fryer & Beverage Infrastructure
+            // Stainless Steel Splash Barrier between Deep Fryer and Beverage Dispenser
+            CreatePrimitiveCube(kitchenGroup.transform, "Fryer_Beverage_SplashBarrier",
+                new Vector3(117.39f, 1.25f, -26.14f),
+                new Vector3(0.04f, 0.65f, 1.20f),
+                stainlessSteelMat);
+
+            // Stack of Clean Red & White French Fry Cartons beside the Fryer
+            Vector3 cartonPos = new Vector3(118.85f, 0.95f, -26.40f);
+            for (int c = 0; c < 3; c++)
+            {
+                CreatePrimitiveCube(kitchenGroup.transform, $"FryCarton_{c + 1}",
+                    cartonPos + new Vector3(0f, c * 0.06f, 0f),
+                    new Vector3(0.14f, 0.08f, 0.12f),
+                    (c % 2 == 0) ? ketchupRedMat : awningWhiteMat);
+            }
+
+            // Commercial Multi-Line Beverage Syrup Line Trunk running under counter
+            CreatePrimitiveCylinder(kitchenGroup.transform, "BeverageSyrup_Trunk",
+                new Vector3(116.64f, 0.50f, -26.85f),
+                new Vector3(0.12f, 1.0f, 0.12f),
+                checkerboardDarkMat);
+
+            // 6. Utility Corner Commercial Metro Wire Storage Rack (X = 109.50, Z = -26.50)
+            Vector3 rackCorner = new Vector3(109.45f, 0f, -26.50f);
+            // 4 Upright Chrome Corner Posts
+            CreatePrimitiveCylinder(kitchenGroup.transform, "Metro_Post_1",
+                rackCorner + new Vector3(-0.35f, 1.10f, -0.40f),
+                new Vector3(0.03f, 2.20f, 0.03f),
+                chromePolishedMat);
+            CreatePrimitiveCylinder(kitchenGroup.transform, "Metro_Post_2",
+                rackCorner + new Vector3(0.35f, 1.10f, -0.40f),
+                new Vector3(0.03f, 2.20f, 0.03f),
+                chromePolishedMat);
+            CreatePrimitiveCylinder(kitchenGroup.transform, "Metro_Post_3",
+                rackCorner + new Vector3(-0.35f, 1.10f, 0.40f),
+                new Vector3(0.03f, 2.20f, 0.03f),
+                chromePolishedMat);
+            CreatePrimitiveCylinder(kitchenGroup.transform, "Metro_Post_4",
+                rackCorner + new Vector3(0.35f, 1.10f, 0.40f),
+                new Vector3(0.03f, 2.20f, 0.03f),
+                chromePolishedMat);
+
+            // 4 Chrome Wire Shelves
+            for (int sh = 0; sh < 4; sh++)
+            {
+                float sy = 0.35f + (sh * 0.55f);
+                CreatePrimitiveCube(kitchenGroup.transform, $"Metro_Shelf_{sh + 1}",
+                    rackCorner + new Vector3(0f, sy, 0f),
+                    new Vector3(0.75f, 0.03f, 0.85f),
+                    chromePolishedMat);
+            }
+
+            // Shelf 1 (Bottom): 50 lb Commercial Flour Sacks
+            CreatePrimitiveCube(kitchenGroup.transform, "FlourSack_1",
+                rackCorner + new Vector3(-0.12f, 0.50f, 0f),
+                new Vector3(0.38f, 0.26f, 0.50f),
+                awningWhiteMat);
+            CreatePrimitiveCube(kitchenGroup.transform, "FlourSack_2",
+                rackCorner + new Vector3(0.15f, 0.50f, 0f),
+                new Vector3(0.35f, 0.26f, 0.45f),
+                awningWhiteMat);
+
+            // Shelf 2: Giant 5-Liter Italian Olive Oil Tins (Olive Green & Gold)
+            CreatePrimitiveCube(kitchenGroup.transform, "OilTin_1",
+                rackCorner + new Vector3(-0.16f, 1.05f, -0.15f),
+                new Vector3(0.20f, 0.32f, 0.16f),
+                plantGreenMat);
+            CreatePrimitiveCube(kitchenGroup.transform, "OilTin_2",
+                rackCorner + new Vector3(0.16f, 1.05f, -0.15f),
+                new Vector3(0.20f, 0.32f, 0.16f),
+                plantGreenMat);
+            CreatePrimitiveCube(kitchenGroup.transform, "OilTin_3",
+                rackCorner + new Vector3(0f, 1.05f, 0.18f),
+                new Vector3(0.20f, 0.32f, 0.16f),
+                brassGoldMat);
+
+            // Shelf 3: Crates of San Marzano Whole Peeled Tomatoes
+            CreatePrimitiveCube(kitchenGroup.transform, "CannedTomatoCrate",
+                rackCorner + new Vector3(0f, 1.58f, 0f),
+                new Vector3(0.55f, 0.18f, 0.65f),
+                ketchupRedMat);
+
+            // 7. Chef Wall Organization: Spices, Knife Strip, Hanging Pots
             // Multi-Tier Spice & Oil Shelf on Subway Tile
             CreatePrimitiveCube(kitchenGroup.transform, "ChefSpiceShelf",
                 new Vector3(121.84f, 1.65f, -17.80f),
@@ -914,11 +1417,36 @@ namespace Environment
                 new Vector3(0.28f, 0.05f, 0.28f),
                 stainlessSteelMat);
 
-            // Center Island Food Prep Task Spotlight
-            CreatePointLight(kitchenGroup.transform, "Island_PrepSpotlight",
-                new Vector3(115.89f, 2.45f, -20.89f),
-                new Color(1.0f, 0.95f, 0.84f),
-                3.2f, 4.5f);
+            // 8. Commercial High-Bay Ceiling Troffer Lighting (4500K Clean Daylight Task Lights)
+            Vector3[] trofferPositions = new Vector3[] {
+                new Vector3(113.5f, 3.10f, -18.0f),
+                new Vector3(118.5f, 3.10f, -18.0f),
+                new Vector3(113.5f, 3.10f, -23.5f),
+                new Vector3(118.5f, 3.10f, -23.5f),
+            };
+
+            for (int tr = 0; tr < trofferPositions.Length; tr++)
+            {
+                Vector3 trPos = trofferPositions[tr];
+                GameObject trofferObj = new GameObject($"TrofferFixture_{tr + 1}");
+                trofferObj.transform.SetParent(kitchenGroup.transform, false);
+
+                // Troffer Outer Stainless Housing
+                CreatePrimitiveCube(trofferObj.transform, "Housing",
+                    trPos,
+                    new Vector3(1.40f, 0.08f, 0.70f),
+                    stainlessSteelMat);
+                // Glowing Fluorescent / LED Diffuser Panel
+                CreatePrimitiveCube(trofferObj.transform, "Diffuser",
+                    trPos + new Vector3(0f, -0.04f, 0f),
+                    new Vector3(1.30f, 0.02f, 0.60f),
+                    awningWhiteMat);
+                // Crisp 4500K Commercial Task Spotlight
+                CreatePointLight(trofferObj.transform, "TaskLight",
+                    trPos + new Vector3(0f, -0.25f, 0f),
+                    new Color(0.96f, 0.98f, 1.0f),
+                    2.8f, 5.0f);
+            }
         }
 
         // ── 7. Atmosphere, Art, Jukebox & Neon Sign ───────────────────────────
@@ -1116,13 +1644,14 @@ namespace Environment
 
         // ── Clean Geometric, Plant & UI Helpers ───────────────────────────────
 
-        private GameObject CreatePrimitiveCube(Transform parent, string name, Vector3 pos, Vector3 size, Material mat)
+        private GameObject CreatePrimitiveCube(Transform parent, string name, Vector3 pos, Vector3 size, Material mat, Quaternion? rot = null)
         {
             GameObject go = GameObject.CreatePrimitive(PrimitiveType.Cube);
             go.name = name;
             go.transform.SetParent(parent, false);
             go.transform.position = pos;
             go.transform.localScale = size;
+            if (rot.HasValue) go.transform.rotation = rot.Value;
 
             Collider col = go.GetComponent<Collider>();
             if (col != null) DestroyImmediate(col);
