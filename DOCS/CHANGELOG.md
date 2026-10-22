@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.0-legal-credits] - 2026-10-22
+*Milestone E: Legal & Third-Party License Compliance Audit.*
+
+### Added
+- **Commercial Licensing Audit (`CREDITS.md`):**
+  - Audited all 57 engine dependencies and package manifests for commercial distribution readiness.
+  - Documented compliance registries for Unity 6 (URP 17.5.0, NGO 2.13.1, Input System 1.20.0, Relay/Lobby, Cinemachine 2.10.7).
+  - Clarified licensing for MCP for Unity (MIT), Steamworks SDK (Valve Dev Agreement), Pandazole City Town Pack (Unity Asset Store Commercial EULA), Liberation Sans (OFL 1.1), and audio assets.
+  - Certified zero unlicensed dependencies.
+
 ## [0.12.0-perf-telemetry] - 2026-10-22
 *Milestone E: Performance Profiling, Frame Pacing & Telemetry.*
 

@@ -85,7 +85,7 @@ Milestone E: Hardening & Commercial QA   [░░░░░░░░░░░░�
 | `REL-001` | Platform | P0 | Steamworks SDK integration (Lobby invites, Rich Presence, Achievements) | Eng | ✅ `COMPLETED` | `PlatformSteamManager.cs` Rich Presence & 5 Achievements with `AchievementToastUI.cs` in-game overlay, static cleanup, Play Mode verified |
 | `REL-002` | Input | P0 | Gamepad glyph auto-detection (Xbox, PlayStation, Steam Deck) and keyboard rebinds | UI/Eng | ✅ `COMPLETED` | Dynamic device auto-detection, platform glyph resolution, options menu binding updates, static cleanup, Play Mode verified |
 | `REL-003` | Perf | P0 | Performance profiling: 120 FPS target on PC, solid 60 FPS on mid-tier mobile | Perf | ✅ `COMPLETED` | `PerformanceTelemetryManager.cs` rolling 1% lows, frame time tracking, F3 HUD, 120/60 target frame rates, static cleanup |
-| `REL-004` | Legal | P1 | Final license audit in `CREDITS.md` and third-party asset compliance check | Legal | 📋 `BACKLOG` | Legal asset audit |
+| `REL-004` | Legal | P1 | Final license audit in `CREDITS.md` and third-party asset compliance check | Legal | ✅ `COMPLETED` | Full legal attribution & compliance audit in `CREDITS.md` across Unity packages, Steamworks, Pandazole, fonts, audio |
 
 ---
 
@@ -102,5 +102,6 @@ Milestone E: Hardening & Commercial QA   [░░░░░░░░░░░░�
 * **2026-10-22:** Milestone D (`EXP-001`) completed. 3D Animated Dine-In Customers: `DineInCustomerController.cs` procedural walking gait, booth sitting pose, eating animation loops, departure on delivery success or timeout, and `TableManager.SpawnDineInCustomerClientRpc`. Verified in Play Mode with 0 errors and 0 warnings.
 * **2026-10-22:** Milestone E (`REL-001`) completed. Steamworks Platform Integration: `PlatformSteamManager.cs` Rich Presence ("Day X - Shift Y"), 5 core Steam achievements with gameplay event listeners, `AchievementToastUI.cs` in-game popup toast, and `PlatformSteamManager.ResetStaticData()` wired to `ResetStaticDataManager`. Verified in Play Mode with 0 errors and 0 warnings.
 * **2026-10-22:** Milestone E (`REL-003`) completed. Performance Telemetry & Profiler: `PerformanceTelemetryManager.cs` targeting 120 FPS on PC and 60 FPS on mobile, rolling 1% Lows, frame time tracking, managed heap GC memory telemetry, F3 HUD overlay, and `PerformanceTelemetryManager.ResetStaticData()` wired to `ResetStaticDataManager`. Verified in Play Mode with 0 errors and 0 warnings.
+* **2026-10-22:** Milestone E (`REL-004`) completed. Comprehensive third-party asset license and legal compliance audit completed in `CREDITS.md`. Verified license compatibility across Unity 6 URP/NGO, MCP for Unity (MIT), Steamworks SDK, Pandazole City Town Pack EULA, SIL Open Font typography, and audio stems.
 
 
