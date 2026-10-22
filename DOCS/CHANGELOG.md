@@ -8,6 +8,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.32.0-kitchen-hud-zero-occlusion-sightlines] - 2026-10-22
+*Milestone D: Kitchen HUD Zero-Occlusion Sightlines Overhaul (EXP-016).*
+
+### Fixed & Enhanced
+- **Zero-Occlusion Isometric Sightline Architecture (`RestaurantEnvironmentEnhancer.cs`):**
+  - **Overhead Dining Ceiling Beams Confined to Dining Hall:**
+    - Truncated rustic wooden ceiling beams (`CeilingBeam_1` through `CeilingBeam_4`) to span strictly across the dining hall from $X = 88.57\text{m}$ to $110.57\text{m}$ ($\text{width} = 22.0\text{m}$, centered at $X = 99.57\text{m}$).
+    - Eliminated previous kitchen airspace overhang where `CeilingBeam_3` directly occluded camera rays to `CuttingCounter_Bottom`, `DeepFryerCounterUI`, and `BeverageDispenserCounterUI`.
+  - **Cook Line Ventilation Elevation:**
+    - Replaced protruding 3D canopy hoods and hanging vertical roof duct tubes with a sleek, flush-mounted commercial exhaust plenum mounted against the East subway wall ($X = 121.88\text{m}$) at $Y = 3.35\text{m}$—comfortably above the highest HUD element (`StoveBurnWarningUI` at $Y = 3.00\text{m}$) with zero counter overhang.
+  - **Center Prep Island Airspace Opening:**
+    - Completely removed overhead double-deck gantry stanchions, overhead shelves, and hanging utensils from above `Island_Cutting` and `Island_Clear_1`.
+    - Relocated all 6 stainless/polycarbonate mise-en-place pans (lettuce, onions, cheese, patties, tomatoes, pickles) and the chef squeeze bottle caddy to a wall-mounted stainless shelf flush against the North subway wall behind the vegetable counters ($Z = -14.82\text{m}, Y = 1.65\text{m}$).
+    - High-visibility commercial LED clock/timer mounted flush on North subway wall facing South ($Z = -14.78\text{m}, Y = 2.45\text{m}$).
+  - **South Kitchen Line Sightline Clearance:**
+    - Converted the former full-height south subway tile wall to a low-profile counter-height ($0.90\text{m}$) sanitary stainless kick-plate flush behind the counter backs.
+    - Removed `FryerExhaust_WallVent` from $Z = -27.02\text{m}$ which previously crossed the downward 46° camera ray to `DeepFryerCounterUI`.
+  - **Scullery Splash Rims & Pass-Through Clearance:**
+    - Maintained sink side splash shields at counter level ($Y = 0.95\text{m}$), 1.45m below `SinkCounterUI` ($Y = 2.40\text{m}$).
+    - Raised pass-through valance header to ceiling line ($Y = 2.85\text{m}$) and converted all general kitchen lighting to flush ceiling task downlights ($Y = 3.60\text{m}$).
+- **Verification & Raycast Audits:**
+  - Automated raycast simulation executed across 10 distinct player kitchen stations (Stove 1, Stove 2, Sink, Deep Fryer, Cutting Bottom, Beverage Dispenser, Island North, Island South, Cutting Top, Pass-through) testing all 14 interactive kitchen HUD canvases (`ProgressBarUI`, `StoveBurnWarningUI`, `DeepFryerCounterUI`, `BeverageDispenserCounterUI`, `SinkCounterUI`, `InteractKeyPromptUI`).
+  - Passed **140 out of 140 dynamic line-of-sight sightline tests with 0 occlusions (100% visibility)**.
+  - Scene saved in `Assets/Scenes/GameSceneTableService.unity`. Zero compiler errors, zero warnings.
+
 ## [0.31.0-commercial-kitchen-scullery-overhaul] - 2026-10-22
 *Milestone D: Commercial Kitchen Infrastructure, Scullery & Ergonomics Overhaul (EXP-015).*
 
