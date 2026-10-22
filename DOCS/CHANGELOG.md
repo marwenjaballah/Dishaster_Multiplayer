@@ -8,6 +8,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.33.0-scene-hierarchy-categorization] - 2026-10-22
+*Milestone D: Professional Scene Hierarchy Categorization & Cleanup (EXP-017).*
+
+### Added & Reorganized
+- **Professional Scene Hierarchy Architecture (`GameSceneTableService.unity`):**
+  - **Category Folders:** Grouped 27 scattered root-level GameObjects into 5 clean, collapsible category hierarchies:
+    - `--- 01_SYSTEMS & MANAGERS ---`: All 14 system singletons and managers (`KitchenGameManager`, `DeliveryManager`, `TableManager`, `KitchenCrisisManager`, `RestaurantEconomyManager`, `DifficultyManager`, `CoopPingManager`, `SoloChefHotSwapManager`, `GameSaveManager`, `LevelSelectionManager`, `GameInput`, `SoundManager`, `MusicManager`, `RuntimeNetStatsMonitor`).
+    - `--- 02_CAMERAS & LIGHTING ---`: All view and environmental lighting systems (`Main Camera`, `Virtual Camera`, `Directional Light`, `Global Volume`).
+    - `--- 03_ENVIRONMENT & WORLD ---`: Physical world architecture (`Restaurant`, `CitySystem`).
+    - `--- 04_GAMEPLAY & VEHICLES ---`: Interactive entities and vehicles (`ElectricScooter`, `DeliveryTarget3DIndicator`).
+    - `--- 05_UI & CANVASES ---`: User interface systems (`EventSystem`, `Canvas`, `MobileTouchControlsUI`, `LevelSelectUI`).
+  - **Counter Consolidation in `Restaurant/Counters`:**
+    - Reparented `DeliveryBagCounter` (previously stranded at scene root) and the 4 crisis utility counters (`WaterLeakValveCounter`, `FuseBoxCounter`, `FireExtinguisherCounter`, `PipeWrenchCounter`) into `Restaurant/Counters`.
+    - All 31 counters now live together in a single consolidated, cleanly organized location with exact world transforms preserved.
+  - **Hierarchy Hygiene:**
+    - Removed duplicate ` (1)` name suffixes across 12 GameObjects (`KitchenGameManager`, `DeliveryManager`, `SoundManager`, `MusicManager`, `GameInput`, `EventSystem`, `Canvas`, `Main Camera`, `Virtual Camera`, `Directional Light`, `Global Volume`, `RuntimeNetStatsMonitor`, `Counters`).
+    - Logically ordered all 17 HUD sub-panels under `Canvas` by gameplay flow (Pre-game $\rightarrow$ Gameplay HUDs $\rightarrow$ Multiplayer/Pause $\rightarrow$ Results/Options).
+  - **Verification:**
+    - Validated all singletons, cameras, Netcode bindings, and serialized references with **0 missing references, 0 errors, and 0 warnings**.
+
 ## [0.32.0-kitchen-hud-zero-occlusion-sightlines] - 2026-10-22
 *Milestone D: Kitchen HUD Zero-Occlusion Sightlines Overhaul (EXP-016).*
 
