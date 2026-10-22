@@ -306,6 +306,23 @@ public class TableManager : NetworkBehaviour {
         if (DeliveryManager.Instance != null) {
             DeliveryManager.Instance.NotifyTableServiceRecipeSpawnedClientRpc(recipeIndex);
         }
+
+        SpawnDineInCustomerClientRpc(new FixedString64Bytes(table.GetTableId()));
+    }
+
+    [Rpc(SendTo.ClientsAndHost)]
+    private void SpawnDineInCustomerClientRpc(FixedString64Bytes tableIdFixed) {
+        string tableId = tableIdFixed.ToString();
+        CustomerTable target = GetTableById(tableId);
+        if (target == null) return;
+
+        string customerName = $"DineInCustomer_{tableId}";
+        if (GameObject.Find(customerName) != null) return;
+
+        GameObject customerGo = new GameObject(customerName);
+        DineInCustomerController customer = customerGo.AddComponent<DineInCustomerController>();
+        Vector3 entrancePos = new Vector3(100f, 0f, -8.5f);
+        customer.Initialize(target, entrancePos);
     }
 
     // ===== DELIVERY HANDLING =====

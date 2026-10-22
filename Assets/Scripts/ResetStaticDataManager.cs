@@ -23,6 +23,7 @@ public class ResetStaticDataManager : MonoBehaviour {
         GameInput.ResetStaticData();
         DeepFryerCounter.ResetStaticData();
         BeverageDispenserCounter.ResetStaticData();
+        DineInCustomerController.ResetStaticData();
     }
 
 

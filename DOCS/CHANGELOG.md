@@ -8,6 +8,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.10.0-dine-in-customers] - 2026-10-22
+*Milestone D: 3D Animated Dine-In Customer Agents.*
+
+### Added
+- **3D Animated Dine-In Customers (`DineInCustomerController.cs`):**
+  - Full procedural locomotion gait (alternating leg strides, arm counter-swings, vertical pelvis bob).
+  - State machine: `WalkingToTable` $\rightarrow$ `Sitting` (80° forward hip bend, resting arms on table) $\rightarrow$ `Eating` (head bobbing and gestures) $\rightarrow$ `Leaving` (standing up and walking out).
+  - Server-authoritative client spawning via `TableManager.SpawnDineInCustomerClientRpc`.
+  - Self-generating stylized low-poly avatar with randomized outfit color palettes (sky blue, coral, emerald, lavender, mustard) and clean non-colliding physics.
+  - Event listeners on `CustomerTable.OnAnyTableDeliverySuccess` and `OnAnyTableDeliveryFailed` for seamless eating and departure loops.
+  - `DineInCustomerController.ResetStaticData()` wired to `ResetStaticDataManager`.
+
 ## [0.9.0-fryer-beverage] - 2026-10-22
 *Milestone D: Deep Fryer Station & Beverage Fountain Dispenser.*
 

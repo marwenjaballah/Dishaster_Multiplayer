@@ -71,7 +71,7 @@ Milestone E: Hardening & Commercial QA   [░░░░░░░░░░░░�
 
 | Task ID | Type | Priority | Description | Assignee | Status | Verification |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| `EXP-001` | NPC | P1 | 3D Animated Dine-In Customers (walk in sidewalk door, sit at booths, eat, leave) | AI/Art | 📋 `BACKLOG` | NavMesh pathing & state transitions |
+| `EXP-001` | NPC | P1 | 3D Animated Dine-In Customers (walk in sidewalk door, sit at booths, eat, leave) | AI/Art | ✅ `COMPLETED` | `DineInCustomerController.cs` with procedural gait, sitting/eating loop, table event integration, static cleanup, Play Mode verified |
 | `EXP-002` | Gameplay | P1 | Deep Fryer station (French Fries) and Beverage fountain machine | Gameplay | ✅ `COMPLETED` | `DeepFryerCounter.cs` & `BeverageDispenserCounter.cs` with server RPCs, progress feedback, static cleanup, Play Mode verified |
 | `EXP-003` | Vehicle | P1 | Scooter 2.0 physics polish (lean into corners, collision feedback, tip loss on crash) | Vehicle | ✅ `COMPLETED` | 18° visual lean kinematics, high-speed crash recoil bounce, $10 food damage penalty via `RestaurantEconomyManager`, Play Mode verified |
 | `EXP-004` | Level Design | P2 | Level 2 (Downtown Burger Bar) and Level 3 (Boardwalk Grill) | Level | 📋 `BACKLOG` | Multi-scene layout validation |
@@ -99,5 +99,6 @@ Milestone E: Hardening & Commercial QA   [░░░░░░░░░░░░�
 * **2026-10-22:** Milestone D (`EXP-003`) completed. Scooter 2.0 physics polish: 18° dynamic corner banking kinematics, high-speed obstacle crash recoil impulse, server-authoritative crash audio broadcasting, and $10 food jolt damage penalty in `RestaurantEconomyManager.cs`. Verified in Play Mode with 0 errors and 0 warnings.
 * **2026-10-22:** Milestone E (`REL-002`) completed. Gamepad glyph auto-detection: input device detection (Xbox, PlayStation, Steam Deck, Keyboard/Mouse, Touchscreen), contextual glyph formatting, options UI live refresh, and `GameInput.ResetStaticData()` wired to `ResetStaticDataManager`. Verified in Play Mode with 0 errors and 0 warnings.
 * **2026-10-22:** Milestone D (`EXP-002`) completed. Deep Fryer & Beverage Fountain Station: `DeepFryerCounter.cs` & `BeverageDispenserCounter.cs` with server-authoritative Netcode RPCs, sizzling and pouring audio, progress feedback, meal combo integration, and static lifecycle cleanup in `ResetStaticDataManager`. Verified in Play Mode with 0 errors and 0 warnings.
+* **2026-10-22:** Milestone D (`EXP-001`) completed. 3D Animated Dine-In Customers: `DineInCustomerController.cs` procedural walking gait, booth sitting pose, eating animation loops, departure on delivery success or timeout, and `TableManager.SpawnDineInCustomerClientRpc`. Verified in Play Mode with 0 errors and 0 warnings.
 
 
