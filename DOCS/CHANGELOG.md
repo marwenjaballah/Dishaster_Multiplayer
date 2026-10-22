@@ -8,6 +8,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.15.0-low-poly-avatar] - 2026-10-22
+*Milestone B: Stylized Low-Poly Avatar Rigging & Kinematics.*
+
+### Added
+- **Low-Poly Chef Humanoid Rig (`PlayerAvatarVisual.cs`):**
+  - Upgraded player character visual representation from basic prototype spheres to a stylized low-poly chef avatar.
+  - Multi-part rig with chef toque (toque hat with dynamic secondary physics sway), tailored chef jacket, dark slate apron, articulated shoulders/arms, and articulated legs/shoes.
+  - Procedural walk kinematics featuring alternating leg strides, arm counter-swings, and sinusoidal vertical torso bounce.
+  - Dynamic carrying pose: when carrying food plates, frying pans, or delivery bags, arms smoothly pivot up into an ergonomic holding stance at chest height.
+  - Vehicle mounting kinematics: when hopping onto the scooter, legs tuck comfortably into driving posture and hands grip handlebars.
+  - Automatic multiplayer team color tinting based on player ID.
+  - `PlayerAvatarVisual.ResetStaticData()` wired to `ResetStaticDataManager`.
+
 ## [0.14.0-pass-through-window] - 2026-10-22
 *Milestone B: Kitchen-to-Diner Pass-Through Service Window.*
 
